@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="description" content="Materia - Admin Template">
+	<meta name="keywords" content="materia, webapp, admin, dashboard, template, ui">
+	<meta name="author" content="solutionportal">
+	<!-- <base href="/"> -->
+
+	<title>SSD</title>
+	
+	{% load static %}
+	<link rel="icon" type="image/x-icon" href="{% static 'images/SS_LOGO.webp' %}">
+
+<!-- Font Styles -->
+<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.min.css' %}">
+<link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
+
+<!-- Plugins -->
+<link rel="stylesheet" href="{% static 'styles/plugins/c3.css' %}">
+<link rel="stylesheet" href="{% static 'styles/plugins/waves.css' %}">
+<link rel="stylesheet" href="{% static 'styles/plugins/perfect_scrollbar.css' %}">
+
+<!-- CSS Stylesheets -->
+<link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'styles/main.min.css' %}">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+
+	<!-- Plugins -->
+	<link rel="stylesheet" href="{% static 'styles/plugins/waves.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/perfect-scrollbar.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/select2.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/bootstrap-colorpicker.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/bootstrap-slider.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/bootstrap-datepicker.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/summernote.css' %}">
+
+
+
+<style>
+	.out-standing{
+		margin:0px
+	}
+
+	.addpays{
+		display:flex;
+		justify-content:center;
+	}
+	.addpays #sendData{
+		margin-top:30px;
+	}
+
+	
+	
+	.logo-container {
+			position: relative;
+			width: fit-content;
+			text-align: center;
+			padding: 20px;
+		  }
+		  
+		  
+		  
+		  .logo-text {
+			display: flex;
+			align-items: center;
+			position: relative;
+			z-index: 2;
+		  }
+		  
+		  .ss {
+			font-family: fantasy;
+			color: red;
+			font-size: 80px;
+			font-weight: 100;
+			line-height: 1;
+		  }
+		  
+		  .digital {
+			font-family: fantasy;
+			color: green;
+			font-size: 80px;
+			font-weight: 100;
+			text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff;
+			margin-top: -10px;
+		  }
+		  
+	</style>
+
+
+
+
+
+<link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+ 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
+
+	<!-- Match Media polyfill for IE9 -->
+	<!--[if IE 9]> <script src="scripts/ie/matchMedia.js"></script>  <![endif]--> 
+
+	
+</head>
+<body id="app" class="app off-canvas">
+	<div id="preloader">
+		<h1 class="dash-cont loa"> <span class="ss">SS</span> <span class="digital">digital</span></h1>
+	</div>
+	
+	<!-- header -->
+	<header class="site-head" id="site-head">
+		<ul class="list-unstyled left-elems">
+			<!-- nav trigger/collapse -->
+			<li>
+				<a href="javascript:;" class="nav-trigger icon ion-md-menu"></a>
+			</li>
+			<!-- #end nav-trigger -->
+
+			<!-- site-logo for mobile nav -->
+			<li>
+				<div class="site-logo visible-xs">
+					<a href="javascript:;" class="text-uppercase h3">
+						<span class="text">SSD</span>
+					</a>
+				</div>
+			</li> <!-- #end site-logo -->
+
+
+			
+		</ul>
+        <ul class="list-unstyled right-elems">
+			<!-- profile drop -->
+			<li class="profile-drop hidden-xs dropdown">
+				<a href="javascript:;" data-toggle="dropdown">
+					<img src="{% static 'images/user.png' %}" alt="admin-pic">
+				</a>
+				<ul class="dropdown-menu dropdown-menu-right">
+					<li><a href="{% url "signout" %}"><span class="ion ion-md-exit">&nbsp;&nbsp;</span>Logout</a></li>
+				</ul>
+			</li>
+			<!-- #end profile-drop -->
+
+			
+
+		</ul>
+
+		<ul class="list-unstyled right-elems">
+			
+
+
+		</ul>
+
+	
+	</header>
+	<!-- #end header -->
+
+	<!-- main-container -->
+	<div class="main-container clearfix">
+		<!-- main-navigation -->
+		 
+		<aside class="nav-wrap" id="site-nav" data-perfect-scrollbar>
+            <div class="nav-head">
+                <!-- site logo -->
+                <a href="{% url 'dashboard' %}" class="site-logo text-uppercase">
+                    {% comment %} <i class="ion ion-disc"></i> {% endcomment %}
+                    <img src="{% static 'images/SS_LOGO.webp' %}" alt="">
+                    <span class="text">SS Digital</span>
+                </a>
+            </div>
+
+            <!-- Site nav (vertical) -->
+
+            <nav class="site-nav clearfix" role="navigation">
+
+
+                <!-- navigation -->
+                <ul class="list-unstyled clearfix nav-list mb15">
+                    <li class="active">
+                        <a href="{% url 'dashboard' %}">
+                            <i class="ion ion-monitor"></i>
+                            <span class="text">Dashboard</span>
+                        </a>
+                    </li>
+                    {% comment %} <li>
+                        <a>
+                            <i class="icon ion-md-people"></i>
+                            <span class="text">Customer Management</span>
+                        </a>
+                    </li> {% endcomment %}
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-people"></i>
+                            <span class="text">Customer Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addcustomer' %}">Add Customer</a></li>
+                            <li><a href="{% url 'listcustomer' %}">List Customer</a></li>
+                        </ul>
+                    </li>
+                    {% if user.role == 'admin' %}
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-contact"></i>
+                            <span class="text">Employee Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addemployee' %}">Add Employee</a></li>
+                            <li><a href="{% url 'listemployee' %}">List Employee</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-cube"></i>
+                            <span class="text">Material Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addmaterial' %}">Add Material</a></li>
+                            <li><a href="{% url 'listmaterial' %}">List Material</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-logo-dropbox"></i>
+                            <span class="text">Inward Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'select_material' %}">Add Inward</a></li>
+                            <li><a href="{% url 'listinward' %}">List Inward</a></li>
+                            <li><a href="{% url 'listoutward' %}">List Outward</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-albums"></i>
+                            <span class="text">Product Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addproduct' %}">Add Product</a></li>
+                            <li><a href="{% url 'listproduct' %}">List Product</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-apps"></i>
+                            <span class="text">Category Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addcategories' %}">Add Category</a></li>
+                            <li><a href="{% url 'listcategories' %}">List Category</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-pricetag"></i>
+                            <span class="text">Cost Management</span>
+                            {% comment %} <i class="icon ion-md-pricetag"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addcost' %}">Add Cost</a></li>
+                            <li><a href="{% url 'listcost' %}">List Cost</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-paper"></i>
+                            <span class="text">Billing Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'bill' %}">Add Bill</a></li>
+                            <li><a href="{% url 'listbill' %}">List Bill</a></li>
+                            <li><a href="{% url 'listquote' %}">List Quotation</a></li>
+                            <li><a href="{% url 'listestimate' %}">List Estimation</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-cash"></i>
+                            <span class="text">Payment Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'filtered_data' 'all' %}">Overall</a></li>
+                            <li><a href="{% url 'filtered_data' 'today' %}">Today</a></li>
+                            <li><a href="{% url 'filtered_data' 'this_week' %}">This Week</a></li>
+                            <li><a href="{% url 'filtered_data' 'this_month' %}">This Month</a></li>
+                            <li><a href="{% url 'filtered_data' 'this_year' %}">This Year</a></li>
+                            <li><a href="{% url 'outstanding'  %}">Outstanting Bills</a></li>
+                        </ul>
+                    </li>
+
+
+
+                </ul> <!-- #end navigation -->
+            </nav>
+
+
+        </aside>
+		<!-- #end main-navigation -->
+
+		<div class="content-container fixedHeader nav-expand">
+         
+           <!-- col-left -->
+
+           <!-- Selects -->
+						<div class="col-sm-12 col-md-11">
+							<div class="panel-heading addbill-heading">
+								<div><a class="btn btn-primary mr5" href="{% url "listbill" %}">List Bill</a></div>
+							</div>
+							<div class="panel panel-default mb20">
+								<div class="row">
+									<div class=" col-md-6">
+										<div class="panel-body">
+											<h3>BILL No. : <span id="paymentId">{{new_pay_id}}</span></h3>
+											<h3>Total Bill Amount : ₹<span id="billAmount">{{data.Grand_Total}}</span></h3>
+											
+											<h3>Pending Amount : ₹<span id="actualPending">{% if data.Payment_Id %}{{data.Pending_Amount}}{% else  %}{{data.Grand_Total}}{% endif %}</span></h3>
+											
+											
+
+											
+
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									
+								</div>
+							</div>
+							<div class="panel panel-default panel-hovered panel-stacked mb30">
+								<div class="panel-heading">Payments</div>
+								<div class="panel-body">
+									<form role="form" id="paymentform">
+										{% csrf_token %}
+										<div>
+											<!-- Single Select -->
+											<div class="form-group">
+												<label class="control-label small">Mode Of Payment</label>
+												<select id="paymentMode" style="width: 100%" data-placeholder="Select Payment Method">
+													<option></option>	<!-- empty, for placeholder -->
+													<option value="CASH">Cash</option>
+													<option value="UPI">UPI</option>
+													<option value="CHEQUE">CHEQUE</option>
+													<option value="IMPS_NIFT">IMPS/NEFT</option>
+													<option value="DISCOUNTED">DISCOUNTED</option>
+												</select>
+																																	
+																								
+												<!-- Cash Payment Fields -->
+												<div id="cashDiv" style="display: none;padding:20px 0px">
+													<label for="">Enter Amount</label>
+													<input type="number" id="cashAmount" class="form-control" placeholder="Enter Cash Amount">
+													<label for="">Pending</label>
+													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
+
+												</div>
+
+												<!-- UPI Payment Fields -->
+												<div id="upiDiv" style="display: none;padding:20px 0px">
+													<label for="">Enter Amount</label>
+													<input type="number" id="upiAmount" class="form-control" placeholder="Enter UPI Amount">
+													<label for="">Pending Amount</label>
+													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
+													<label for="">Enter Mobile Number</label>
+													<input type="text" id="upiMobile" class="form-control" placeholder="Enter Mobile Number">
+													<label for="">Enter UTR No.</label>
+													<input type="text" id="upiUtr" class="form-control" placeholder="Enter UTR Number">
+
+												</div>
+
+												<!-- Account Transfer Fields -->
+												<div id="transferDiv" style="display: none;padding:20px 0px">
+													<label for="">Enter Amount</label>
+													<input type="number" id="transferAmount" class="form-control" placeholder="Enter Transfer Amount">
+													<label for="">Pending Amount</label>
+													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
+													<label for="">Enter UTR No.</label>
+													<input type="text" id="transferUtr" class="form-control" placeholder="Enter UTR Number">
+
+												</div>
+
+												<div id="chequeDiv" style="display: none;padding:20px 0px">
+													<label for="">Enter Amount</label>
+													<input type="number" id="chequeAmount" class="form-control" placeholder="Enter Cheque Amount">
+													<label for="">Pending Amount</label>
+													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
+													<label for="">Cheque Date</label>
+													<input type="date" id="chequeDate" class="form-control" placeholder="Enter UTR Number">
+
+												</div>
+
+												<!-- Discount Fields -->
+												<div id="manualDiv" style="display: none; padding:20px 0px">
+													<label for="">Enter Amount</label>
+													<input type="number" id="manualAmount" class="form-control" placeholder="Enter Amount">
+													<label for="">Pending Amount</label>
+													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
+													<label for="">Enter the Reason For Discount</label>
+													<input type="text" id="manualReason" class="form-control" placeholder="Enter Reason for Bad Debts">
+
+												</div>
+											</div>
+
+										</div>
+
+									</form>
+									<div class="addpays">
+										<button id="addEntryBtn" class="btn-primary">Add Payment</button>
+									</div>
+								</div>
+							</div>
+
+							
+
+							<div class="panel">
+								<!-- Data Table -->
+								
+								<!-- #End Data Table -->
+
+								<table class="table table-bordered table-striped table-responsive" id="entriesTable">
+									<thead>
+										<tr>
+											<th>
+												Payment Mode
+												<div class="th">
+													<i class="fa fa-caret-up icon-up"></i>
+													<i class="fa fa-caret-down icon-down"></i>
+												</div>
+											</th>
+											
+											<th>
+												UTR / Reason / Cheque Date
+												<div class="th">
+													<i class="fa fa-caret-up icon-up"></i>
+													<i class="fa fa-caret-down icon-down"></i>
+												</div>
+											</th>
+											
+											<th>
+												Mobile Number
+												<div class="th">
+													<i class="fa fa-caret-up icon-up"></i>
+													<i class="fa fa-caret-down icon-down"></i>
+												</div>
+											</th>
+											<th>
+												Amount
+												<div class="th">
+													<i class="fa fa-caret-up icon-up"></i>
+													<i class="fa fa-caret-down icon-down"></i>
+												</div>
+											</th>
+											<th>
+												Pending Amount
+												<div class="th">
+													<i class="fa fa-caret-up icon-up"></i>
+													<i class="fa fa-caret-down icon-down"></i>
+												</div>
+											</th>
+											
+											<!--<th>
+												Action
+												<div class="th">
+													<i class="fa fa-caret-up icon-up"></i>
+													<i class="fa fa-caret-down icon-down"></i>
+												</div>
+											</th>-->
+										</tr>
+									</thead>
+									<tbody>
+										<!-- Data initializes via script, can also be loaded via AJAX -->
+									</tbody>
+								</table>
+							</div>
+							<div class="addpays">
+								<button id="sendData" class="btn-tag-primary">Submit The Payments</button>
+							</div>
+
+							
+						</div>
+			
+						
+
+				
+			</div> <!-- #end col-left -->
+
+
+		</div>
+
+
+		<!-- content-here -->
+		<div class="content-container" id="content">
+			<!-- dashboard page -->
+			<div class="page page-dashboard">
+
+				<div class="page-wrap">
+
+
+					
+
+				</div> <!-- #end page-wrap -->
+			</div>
+			<!-- #end dashboard page -->
+		</div>
+
+		
+	</div> <!-- #end main-container -->
+	
+
+	<!-- theme settings -->
+	<div class="site-settings clearfix hidden-xs" >
+		<div class="settings clearfix">
+			<div class="trigger ion ion-settings left"></div>
+			<div class="wrapper left">
+				<ul class="list-unstyled other-settings">
+					<li class="clearfix mb10">
+						<div class="left small">Nav Horizontal</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox" id="navHorizontal"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+						
+						
+					</li>
+					<li class="clearfix mb10">
+						<div class="left small">Fixed Header</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox"  id="fixedHeader"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+					</li>
+					<li class="clearfix mb10">
+						<div class="left small">Nav Full</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox"  id="navFull"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+					</li>
+				</ul>
+				<hr/>
+				<ul class="themes list-unstyled" id="themeColor">
+					<li data-theme="theme-zero"></li>
+					<li data-theme="theme-one"></li>
+					<li data-theme="theme-two"></li>
+					<li data-theme="theme-three" class="active"></li>
+					<li data-theme="theme-four"></li>
+					<li data-theme="theme-five"></li>
+					<li data-theme="theme-six"></li>
+					<li data-theme="theme-seven"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- #end theme settings -->
+
+
+	
+
+	<!-- Dev only -->
+	<!-- Vendors -->
+	{% load static %}
+
+
+<script src="{% static 'scripts/vendors.js' %}"></script>
+<script src="{% static 'scripts/plugins/screenfull.js' %}"></script>
+<script src="{% static 'scripts/plugins/perfect-scrollbar.min.js' %}"></script>
+<script src="{% static 'scripts/plugins/waves.min.js' %}"></script>
+<script src="{% static 'scripts/plugins/select2.min.js' %}"></script>
+<script src="{% static 'scripts/plugins/bootstrap-colorpicker.min.js' %}"></script>
+<script src="{% static 'scripts/plugins/bootstrap-slider.min.js' %}"></script>
+<script src="{% static 'scripts/plugins/summernote.min.js' %}"></script>
+<script src="{% static 'scripts/plugins/bootstrap-datepicker.min.js' %}"></script>
+<script src="{% static 'scripts/app.js' %}"></script>
+{% comment %} <script src="{% static 'scripts/form-elements.init.js' %}"></script> {% endcomment %}
+
+
+
+<!-- Scripts -->
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> {% endcomment %}
+<script>
+	$(document).ready(function () {
+		"use strict";
+
+		const totalAmount = parseFloat($("#billAmount").text()) || 0; // Ensure numeric value
+		let actualPending = parseFloat($("#actualPending").text().trim());
+		if (isNaN(actualPending)) {
+			actualPending = 0; // Set to 0 if not available
+		}
+
+		$("#paymentMode").select2();
+
+		function resetPaymentFields() {
+			$(".payment-div").hide().find("input").val("");
+		}
+
+		function getTotalEnteredAmount() {
+			let total = 0;
+			$("#entriesTable tbody tr").each(function () {
+				total += parseFloat($(this).find("td:nth-child(4)").text().replace("₹", "")) || 0;
+			});
+			return total;
+		}
+
+		function updatePendingAmount() {
+			let enteredAmount = parseFloat($(this).val()) || 0;
+			let totalEnteredAmount = getTotalEnteredAmount();
+			let remaining = actualPending - totalEnteredAmount - enteredAmount;
+			if (remaining < 0) remaining = 0;
+			$(".pendingAmount").val(remaining.toFixed(2)); // Update pendingAmount field
+		}
+
+		// Function to get the last row's pending amount or bill amount
+		function getPendingAmount() {
+			let table = $("#entriesTable tbody");
+			let rows = table.find("tr");
+		
+			// If there are rows in the table
+			if (rows.length > 0) {
+				// Get the last row's pending amount
+				let lastRow = rows.last();
+				let pendingAmountCell = lastRow.find("td:nth-child(5)");
+				let pendingAmount = parseFloat(pendingAmountCell.text().replace("₹", "").trim()) || 0;
+		
+				// Enable the send button
+				$("#sendData").prop("disabled", false);
+		
+				return pendingAmount;
+			} else {
+				// Disable the send button if no rows exist
+				$("#sendData").prop("disabled", true);
+		
+				// Return actualPending if it's a valid number, otherwise return 0
+				return !isNaN(actualPending) ? actualPending : 0;
+			}
+		}
+
+		// Initialize pending amount on page load
+		$(".pendingAmount").val(getPendingAmount().toFixed(2));
+
+		$("#paymentMode").on("change", function () {
+			resetPaymentFields();
+			let selectedMode = $(this).val();
+			if (selectedMode === "CASH") {
+				$("#cashDiv").show();
+				$("#upiDiv").hide();
+				$("#transferDiv").hide();
+				$("#manualDiv").hide();
+				$("#chequeDiv").hide();
+			} else if (selectedMode === "UPI") {
+				$("#upiDiv").show();
+				$("#cashDiv").hide();
+				$("#transferDiv").hide();
+				$("#manualDiv").hide();
+				$("#chequeDiv").hide();
+			} else if (selectedMode === "IMPS_NIFT") {
+				$("#transferDiv").show();
+				$("#cashDiv").hide();
+				$("#upiDiv").hide();
+				$("#manualDiv").hide();
+				$("#chequeDiv").hide();
+			} else if (selectedMode === "CHEQUE") {
+				$("#chequeDiv").show();
+				$("#transferDiv").hide();
+				$("#cashDiv").hide();
+				$("#upiDiv").hide();
+				$("#manualDiv").hide();
+			} else if (selectedMode === "DISCOUNTED") {
+				$("#manualDiv").show();
+				$("#cashDiv").hide();
+				$("#upiDiv").hide();
+				$("#transferDiv").hide();
+				$("#chequeDiv").hide();
+			} else {
+				$("#cashDiv").hide();
+				$("#upiDiv").hide();
+				$("#transferDiv").hide();
+				$("#chequeDiv").hide();
+				$("#manualDiv").hide();
+			}
+		});
+
+		$("#cashAmount, #upiAmount, #transferAmount, #manualAmount, #chequeAmount").on("keyup", function () {
+			let enteredAmount = parseFloat($(this).val()) || 0;
+			let totalEnteredAmount = getTotalEnteredAmount();
+			let pending = actualPending - totalEnteredAmount;
+
+			if (enteredAmount > pending) {
+				alert("Entered amount exceeds the pending amount!");
+				$(this).val("");
+				enteredAmount = 0;
+			} else if (enteredAmount < 0) {
+				alert("Enter a positive amount");
+				$(this).val("");
+				enteredAmount = 0;
+			}
+
+			// Recalculate the total entered amount after potential correction
+			totalEnteredAmount = getTotalEnteredAmount();
+			let remaining = actualPending - totalEnteredAmount;
+			if (remaining < 0) remaining = 0;
+
+			$(".pendingAmount").val(remaining.toFixed(2));
+		});
+
+		$("#addEntryBtn").on("click", function () {
+			let mode = $("#paymentMode").val();
+			if (!mode) return alert("Please select a payment mode.");
+
+			let amount = "", utrOrReason = "", mobile = "";
+			if (mode === "CASH") amount = $("#cashAmount").val();
+			else if (mode === "UPI") {
+				amount = $("#upiAmount").val();
+				mobile = $("#upiMobile").val();
+				utrOrReason = $("#upiUtr").val();
+			} else if (mode === "IMPS_NIFT") {
+				amount = $("#transferAmount").val();
+				utrOrReason = $("#transferUtr").val();
+			} else if (mode === "CHEQUE") {
+				amount = $("#chequeAmount").val();
+				utrOrReason = $("#chequeDate").val();
+			} else if (mode === "DISCOUNTED") {
+				amount = $("#manualAmount").val();
+				utrOrReason = $("#manualReason").val();
+			}
+
+			if (!amount || amount <= 0) return alert("Enter a valid amount.");
+			let enteredAmount = parseFloat(amount);
+			let pendingAmount = actualPending - getTotalEnteredAmount() - enteredAmount;
+			if (pendingAmount < 0) pendingAmount = 0;
+
+			// Confirmation alert
+			let confirmationMessage = `Bill Amount: ₹${totalAmount.toFixed(2)}\nPaying Amount: ₹${enteredAmount.toFixed(2)}\nPending Amount: ₹${pendingAmount.toFixed(2)}\nAre you sure you want to add this payment?`;
+			if (!confirm(confirmationMessage)) return;
+
+			// Add entry to the table
+			$("#entriesTable tbody").append(`
+				<tr>
+					<td>${mode.replace("_", "/")}</td>
+					<td>${utrOrReason || "N/A"}</td>
+					<td>${mobile || "N/A"}</td>
+					<td>${parseFloat(amount).toFixed(2)}</td>
+					<td>${pendingAmount.toFixed(2)}</td>
+				</tr>
+			`);
+
+			// Update pending amount
+			$(".pendingAmount").val(pendingAmount.toFixed(2));
+			resetPaymentFields();
+			document.getElementById("paymentform").reset();
+			$("#paymentMode").val(null).trigger("change");
+			getPendingAmount();
+		});
+	});
+</script>
+
+
+
+<script>
+	document.getElementById("sendData").addEventListener("click", function () {
+		let tableData = [];
+	
+		document.querySelectorAll("#entriesTable tbody tr").forEach(row => {
+			let rowData = {
+				payment_mode: row.cells[0].textContent.trim(),
+				utr_reason: row.cells[1].textContent.trim(),
+				mobile_number: row.cells[2].textContent.trim(),
+				amount: row.cells[3].textContent.trim(),
+				pending_amount: row.cells[4].textContent.trim()
+			};
+			tableData.push(rowData);
+		});
+	
+		let paymentId = document.getElementById("paymentId").textContent.trim(); // Get the dynamic ID
+		let url = `/addpayment/${paymentId}`;  // Use ID in URL
+	
+		// Get bill amount
+		let billAmountElement = document.getElementById("billAmount");
+		let totalAmount = billAmountElement ? billAmountElement.textContent.trim() : "0";
+	
+		console.log("🔹 billAmountElement:", billAmountElement); // Debugging
+		console.log("🔹 totalAmount:", totalAmount); // Debugging
+	
+		let table = $("#entriesTable tbody");
+		let rows = table.find("tr");
+	
+		let finalPending = "0"; // Default value
+	
+		if (rows.length > 0) {
+			// Get the last row
+			let lastRow = rows.last();
+			let pendingAmountCell = lastRow.get(0).querySelector("td:nth-child(5)");
+			finalPending = pendingAmountCell ? pendingAmountCell.textContent.replace("₹", "").trim() : "0";
+		} else {
+			// If no rows, return the bill amount
+			finalPending = totalAmount || "0"; // Ensure totalAmount is defined
+		}
+	
+		console.log("🔹 finalPending before sending:", finalPending); // Debugging
+	
+		let requestBody = JSON.stringify({ 
+			tableData: tableData,
+			finalPending: finalPending,
+			totalAmount: totalAmount // ✅ Fixed issue
+		});
+	
+		console.log("🔹 Request Payload:", requestBody); // Debugging
+	
+		fetch(url, {  
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value // Include CSRF token
+			},
+			body: requestBody // ✅ Now includes finalPending and totalAmount
+		})
+		.then(response => response.text())  // Read response as text
+		.then(data => {
+			console.log("🔹 Raw Response:", data);  // Debugging
+			try {
+				let jsonData = JSON.parse(data);
+				console.log("✅ Parsed JSON:", jsonData);
+				alert(jsonData.message);
+				// ✅ Refresh the page
+
+				// ✅ Redirect after a short delay (1 second)
+				
+				setTimeout(() => {
+					// Redirect to the desired page
+					// Clear the browser history state to prevent back navigation
+					history.pushState(null, null, window.location.href);
+					location.reload();
+				}, 100);
+				
+				// Listen for back navigation attempts and push the current state
+				window.onpopstate = function () {
+					history.pushState(null, null, window.location.href);
+				};
+				
+			} catch (error) {
+				console.error("❌ JSON Parse Error:", error);
+			}
+		})
+		.catch(error => {
+			console.error("❌ Fetch Error:", error);
+		});
+	});
+	
+	
+	
+</script>
+
+	
+
+	<script>
+		window.addEventListener("load", function () {
+		  const preloader = document.getElementById("preloader");
+		  preloader.style.opacity = "0";
+		  setTimeout(() => preloader.style.display = "none", 500);
+		});
+	</script>
+	
+</body>
+</html>

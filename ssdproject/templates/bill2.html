@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="description" content="Materia - Admin Template">
+	<meta name="keywords" content="materia, webapp, admin, dashboard, template, ui">
+	<meta name="author" content="solutionportal">
+	<!-- <base href="/"> -->
+
+	<title>SSD</title>
+
+	{% load static %}
+	<link rel="icon" type="image/x-icon" href="{% static 'images/SS_LOGO.webp' %}">
+
+	<!-- Font Styles -->
+	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
+
+	<!-- Plugins -->
+	<link rel="stylesheet" href="{% static 'styles/plugins/c3.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/waves.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/perfect_scrollbar.css' %}">
+
+	<!-- CSS Stylesheets -->
+	<link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/main.min.css' %}">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+
+
+
+
+
+
+	<link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
+
+	<!-- Match Media polyfill for IE9 -->
+	<!--[if IE 9]> <script src="scripts/ie/matchMedia.js"></script>  <![endif]-->
+
+
+
+
+	<style>
+		/* General styling */
+		.dropdown {
+			width: 100%;
+			/* Full width */
+			padding: 10px;
+			font-size: 16px;
+			border: 2px solid #ccc;
+			border-radius: 0px;
+			background-color: #fff;
+			cursor: pointer;
+			outline: none;
+			transition: border-color 0.3s, box-shadow 0.3s;
+		}
+
+		/* Focus effect */
+		.dropdown:focus {
+			border-color: #007bff;
+			box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+		}
+
+		/* Disabled option */
+		.dropdown option:disabled {
+			color: #aaa;
+		}
+
+		/* Hover effect */
+		.dropdown:hover {
+			border-color: #0056b3;
+		}
+
+		/* Custom styling for when dropdown is open */
+		.dropdown:active,
+		.dropdown:focus-within {
+			background-color: #f9f9f9;
+		}
+
+		/* Style the autocomplete dropdown */
+		.autocomplete-items {
+			position: absolute;
+
+				{
+				% comment %
+			}
+
+			border: 1px solid #ddd;
+
+				{
+				% endcomment %
+			}
+
+			border-radius: 5px;
+			max-height: 200px;
+			overflow-y: auto;
+			background-color: #fff;
+			z-index: 99;
+			width: 500px;
+		}
+
+		.autocomplete-items div {
+			padding: 10px;
+			cursor: pointer;
+		}
+
+		.autocomplete-items div:hover {
+			background-color: #f1f1f1;
+		}
+
+		.sec-1 {
+			display: flex;
+			padding: 0px 0px 20px;
+
+				{
+				% comment %
+			}
+
+			justify-content : space-evenly;
+
+				{
+				% endcomment %
+			}
+
+			align-items : center
+		}
+
+		.cust-details {
+			width: 100%;
+		}
+
+		.cust-details div div {
+			display: flex;
+			justify-content: space-around;
+			background: #fff;
+			padding: 20px;
+			width: 100%
+		}
+
+		.cust-details div div p {
+			margin: 0px;
+			padding: 0px;
+		}
+
+		.table-responsive {
+
+			background-color: #fff;
+			padding: 10px;
+		}
+
+		.biling-buttons {
+			display: flex;
+			justify-content: center;
+			padding: 10px;
+		}
+
+		.clearfix.add {
+			display: flex;
+			justify-content: center;
+		}
+
+		.col-md-9.cost_per_quantity {
+			padding-right: 0px;
+			padding-left: 5px;
+		}
+
+		.col-md-3.manual {
+			display: flex;
+		}
+
+		.specs {
+			font-size: 10px;
+		}
+
+		th {
+			text-align: center;
+		}
+
+		td {
+			text-align: center;
+		}
+
+		.panel-heading.addbill-heading {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		#length,
+		#height {
+			padding: 0px;
+		}
+
+		#selling_cost {
+			background: red;
+			color: #fff;
+		}
+		.logo-container {
+			position: relative;
+			width: fit-content;
+			text-align: center;
+			padding: 20px;
+		  }
+		  
+		  
+		  
+		  .logo-text {
+			display: flex;
+			align-items: center;
+			position: relative;
+			z-index: 2;
+		  }
+		  
+		  .ss {
+			font-family: fantasy;
+			color: red;
+			font-size: 80px;
+			font-weight: 100;
+			line-height: 1;
+		  }
+		  
+		  .digital {
+			font-family: fantasy;
+			color: green;
+			font-size: 80px;
+			font-weight: 100;
+			text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff;
+			margin-top: -10px;
+		  }
+		  
+	</style>
+
+
+
+
+</head>
+
+<body id="app" class="app off-canvas">
+	<div id="preloader">
+		<h1 class="dash-cont loa"> <span class="ss">SS</span> <span class="digital">digital</span></h1>
+	</div>
+
+	<!-- header -->
+	<header class="site-head" id="site-head">
+		<ul class="list-unstyled left-elems">
+			<!-- nav trigger/collapse -->
+			<li>
+				<a href="javascript:;" class="nav-trigger icon ion-md-menu"></a>
+			</li>
+			<!-- #end nav-trigger -->
+
+			<!-- site-logo for mobile nav -->
+			<li>
+				<div class="site-logo visible-xs">
+					<a href="javascript:;" class="text-uppercase h3">
+						<span class="text">SSD</span>
+					</a>
+				</div>
+			</li> <!-- #end site-logo -->
+
+
+
+		</ul>
+
+		<ul class="list-unstyled right-elems">
+
+
+
+		</ul>
+
+	</header>
+	<!-- #end header -->
+
+	<!-- main-container -->
+	<div class="main-container clearfix">
+		<!-- main-navigation -->
+		 
+		<aside class="nav-wrap" id="site-nav" data-perfect-scrollbar>
+			<div class="nav-head">
+				<!-- site logo -->
+				<a href="{% url 'dashboard' %}" class="site-logo text-uppercase">
+					{% comment %} <i class="ion ion-disc"></i> {% endcomment %}
+					<img src="{% static 'images/SS_LOGO.webp' %}" alt="">
+					<span class="text">SS Digital</span>
+				</a>
+			</div>
+
+			<!-- Site nav (vertical) -->
+
+			<nav class="site-nav clearfix" role="navigation">
+
+
+				<!-- navigation -->
+				<ul class="list-unstyled clearfix nav-list mb15">
+					<li class="active">
+						<a href="{% url 'dashboard' %}">
+							<i class="ion ion-monitor"></i>
+							<span class="text">Dashboard</span>
+						</a>
+					</li>
+					{% comment %} <li>
+						<a>
+							<i class="icon ion-md-people"></i>
+							<span class="text">Customer Management</span>
+						</a>
+					</li> {% endcomment %}
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-md-people"></i>
+							<span class="text">Customer Management</span>
+							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'addcustomer' %}">Add Customer</a></li>
+							<li><a href="{% url 'listcustomer' %}">List Customer</a></li>
+						</ul>
+					</li>
+					{% if user.role == 'admin' %}
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-md-contact"></i>
+							<span class="text">Employee Management</span>
+							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'addemployee' %}">Add Employee</a></li>
+							<li><a href="{% url 'listemployee' %}">List Employee</a></li>
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-md-cube"></i>
+							<span class="text">Material Management</span>
+							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'addmaterial' %}">Add Material</a></li>
+							<li><a href="{% url 'listmaterial' %}">List Material</a></li>
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-logo-dropbox"></i>
+							<span class="text">Inward Management</span>
+							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'select_material' %}">Add Inward</a></li>
+							<li><a href="{% url 'listinward' %}">List Inward</a></li>
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-md-albums"></i>
+							<span class="text">Product Management</span>
+							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'addproduct' %}">Add Product</a></li>
+							<li><a href="{% url 'listproduct' %}">List Product</a></li>
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-md-apps"></i>
+							<span class="text">Category Management</span>
+							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'addcategories' %}">Add Category</a></li>
+							<li><a href="{% url 'listcategories' %}">List Category</a></li>
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-md-pricetag"></i>
+							<span class="text">Cost Management</span>
+							{% comment %} <i class="icon ion-md-pricetag"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'addcost' %}">Add Cost</a></li>
+							<li><a href="{% url 'listcost' %}">List Cost</a></li>
+						</ul>
+					</li>
+					{% endif %}
+
+
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-md-paper"></i>
+							<span class="text">Billing Management</span>
+							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'bill' %}">Add Bill</a></li>
+							<li><a href="{% url 'listbill' %}">List Bill</a></li>
+							<li><a href="{% url 'listquote' %}">List Quotation</a></li>
+							<li><a href="{% url 'listestimate' %}">List Estimation</a></li>
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:;">
+							<i class="icon ion-md-cash"></i>
+							<span class="text">Payment Management</span>
+							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+						</a>
+						<ul class="inner-drop list-unstyled">
+							<li><a href="{% url 'filtered_data' 'all' %}">Overall</a></li>
+							<li><a href="{% url 'filtered_data' 'today' %}">Today</a></li>
+							<li><a href="{% url 'filtered_data' 'this_week' %}">This Week</a></li>
+							<li><a href="{% url 'filtered_data' 'this_month' %}">This Month</a></li>
+							<li><a href="{% url 'filtered_data' 'this_year' %}">This Year</a></li>
+                            <li><a href="{% url 'outstanding'  %}">Outstanting Bills</a></li>
+						</ul>
+					</li>
+
+
+
+				</ul> <!-- #end navigation -->
+			</nav>
+
+
+		</aside>
+		<!-- #end main-navigation -->
+
+		<div class="content-container fixedHeader nav-expand">
+
+
+
+
+			<!-- col-left -->
+			<div class="col-sm-12 col-md-11">
+				<div class="sec-1">
+					{% comment %} <div class="finder">
+						<form>
+							<input type="text" id="search" placeholder="Search here.." class="form-control"
+								style="width:500px;" autocomplete="off" />
+							<div id="autocomplete-list" class="autocomplete-items"></div>
+						</form>
+					</div> {% endcomment %}
+					<div class="cust-details">
+						<div id="customer-container">
+
+						</div> <!-- This will display the selected customer details -->
+					</div>
+
+				</div>
+				<div class="sec-2">
+					<!-- Data Table -->
+					<table class="table table-bordered table-striped table-responsive" id="history-table">
+						<thead>
+							<tr>
+
+								<th>
+									Bill Id
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+								<th>
+									Billing Date
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+
+								<th>
+									Bill Amount
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+								<th>
+									Advance Amount
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+								<th>
+									Balance Amount
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+								<th>
+									Bill Details
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+								<th>
+									Status
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+							</tr>
+						</thead>
+						<tbody>
+							<!-- Data initializes via script, can also be loaded via AJAX -->
+						</tbody>
+					</table>
+					<!-- #End Data Table -->
+				</div>
+
+				<div class="panel panel-default panel-hovered panel-stacked mb30">
+					<div class="panel-heading addbill-heading">
+						<div>Add Billing</div>
+						<div><a class="btn btn-primary mr5" href="{% url 'listbill' %}">List Bill</a></div>
+					</div>
+
+					{% if messages %}
+
+					{% for message in messages %}
+					<script type="text/javascript">
+						alert('{{ message }}');
+					</script>
+					{% endfor %}
+
+					{% endif %}
+					<div class="panel-body">
+
+						<form id='form' class="form-horizontal" action="" method="POST">
+							{% csrf_token %}
+							<!-- form horizontal acts as a row -->
+							<!-- Bill Id-->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Bill No</label>
+								<div class="col-md-9">
+									<input type="text" value="{{new_id}}" class="form-control" placeholder="Input is"
+										readonly id="billId">
+								</div>
+							</div>
+
+							<!-- Choose Type -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Choose</label>
+								<div class="ui-radio cost-radio ui-radio-primary">
+									<label class="ui-radio-inline">
+										<input type="radio" id="agent" value="agent" name="customer_type" checked>
+										<span>Agent</span>
+									</label>
+									<label class="ui-radio-inline">
+										<input type="radio" id="customer" value="customer" name="customer_type">
+										<span>Customer</span>
+									</label><br>
+
+								</div>
+							</div>
+
+							<!-- Customer Details-->
+							<div class="form-group" id="type_customer">
+								<label class="col-md-3 control-label">Customer Details</label>
+								<div class="col-md-9">
+									{% comment %} <input type="text" value="{{new_id}}" class="form-control"
+										placeholder="Input is disabled" disabled> {% endcomment %}
+									<input type="text" id="search" placeholder="Search here.." name="custumer_details"
+										class="form-control" required autocomplete="off" />
+									<input type="hidden" id="customer_hidden" name="customer_hidden">
+									<div id="autocomplete-list" class="autocomplete-items"></div>
+								</div>
+							</div>
+
+							<!-- Agent Details-->
+							<div class="form-group" id="type_agent">
+								<label class="col-md-3 control-label">Agent Details</label>
+								<div class="col-md-9">
+									{% comment %} <input type="text" value="{{new_id}}" class="form-control"
+										placeholder="Input is disabled" disabled> {% endcomment %}
+									<input type="text" id="search2" placeholder="Search here.." name="custumer_details"
+										class="form-control" required autocomplete="off" />
+									<input type="hidden" id="customer_hidden2" name="customer_hidden">
+									<div id="autocomplete-list2" class="autocomplete-items"></div>
+								</div>
+							</div>
+
+							<!-- Bill Date-->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Bill Date</label>
+								<div class="col-md-9">
+									<input type="date" id="billingDate" name="billing_date" class="form-control"
+										required />
+								</div>
+							</div>
+
+							<!-- Product Name -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Product Name</label>
+								<div class="col-md-9">
+									{% comment %} <input type="text" class="form-control" name="name"
+										placeholder="Product Name" required> {% endcomment %}
+									<select name="product_name" id="product" class="dropdown" required>
+										<option value="" disabled selected>Select an option</option>
+										{% for prod in products %}
+										<option value="{{prod.Product_Name}}">{{prod.Product_Name}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+
+							<!-- Category Name -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Category Name</label>
+								<div class="col-md-9">
+									{% comment %} <input type="text" class="form-control" name="name"
+										placeholder="Product Name" required> {% endcomment %}
+									<select name="category_name" id="category" class="dropdown" required>
+										<option value="">Select a category</option>
+									</select>
+								</div>
+							</div>
+
+							<!-- Sub-Category -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Sub-Category</label>
+								<div class="col-md-9">
+									<select name="sub_category" id="subcategory" class="dropdown" required>
+										<option value="">Select a Sub-category</option>
+									</select>
+								</div>
+							</div>
+
+
+
+							<!-- Dimention -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Size</label>
+								<div class="col-md-1">
+									<input type="number" class="form-control" placeholder="Length" id="length"
+										name="length">
+								</div>
+								<div class="size-cross col-md-1" style="max-width: 1%;margin-top: 7px;padding: 0px;">
+									X
+								</div>
+								<div class="col-md-1">
+									<input type="number" class="form-control" placeholder="Height" id="height"
+										name="height">
+								</div>
+							</div>
+							<!-- Quantity -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Quantity</label>
+								<div class="col-md-9">
+									<input type="number" class="form-control" id="quantity" name="quantity"
+										placeholder="Quantity" required>
+								</div>
+							</div>
+
+							<!-- sqft -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Sqft</label>
+								<div class="col-md-9">
+									<input type="number" class="form-control" id="sqft" name="sqft" placeholder="Sqft"
+										readonly>
+								</div>
+							</div>
+
+
+
+
+							<!-- Cost -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Cost</label>
+								<div class="col-md-9">
+									<input type="number" class="form-control" id="cost" name="cost" placeholder="Cost"
+										readonly>
+								</div>
+							</div>
+
+							<!-- Cost -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Selling Cost</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" id="selling_cost" name="selling_cost"
+										placeholder="Selling Cost" readonly>
+								</div>
+							</div>
+
+							<!-- total-sqft -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Total Sqft</label>
+								<div class="col-md-9">
+									<input type="number" class="form-control" id="total_sqft" name="total_sqft"
+										placeholder="Total Sqft" readonly>
+								</div>
+							</div>
+
+
+
+							<!-- Total -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">Total</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" id="total" placeholder="Total Amount"
+										name="total" readonly>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-md-3 control-label">Manual Cost</label>
+								<div class="ui-radio cost-radio ui-radio-primary col-md-1">
+									<label class="ui-radio-inline">
+										<input type="checkbox" value="Cost Per Unit" name="manual_cost"
+											id="manualCostRadio">
+										<span></span>
+									</label>
+								</div>
+								<div class="col-md-3 manual" id="manualInputs" style="display: none;">
+									<label class="col-md-3 control-label">Cost</label>
+									<input type="number" id="manualCost" class="form-control col-md-9"
+										name="manual-cost" placeholder="Enter Amount">
+								</div>
+								<div class="col-md-3 manual" id="manualInputs2" style="display: none;">
+									<label class="col-md-3 control-label">Remarks</label>
+									<input type="text" id="remarks" class="form-control" name="remarks"
+										placeholder="Remarks">
+								</div>
+
+							</div>
+
+
+							<div class="clearfix add">
+								<button type="button" class="btn btn-primary mr5">Add</button>
+							</div>
+
+						</form>
+					</div>
+				</div>
+
+				<div class="table-responsive">
+					<!-- Data Table -->
+					<table class="table table-bordered table-striped table-responsive" id="entriesTable">
+						<thead>
+							<tr>
+								<th>
+									S.No
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+								<th>
+									Specifications
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+
+								<th>
+									Dimension
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+								<th>
+									Qty
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+								<th>
+									Size
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+								<th style="word-wrap: break-word; 
+									white-space: normal;
+									max-width: 100px;">
+									Actual Cost / Manual Cost
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+								<th>
+									Cost
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+								<th>
+									Total Sqft
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+
+								<th>
+									Remarks
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+								<th>
+									Action
+									<div class="th">
+										<i class="fa fa-caret-up icon-up"></i>
+										<i class="fa fa-caret-down icon-down"></i>
+									</div>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- Data initializes via script, can also be loaded via AJAX -->
+						</tbody>
+					</table>
+					<!-- #End Data Table -->
+
+					<p><strong>Grand Total:</strong> <span id="grandTotal">0.00</span></p>
+					{% comment %} <p><strong>Grand Total with GST:</strong> <span id="grandTotalGST">0.00</span></p> {% endcomment %}
+
+				</div>
+				<div class="biling-buttons">
+					<button class="btn btn-primary mr5" type="submit" id="submitButton">Bill</button>
+					<button class="btn btn-primary mr5" type="submit" id="estimate">Estimate</button>
+					<button class="btn btn-primary mr5" type="submit" id="quote">Quote</button>
+					<button class="btn btn-primary mr5" type="submit" id="billAndPay">Bill and Pay</button>
+				</div>
+			</div> <!-- #end col-left -->
+
+
+		</div>
+
+
+		<!-- content-here -->
+		<div class="content-container" id="content">
+			<!-- dashboard page -->
+			<div class="page page-dashboard">
+
+				<div class="page-wrap">
+
+
+
+
+				</div> <!-- #end page-wrap -->
+			</div>
+			<!-- #end dashboard page -->
+		</div>
+
+
+	</div> <!-- #end main-container -->
+
+
+	<!-- theme settings -->
+	<div class="site-settings clearfix hidden-xs">
+		<div class="settings clearfix">
+			<div class="trigger ion ion-settings left"></div>
+			<div class="wrapper left">
+				<ul class="list-unstyled other-settings">
+					<li class="clearfix mb10">
+						<div class="left small">Nav Horizontal</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox" id="navHorizontal">
+								<span>&nbsp;</span>
+							</label>
+						</div>
+
+
+					</li>
+					<li class="clearfix mb10">
+						<div class="left small">Fixed Header</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox" id="fixedHeader">
+								<span>&nbsp;</span>
+							</label>
+						</div>
+					</li>
+					<li class="clearfix mb10">
+						<div class="left small">Nav Full</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox" id="navFull">
+								<span>&nbsp;</span>
+							</label>
+						</div>
+					</li>
+				</ul>
+				<hr />
+				<ul class="themes list-unstyled" id="themeColor">
+					<li data-theme="theme-zero" class="active"></li>
+					<li data-theme="theme-one"></li>
+					<li data-theme="theme-two"></li>
+					<li data-theme="theme-three"></li>
+					<li data-theme="theme-four"></li>
+					<li data-theme="theme-five"></li>
+					<li data-theme="theme-six"></li>
+					<li data-theme="theme-seven"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- #end theme settings -->
+
+
+
+
+	<!-- Dev only -->
+	<!-- Vendors -->
+	{% load static %}
+
+	<!-- Font Awesome CDN -->
+
+
+	<script src="{% static 'scripts/vendors.js' %}"></script>
+	<script src="{% static 'scripts/plugins/d3.min.js' %}"></script>
+	<script src="{% static 'scripts/plugins/c3.min.js' %}"></script>
+	<script src="{% static 'scripts/plugins/screenfull.js' %}"></script>
+	<script src="{% static 'scripts/plugins/perfect-scrollbar.min.js' %}"></script>
+	<script src="{% static 'scripts/plugins/waves.min.js' %}"></script>
+	<script src="{% static 'scripts/plugins/jquery.sparkline.min.js' %}"></script>
+	<script src="{% static 'scripts/plugins/jquery.easypiechart.min.js' %}"></script>
+	<script src="{% static 'scripts/plugins/bootstrap-rating.min.js' %}"></script>
+	<script src="{% static 'scripts/app.js' %}"></script>
+	<script src="{% static 'scripts/index.init.js' %}"></script>
+
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var customerData = [
+				{% for item in data %}
+				"{{ item.Customer_Id }}--{{ item.Customer_Name }}--{{ item.Phone_No }}"{% if not forloop.last %}, {% endif %}
+		{% endfor %}
+		];
+		var BillingData = [
+			{% for item in data2 %}
+		{
+			"Customer_Id": "{{ item.Customer_Id }}",
+				"Bill_Id": "{{ item.Bill_Id }}",
+					"Billing_Date": "{{ item.Date }}",
+						"Grand_Total": {{ item.Grand_Total }},
+			"Paid_Amount": {{ item.Paid_Amount }},
+			"Pending_Amount": {{ item.Pending_Amount }}
+		} {% if not forloop.last %}, {% endif %}
+		{% endfor %}
+		];
+
+		var input = document.getElementById("search");
+		var hiddenInput = document.getElementById("customer_hidden");
+		var autocompleteList = document.getElementById("autocomplete-list");
+		var customerContainer = document.getElementById("customer-container");
+		var historyTable = document.getElementById("history-table").getElementsByTagName("tbody")[0];
+
+		// Autocomplete functionality
+		input.addEventListener("input", function () {
+			var val = this.value.trim();
+			autocompleteList.innerHTML = "";
+
+			if (!val) return;
+
+			var found = false;
+
+			customerData.forEach(function (item) {
+				if (item.toLowerCase().includes(val.toLowerCase())) {
+					found = true;
+					var suggestion = document.createElement("div");
+					suggestion.textContent = item;
+					suggestion.style.cursor = "pointer";
+					suggestion.classList.add("autocomplete-item");
+
+					suggestion.addEventListener("click", function () {
+						input.value = item;
+						hiddenInput.value = item;
+						autocompleteList.innerHTML = "";
+
+						var parts = item.split("--");
+						if (parts.length === 3) {
+							var customerId = parts[0];
+							var customerName = parts[1];
+							var phoneNo = parts[2];
+
+							// Display Customer ID in the container
+							customerContainer.innerHTML =
+								`<div>
+									<p><strong>Customer ID:</strong> ${customerId}</p>
+									<p><strong>Name:</strong> ${customerName}</p>
+									<p><strong>Phone No:</strong> ${phoneNo}</p>
+								</div>`;
+
+							// Update table with filtered data
+							updateTable(customerId);
+						}
+
+					});
+
+					autocompleteList.appendChild(suggestion);
+				}
+			});
+
+			if (!found) {
+				alert("No matching customer found.");
+			}
+		});
+
+		// Function to filter and update the table
+		function updateTable(customerId) {
+			// Clear existing table rows
+			historyTable.innerHTML = "";
+
+			// Filter billing data based on Customer ID
+			var filteredData = BillingData.filter(row => row.Customer_Id === customerId);
+
+			// Calculate total pending amount
+			var totalPendingAmount = filteredData.reduce((sum, row) => sum + row.Pending_Amount, 0);
+
+			// Get customer details
+			var customerInfo = customerData.find(item => item.startsWith(customerId));
+			var customerName = "";
+			var phoneNo = "";
+
+			if (customerInfo) {
+				var parts = customerInfo.split("--");
+				customerName = parts[1];
+				phoneNo = parts[2];
+			}
+
+			// Update Customer Details + Total Pending Amount in the Container
+			customerContainer.innerHTML = `
+				<div>
+					<p><strong>Customer ID:</strong> ${customerId}</p>
+					<p><strong>Name:</strong> ${customerName}</p>
+					<p><strong>Phone No:</strong> ${phoneNo}</p>
+					<p><strong>Total Pending Amount:</strong> ₹${totalPendingAmount.toFixed(2)}</p>
+				</div>
+			`;
+
+			if (filteredData.length === 0) {
+				historyTable.innerHTML = "<tr><td colspan='7' style='text-align: center;'>No records found</td></tr>";
+				return;
+			}
+
+			filteredData.forEach(function (row) {
+				var newRow = historyTable.insertRow();
+
+				// Determine payment status
+				var statusText = "";
+				var statusColor = "";
+
+				if (row.Pending_Amount === 0) {
+					statusText = "Fully Paid";
+					statusColor = "green";
+				} else if (row.Pending_Amount === row.Grand_Total) {
+					statusText = "Not Paid";
+					statusColor = "red";
+				} else {
+					statusText = "Partially Paid";
+					statusColor = "orange";
+				}
+
+				var billDetailsUrl = "{% url 'bill_payment_details' 'BILL_ID_PLACEHOLDER' %}".replace("BILL_ID_PLACEHOLDER", row.Bill_Id);
+
+				// Add table data
+				var rowData = [
+					row.Bill_Id,
+					row.Billing_Date,
+					row.Grand_Total,
+					row.Paid_Amount,
+					row.Pending_Amount,
+					`<a title="Bill Details" href="${billDetailsUrl}">
+						<button type="button" class="btn btn-default ion icon ion-md-list"></button>
+					</a>`,
+					`<span style="color: ${statusColor}; font-weight: bold;">${statusText}</span>`
+				];
+
+				rowData.forEach(function (cellData, index) {
+					var cell = newRow.insertCell();
+					if (index === 5 || index === 6) {
+						cell.innerHTML = cellData; // Ensure button and status are correctly rendered
+					} else {
+						cell.textContent = cellData;
+					}
+				});
+			});
+		}
+
+
+		// Hide autocomplete when clicking outside
+		document.addEventListener("click", function (e) {
+			if (!input.contains(e.target) && !autocompleteList.contains(e.target)) {
+				autocompleteList.innerHTML = "";
+			}
+		});
+	});
+
+
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var customerData = [
+				{% for item in data3 %}
+				"{{ item.Agent_Id }}--{{ item.Customer_Name }}--{{ item.Phone_No }}"{% if not forloop.last %}, {% endif %}
+		{% endfor %}
+		];
+		var BillingData2 = [
+			{% for item in data2 %}
+		{
+			"Agent_Id": "{{ item.Agent_Id }}",
+				"Bill_Id": "{{ item.Bill_Id }}",
+					"Billing_Date": "{{ item.Date }}",
+						"Grand_Total": {{ item.Grand_Total }},
+			"Paid_Amount": {{ item.Paid_Amount }},
+			"Pending_Amount": {{ item.Pending_Amount }}
+		} {% if not forloop.last %}, {% endif %}
+		{% endfor %}
+		];
+
+		var input = document.getElementById("search2");
+		var hiddenInput = document.getElementById("customer_hidden2");
+		var autocompleteList = document.getElementById("autocomplete-list2");
+		var customerContainer = document.getElementById("customer-container");
+		var historyTable = document.getElementById("history-table").getElementsByTagName("tbody")[0];
+
+		// Autocomplete functionality
+		input.addEventListener("input", function () {
+			var val = this.value.trim();
+			autocompleteList.innerHTML = "";
+
+			if (!val) return;
+
+			var found = false;
+
+			customerData.forEach(function (item) {
+				if (item.toLowerCase().includes(val.toLowerCase())) {
+					found = true;
+					var suggestion = document.createElement("div");
+					suggestion.textContent = item;
+					suggestion.style.cursor = "pointer";
+					suggestion.classList.add("autocomplete-item");
+
+					suggestion.addEventListener("click", function () {
+						input.value = item;
+						hiddenInput.value = item;
+						autocompleteList.innerHTML = "";
+
+						var parts = item.split("--");
+						if (parts.length === 3) {
+							var AgentId = parts[0];
+							var customerName = parts[1];
+							var phoneNo = parts[2];
+
+							// Display Customer ID in the container
+							customerContainer.innerHTML =
+								`<div>
+									<p><strong>Agent ID:</strong> ${AgentId}</p>
+									<p><strong>Name:</strong> ${customerName}</p>
+									<p><strong>Phone No:</strong> ${phoneNo}</p>
+								</div>`;
+
+							// Update table with filtered data
+							updateTable(AgentId);
+						}
+
+					});
+
+					autocompleteList.appendChild(suggestion);
+				}
+			});
+
+			if (!found) {
+				alert("No matching customer found.");
+			}
+		});
+
+		// Function to filter and update the table
+		function updateTable(AgentId) {
+			// Clear existing table rows
+			historyTable.innerHTML = "";
+
+			// Filter billing data based on Customer ID
+			var filteredData = BillingData2.filter(row => row.Agent_Id === AgentId);
+
+			// Calculate total pending amount
+			var totalPendingAmount = filteredData.reduce((sum, row) => sum + row.Pending_Amount, 0);
+
+			// Get customer details
+			var customerInfo = customerData.find(item => item.startsWith(AgentId));
+			var customerName = "";
+			var phoneNo = "";
+
+			if (customerInfo) {
+				var parts = customerInfo.split("--");
+				customerName = parts[1];
+				phoneNo = parts[2];
+			}
+
+			// Update Customer Details + Total Pending Amount in the Container
+			customerContainer.innerHTML = `
+				<div>
+					<p><strong>Agent ID:</strong> ${AgentId}</p>
+					<p><strong>Name:</strong> ${customerName}</p>
+					<p><strong>Phone No:</strong> ${phoneNo}</p>
+					<p><strong>Total Pending Amount:</strong> ₹${totalPendingAmount.toFixed(2)}</p>
+				</div>
+			`;
+
+			if (filteredData.length === 0) {
+				historyTable.innerHTML = "<tr><td colspan='7' style='text-align: center;'>No records found</td></tr>";
+				return;
+			}
+
+			filteredData.forEach(function (row) {
+				var newRow = historyTable.insertRow();
+
+				// Determine payment status
+				var statusText = "";
+				var statusColor = "";
+
+				if (row.Pending_Amount === 0) {
+					statusText = "Fully Paid";
+					statusColor = "green";
+				} else if (row.Pending_Amount === row.Grand_Total) {
+					statusText = "Not Paid";
+					statusColor = "red";
+				} else {
+					statusText = "Partially Paid";
+					statusColor = "orange";
+				}
+
+				var billDetailsUrl = "{% url 'bill_payment_details' 'BILL_ID_PLACEHOLDER' %}".replace("BILL_ID_PLACEHOLDER", row.Bill_Id);
+
+				// Add table data
+				var rowData = [
+					row.Bill_Id,
+					row.Billing_Date,
+					row.Grand_Total,
+					row.Paid_Amount,
+					row.Pending_Amount,
+					`<a title="Bill Details" href="${billDetailsUrl}">
+						<button type="button" class="btn btn-default ion icon ion-md-list"></button>
+					</a>`,
+					`<span style="color: ${statusColor}; font-weight: bold;">${statusText}</span>`
+				];
+
+				rowData.forEach(function (cellData, index) {
+					var cell = newRow.insertCell();
+					if (index === 5 || index === 6) {
+						cell.innerHTML = cellData; // Ensure button and status are correctly rendered
+					} else {
+						cell.textContent = cellData;
+					}
+				});
+			});
+		}
+
+
+		// Hide autocomplete when clicking outside
+		document.addEventListener("click", function (e) {
+			if (!input.contains(e.target) && !autocompleteList.contains(e.target)) {
+				autocompleteList.innerHTML = "";
+			}
+		});
+	});
+
+
+	</script>
+
+
+
+
+	<script>
+
+		const productsData = [
+			{% for item in products %}
+		{
+			product_id: "{{ item.Product_Id|escapejs }}",
+				product_name: "{{ item.Product_Name|escapejs }}",
+					GST: {{ item.GST }},
+			HSN: "{{ item.HSN_Code|escapejs }}"
+		} {% if not forloop.last %}, {% endif %}
+		{% endfor %}
+    ];
+
+		const categoryData = [
+			{% for item in category %}
+		{
+			product_name: "{{ item.Product_Name|escapejs }}",
+				category_name: "{{ item.Categories_Name|escapejs }}",
+					sub_category: "{{ item.Sub_Categories|escapejs }}"
+
+		} {% if not forloop.last %}, {% endif %}
+		{% endfor %}
+    ];
+
+		const costData = [
+			{% for item in cos %}
+		{
+			product_name: "{{ item.Product_Name|escapejs }}",
+			category_name: "{{ item.Category_Name|escapejs }}",
+			sub_category: "{{ item.Sub_Category|escapejs }}",
+			fixed_cost: {{ item.Fixed_Cost }},
+			selling_costs: "{{ item.Selling_Cost |escapejs  }}",
+			cost_for_agent: {{ item.Cost_for_Agent }},
+			length: {{ item.Length |default:"null" }},
+			height: {{ item.Height |default:"null"}}
+		} {% if not forloop.last %}, {% endif %}
+		{% endfor %}
+    ];
+
+		document.addEventListener("DOMContentLoaded", function () {
+			const agentRadio = document.getElementById("agent");
+			const customerRadio = document.getElementById("customer");
+			const typeAgentDiv = document.getElementById("type_agent");
+			const typeCustomerDiv = document.getElementById("type_customer");
+
+			const productDropdown = document.getElementById("product");
+			const categoryDropdown = document.getElementById("category");
+			const subCategoryDropdown = document.getElementById("subcategory");
+
+			const lengthField = document.getElementById("length");
+			const heightField = document.getElementById("height");
+			const quantityField = document.getElementById("quantity");
+
+			const costField = document.getElementById("cost");
+			const sellingField = document.getElementById("selling_cost");
+			const manualCostField = document.getElementById("manualCost");
+
+			const sqftField = document.getElementById("sqft");
+			const totalSqftField = document.getElementById("total_sqft");
+			const totalField = document.getElementById("total");
+
+			// **1. Toggle Between Agent & Customer**
+			function toggleUserType() {
+				if (agentRadio.checked) {
+					typeAgentDiv.style.display = "block";
+					typeCustomerDiv.style.display = "none";
+					document.getElementById("search2").setAttribute("required", "true");
+					document.getElementById("search").removeAttribute("required");
+					document.getElementById("search").value = "";
+				} else {
+					typeAgentDiv.style.display = "none";
+					typeCustomerDiv.style.display = "block";
+					document.getElementById("search").setAttribute("required", "true");
+					document.getElementById("search2").removeAttribute("required");
+					document.getElementById("search2").value = "";
+					checkRequiredFields();
+				}
+				updateCost(); // Update cost when switching user type
+			}
+
+			agentRadio.addEventListener("change", toggleUserType);
+			customerRadio.addEventListener("change", toggleUserType);
+
+			// **2. Update GST and Categories when Product is Selected**
+			function updateGSTAndCategory() {
+				const selectedProduct = productDropdown.value;
+
+				categoryDropdown.innerHTML = `<option value="">Select a category</option>`;
+				subCategoryDropdown.innerHTML = `<option value="">Select a Sub-category</option>`;
+
+				if (selectedProduct === "OTHERS") {
+					console.log("Skipping category selection for 'OTHERS'");
+				} else {
+					enableCategorySelection();
+					populateCategoryDropdown(selectedProduct);
+				}
+			}
+
+			function enableCategorySelection() {
+				categoryDropdown.removeAttribute("disabled");
+				subCategoryDropdown.removeAttribute("disabled");
+				categoryDropdown.setAttribute("required", "true");
+				subCategoryDropdown.setAttribute("required", "true");
+
+				costField.setAttribute("readonly", "true");
+			}
+
+			function populateCategoryDropdown(product) {
+				const productCategories = categoryData.filter(c => c.product_name === product);
+
+				productCategories.forEach(cat => {
+					if (![...categoryDropdown.options].some(option => option.value === cat.category_name)) {
+						const option = document.createElement("option");
+						option.value = cat.category_name;
+						option.textContent = cat.category_name;
+						categoryDropdown.appendChild(option);
+					}
+				});
+			}
+
+			function updateSubCategory() {
+				const selectedProduct = productDropdown.value;
+				const selectedCategory = categoryDropdown.value;
+
+				subCategoryDropdown.innerHTML = `<option value="">Select a Sub-category</option>`;
+
+				const subCategories = categoryData.filter(c => c.product_name === selectedProduct && c.category_name === selectedCategory);
+
+				subCategories.forEach(sub => {
+					if (![...subCategoryDropdown.options].some(option => option.value === sub.sub_category)) {
+						const option = document.createElement("option");
+						option.value = sub.sub_category;
+						option.textContent = sub.sub_category;
+						subCategoryDropdown.appendChild(option);
+					}
+				});
+
+				costField.value = "";
+				totalField.value = "";
+			}
+
+			// **3. Update Cost Based on Selection**
+			function updateCost() {
+				const selectedProduct = productDropdown.value.trim();
+				const selectedCategory = categoryDropdown.value.trim();
+				const selectedSubCategory = subCategoryDropdown.value.trim();
+				const isAgent = agentRadio.checked;
+			
+				// Check if there's a matching costData entry with null length & height
+				const noDimEntry = costData.find(c =>
+					c.product_name.trim() === selectedProduct &&
+					c.category_name.trim() === selectedCategory &&
+					c.sub_category.trim() === selectedSubCategory &&
+					(c.length === null || c.length === undefined) &&
+					(c.height === null || c.height === undefined)
+				);
+			
+				if (noDimEntry) {
+					// Hide dimension and area fields
+					lengthField.parentElement.style.display = "none";
+					heightField.parentElement.style.display = "none";
+					sqftField.parentElement.style.display = "none";
+					totalSqftField.parentElement.style.display = "none";
+			
+					// Set cost directly
+					costField.setAttribute("readonly", "true");
+					costField.value = isAgent ? noDimEntry.cost_for_agent : noDimEntry.fixed_cost;
+					sellingField.value = noDimEntry.selling_costs;
+			
+					// Set length and height to 1 for calculation (or zero, depending on your logic)
+					lengthField.value = 1;
+					heightField.value = 1;
+			
+					calculateTotal();
+					return;
+				} else {
+					// Show the fields again if dimensions are required
+					lengthField.parentElement.style.display = "block";
+					heightField.parentElement.style.display = "block";
+					sqftField.parentElement.style.display = "block";
+					totalSqftField.parentElement.style.display = "block";
+				}
+			
+				// Now proceed as before for entries with dimensions
+				const length = parseFloat(lengthField.value.trim()) || 0;
+				const height = parseFloat(heightField.value.trim()) || 0;
+			
+				const costInfo = costData.find(c =>
+					c.product_name.trim() === selectedProduct &&
+					c.category_name.trim() === selectedCategory &&
+					c.sub_category.trim() === selectedSubCategory &&
+					parseFloat(c.length) === length &&
+					parseFloat(c.height) === height
+				);
+			
+				if (costInfo) {
+					costField.setAttribute("readonly", "true");
+					costField.value = isAgent ? costInfo.cost_for_agent : costInfo.fixed_cost;
+					sellingField.value = costInfo.selling_costs;
+				} else {
+					costField.removeAttribute("readonly");
+					costField.removeAttribute("required");
+					costField.value = 0;
+					sellingField.value = 0;
+				}
+			
+				calculateTotal();
+			}
+			
+
+			// **4. Calculate Total Cost**
+			function calculateTotal() {
+				const length = parseFloat(lengthField.value) || 0;
+				const height = parseFloat(heightField.value) || 0;
+				const quantity = parseFloat(quantityField.value) || 0;
+				const cost = parseFloat(costField.value) || 0;
+				const manualCost = parseFloat(manualCostField.value) || 0;
+
+				let total = 0;
+				let sqft = length * height;
+				let totalSqft = sqft * quantity;
+
+				if (manualCost === 0) {
+					total = quantity * cost;
+				} else {
+					total = quantity * cost;
+				}
+				sqftField.value = sqft.toFixed(2);
+				totalSqftField.value = totalSqft.toFixed(2);
+				totalField.value = total.toFixed(2);
+			}
+
+			function validateselling() {
+				const manualCost = parseFloat(manualCostField.value) || 0;
+				const totalamount = parseFloat(totalField.value) || 0;
+
+				if (manualCost < totalamount) {
+					alert("testing")
+				}
+			}
+
+			// **5. Attach Event Listeners**
+			productDropdown.addEventListener("change", updateGSTAndCategory);
+			categoryDropdown.addEventListener("change", updateSubCategory);
+			subCategoryDropdown.addEventListener("change", updateCost);
+
+			lengthField.addEventListener("input", calculateTotal);
+			lengthField.addEventListener("input", updateCost);
+
+			heightField.addEventListener("input", calculateTotal);
+			heightField.addEventListener("input", updateCost);
+			quantityField.addEventListener("input", calculateTotal);
+			manualCostField.addEventListener("input", calculateTotal);
+			manualCostField.addEventListener("blur", validateselling);
+
+			costField.addEventListener("input", calculateTotal);
+
+
+
+			// **6. Initialize Correct Visibility on Page Load**
+			toggleUserType();
+		});
+	</script>
+
+
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const form = document.getElementById("form");
+			const productDropdown = document.getElementById("product");
+			const categoryDropdown = document.getElementById("category");
+			const subCategoryDropdown = document.getElementById("subcategory");
+			const costField = document.getElementById("cost");
+
+			function validateForm(event) {
+				const selectedProduct = productDropdown.value;
+				const selectedCategory = categoryDropdown.value;
+				const selectedSubCategory = subCategoryDropdown.value;
+
+				const costInfo = costData.find(c =>
+					c.product_name === selectedProduct &&
+					c.category_name === selectedCategory &&
+					c.sub_category === selectedSubCategory
+				);
+
+				if (!costInfo) {
+					alert("Invalid selection! selected Product, Category, and Sub-Category. Doesn't have costing");
+					event.preventDefault();  // **Prevent form submission**
+					return false;
+				}
+
+
+
+				if (!costField.value || parseFloat(costField.value) <= 0) {
+					alert("Invalid cost value!");
+					event.preventDefault();
+					return false;
+				}
+
+				return true;
+			}
+
+			// Attach validation to form submit event
+			form.addEventListener("submit", validateForm);
+		});
+
+	</script>
+
+	<script>
+		document.getElementById("form").addEventListener("submit", function (event) {
+			if (!confirm("The form is submitting.....")) {
+				event.preventDefault();  // Stop redirection
+			}
+		});
+	</script>
+
+
+
+	<script>
+		function toggleManualInputs() {
+			const manualCostRadio = document.getElementById("manualCostRadio");
+			const manualInputs = document.getElementById("manualInputs");
+			const manualInputs2 = document.getElementById("manualInputs2");
+
+			if (manualCostRadio) { // Ensure the element exists
+				const isChecked = manualCostRadio.checked;
+				manualInputs.style.display = isChecked ? "flex" : "none";
+				manualInputs2.style.display = isChecked ? "flex" : "none";
+				manualInputs.style.gap = isChecked ? "10px" : "10px";
+				manualInputs2.style.gap = isChecked ? "10px" : "10px";
+			}
+		}
+
+		// Run function on page load
+		document.addEventListener("DOMContentLoaded", toggleManualInputs);
+
+		// Attach event listener for changes
+		document.getElementById("manualCostRadio").addEventListener("change", toggleManualInputs);
+
+
+
+
+	</script>
+
+
+	<!-- script for storing form entries -->
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const addButton = document.querySelector("button[type='button']");
+			const submitButton = document.getElementById("submitButton");
+			const bill_and_payButton = document.getElementById("billAndPay");
+			const estimate = document.getElementById("estimate");
+			const quote = document.getElementById("quote");
+			const form = document.getElementById("form");
+			const tableBody = document.querySelector("#entriesTable tbody");
+			const grandTotalElement = document.getElementById("grandTotal");
+			//const grandTotalGSTElement = document.getElementById("grandTotalGST");
+			const customProductDescription = document.getElementById("custom-product-description");
+			const manualCost = document.getElementById("manualCost");
+			const remarks = document.getElementById("remarks");
+			const totalField = document.getElementById("total");
+			const costField = document.getElementById("cost");
+
+			costField.addEventListener("input", checkRequiredFields);
+
+
+
+			// Function to check if all required fields are filled
+			function checkRequiredFields() {
+				let requiredFields = document.querySelectorAll("#form [required]");
+				let allFilled = Array.from(requiredFields).every(input => input.value.trim() !== "");
+
+				// Check if totalField is empty or 0.00
+				if (!totalField.value.trim() || totalField.value.trim() === "0.00") {
+					addButton.disabled = true; // Disable button
+					return; // Exit the function early
+				}
+
+				// Disable addButton if any required field is empty
+				addButton.disabled = !allFilled;
+			}
+
+			// Run validation when any required field or totalField changes
+			document.querySelectorAll("#form [required], #total").forEach(input => {
+				input.addEventListener("input", checkRequiredFields);
+			});
+
+			//manualCost.addEventListener("input", checkRequiredFields);
+
+			// Run validation on page load to set initial button state
+			checkRequiredFields();
+
+
+
+			// Function to check if table has data
+			function checkTableData() {
+				let hasRows = tableBody.children.length > 0;
+				submitButton.disabled = !hasRows;
+				bill_and_payButton.disabled = !hasRows; // Disables clicking
+				//bill_and_payButton.style.pointerEvents = "auto"; // Disables clicking
+				//bill_and_payButton.style.opacity = "1"; // Makes it visually appear disabled
+				estimate.disabled = !hasRows;
+				quote.disabled = !hasRows;
+				calculateGrandTotal();
+			}
+
+			// Function to calculate grand total
+			function calculateGrandTotal() {
+				let total = 0;
+
+				document.querySelectorAll("#entriesTable tbody tr").forEach(row => {
+					let cells = row.querySelectorAll("td");
+					let cellValue = cells[5].textContent.trim(); // Get the text from the 6th column
+
+					// Split the value by " / " and extract left and right parts
+					let [leftValue, rightValue] = cellValue.split(" / ").map(val => val.trim());
+
+					// Convert values to numbers
+					leftValue = parseFloat(leftValue) || 0;
+					rightValue = rightValue.toLowerCase() === "none" ? leftValue : parseFloat(rightValue) || leftValue;
+
+					total += rightValue; // Use right value if valid, otherwise use left value
+				});
+
+				grandTotalElement.textContent = total.toFixed(2);
+			}
+
+
+			// Check fields on input change
+			document.querySelectorAll("#form [required]").forEach(input => {
+				input.addEventListener("input", checkRequiredFields);
+			});
+
+			// Function to clear only specific fields after adding an entry
+			function clearNonCustomerFields() {
+				let fieldsToClear = ["product", "custom-product-description", "category", "subcategory", "length", "height", "quantity", "cost", "total", "total_with_gst", "total_sqft", "sqft", "remarks", "manualCost","selling_cost"];
+				let checkbox = document.getElementById("manualCostRadio");
+				checkbox.checked = false;
+				fieldsToClear.forEach(id => {
+					let field = document.getElementById(id);
+					if (field) {
+						field.value = "";
+					}
+				});
+			}
+
+
+			// Function to add form data to the table
+			addButton.addEventListener("click", function () {
+				let customerInput = document.getElementById("search").value.trim();
+				let customerData = customerInput.split("--");
+
+				let customerId = customerData[0] || "";
+				let customerName = customerData[1] || "";
+				let customerPhone = customerData[2] || "";
+
+				let agentInput = document.getElementById("search2").value.trim();
+				let agentData = agentInput.split("--");
+
+				let agentId = agentData[0] || "";
+				let agentName = agentData[1] || "";
+				let agentPhone = agentData[2] || "";
+
+				let length = document.getElementById("length").value.trim();
+				let width = document.getElementById("height").value.trim();
+				let totalSqft = document.getElementById("total_sqft").value.trim();
+				let qty = document.getElementById("quantity").value.trim();
+
+				let row = document.createElement("tr");
+				let area = length * width
+
+				// Get the current number of rows to determine the S.No
+				let serialNumber = tableBody.rows.length + 1;
+				let manualCostValue = document.getElementById("manualCost").value.trim();
+
+				let costDisplay = manualCostValue ? `${document.getElementById("total").value} / ${manualCostValue}` : document.getElementById("total").value + " / None";
+				const remarksValue = document.getElementById("remarks").value.trim();
+				const storedValue = remarksValue ? remarksValue : "None";
+
+				row.innerHTML = `
+				<td>${serialNumber}</td>
+				<td class="specs">${document.getElementById("product").value},<br>${document.getElementById("category").value},<br>${document.getElementById("subcategory").value}</td>
+				<td>${
+  				(parseFloat(length) === 1 && parseFloat(width) === 1 && parseFloat(area) === 1)
+   				 ? '0X0=0'
+   				 : `${length} X ${width}=${area}`
+				}</td>
+				<td>${qty}</td>
+				<td>${(area === 1) ? 0 : area * qty}</td>
+				<td>${costDisplay} </td>
+				<td>${document.getElementById("cost").value}</td>
+				<td>${
+  				(Math.abs(parseFloat(document.getElementById("total_sqft").value) - qty) < 0.001)
+  				  ? 0
+  				  : document.getElementById("total_sqft").value
+				}</td>
+				<td style="word-wrap: break-word; 
+				white-space: normal;
+				max-width: 200px;">${storedValue}</td>
+				<td><button type="button" class="btn btn-danger btn-sm delete">Delete</button></td>
+			`;
+
+
+				tableBody.appendChild(row);
+
+				// Clear only the required fields
+				clearNonCustomerFields();
+				checkRequiredFields();
+				checkTableData();
+				toggleManualInputs();
+			});
+
+
+			// Delete row functionality
+			tableBody.addEventListener("click", function (event) {
+				if (event.target.classList.contains("delete")) {
+					event.target.closest("tr").remove();
+
+					// Reorder S.No after deletion
+					[...tableBody.rows].forEach((row, index) => {
+						row.cells[0].textContent = index + 1;
+					});
+
+					checkTableData();
+				}
+			});
+
+
+
+			// Function to collect table data
+			function collectTableData() {
+				let customerInput = document.getElementById("search").value.trim();
+				let customerData = customerInput.split("--");
+
+				let customerId = customerData[0] || "";
+				let customerName = customerData[1] || "";
+				let customerPhone = customerData[2] || "";
+
+				let agentInput = document.getElementById("search2").value.trim();
+				let agentData = agentInput.split("--");
+
+				let agentId = agentData[0] || "";
+				let agentName = agentData[1] || "";
+				let agentPhone = agentData[2] || "";
+
+				let entries = []; // Initialize the entries array
+
+				document.querySelectorAll("#entriesTable tbody tr").forEach(row => {
+					let cells = row.querySelectorAll("td");
+					let entry = {
+						s_no: cells[0]?.textContent.trim() || "",
+						product: cells[1]?.textContent.trim() || "",
+						dimension: cells[2]?.textContent.trim() || "",
+						quantity: cells[3]?.textContent.trim() || "",
+						size: cells[4]?.textContent.trim() || "",
+						cost: cells[5]?.textContent.trim() || "",
+						cost_per_sqft: cells[6]?.textContent.trim() || "",
+						total_sqft: cells[7]?.textContent.trim() || "",
+						remarks: cells[8]?.textContent.trim() || ""
+					};
+					entries.push(entry);
+				});
+
+				let grandTotalElement = document.getElementById("grandTotal"); // Ensure this exists
+				let grandTotal = grandTotalElement ? parseFloat(grandTotalElement.textContent) || 0 : 0;
+
+				let billIdElement = document.getElementById("billId"); // Ensure this exists
+				let BillId = billIdElement ? billIdElement.textContent.trim() : "";
+
+				let billDateElement = document.getElementById("billingDate"); // Ensure this exists
+				let BillDate = billDateElement.value ? billDateElement.value.trim() : "";
+
+				return {
+					entries: entries,
+					grand_total: grandTotal,
+					grand_total_with_gst: "No values",
+					customer_id: customerId,
+					customer_name: customerName,
+					customer_phone: customerPhone,
+					agent_id: agentId,
+					agent_name: agentName,
+					agent_phone: agentPhone,
+					bill_id: BillId,
+					bill_date: BillDate
+				};
+			}
+
+
+			// Submit form and send all table data
+			function submitData(url, extraData = {}, showAlert = true) {
+				let data = collectTableData();
+
+				// Merge extraData into data
+				Object.assign(data, extraData);
+
+				fetch(url, {
+					method: "POST",
+					headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" },
+					body: JSON.stringify(data)
+				})
+					.then(response => {
+						if (response.redirected) {
+							if (showAlert) {
+								alert("Form submitted successfully!");
+								resetFormAndTable(); // Clear form and table after alert
+								setTimeout(() => {
+									window.location.href = response.url;  // Redirect after alert
+								}, 100);  // Adjust delay if needed
+							} else {
+								alert("Form submitted successfully!,You're Redirecting to payments");
+								resetFormAndTable();
+
+								window.location.href = response.url;  // Redirect after alert
+
+							}
+						} else {
+							return response.json();
+						}
+					})
+					.then(data => {
+						if (data && data.message) {
+							alert(data.message);
+						}
+					})
+					.catch(error => console.error("Error:", error));
+			}
+
+			submitButton.addEventListener("click", function () {
+				submitData("/bill/");
+			});
+
+			bill_and_payButton.addEventListener("click", function () {
+				submitData(`/bill_and_pay/{{ new_id }}`, {}, false);  // Use Django syntax correctly
+			});
+			estimate.addEventListener("click", function () {
+				submitData("/estimate/");
+			});
+
+			quote.addEventListener("click", function () {
+				submitData("/quote/");
+			});
+
+			function resetFormAndTable() {
+				var historyTable = document.getElementById("history-table").getElementsByTagName("tbody")[0];
+				var customerContainer = document.getElementById("customer-container");
+				// Reset the form
+				document.getElementById("form").reset();
+				historyTable.innerHTML = "";
+				customerContainer.innerHTML = ""
+
+				// Clear the table
+				let tableBody = document.querySelector("#entriesTable tbody");
+				tableBody.innerHTML = "";
+
+				// Recalculate grand total and disable buttons
+				document.getElementById("grandTotal").textContent = "0.00";
+				addButton.disabled = true;
+				submitButton.disabled = true;
+				estimate.disabled = true;
+				quote.disabled = true;
+				bill_and_payButton.disabled = true;
+				//bill_and_payButton.style.pointerEvents = "none";
+				//bill_and_payButton.style.opacity = "0.7";
+			}
+
+
+			// Disable buttons initially
+			addButton.disabled = true;
+			submitButton.disabled = true;
+			bill_and_payButton.disabled = true;
+			//bill_and_payButton.style.pointerEvents = "none"; // Disables clicking
+			//bill_and_payButton.style.opacity = "0.7"; // Makes it visually appear disabled
+			estimate.disabled = true;
+			quote.disabled = true;
+		});
+
+	</script>
+
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			let today = new Date().toISOString().split('T')[0];
+			document.getElementById("billingDate").value = today;
+		});
+	</script>
+
+
+
+
+
+	<script>
+		window.addEventListener("load", function () {
+		  const preloader = document.getElementById("preloader");
+		  preloader.style.opacity = "0";
+		  setTimeout(() => preloader.style.display = "none", 500);
+		});
+	</script>
+	
+</body>
+
+</html>

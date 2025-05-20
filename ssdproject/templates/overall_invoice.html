@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Materia - Admin Template">
+    <meta name="keywords" content="materia, webapp, admin, dashboard, template, ui">
+    <meta name="author" content="solutionportal">
+    <!-- <base href="/"> -->
+
+    <title>SSD</title>
+
+  
+	{% load static %}
+	<link rel="icon" type="image/x-icon" href="{% static 'images/SS_LOGO.png' %}">
+	
+	<!-- Icons -->
+	<link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.min.css' %}">
+
+	<!-- Plugins -->
+	<link rel="stylesheet" href="{% static 'styles/plugins/waves.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/plugins/perfect-scrollbar.css' %}">
+	
+	<!-- Css/Less Stylesheets -->
+	<link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/main.min.css' %}">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
+
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        .col-md-6.qrCode{
+            display: flex;
+            align-items:center;
+        }
+
+        .row.total-sum.total-sum2{
+            display:flex;
+            justify-content:end;
+        }
+        .clearfix.invoice-head{
+            display:flex;
+        }
+        .clearfix.invoice-head span{
+            width:30%;
+        }
+        .clearfix.invoice-head .estimation-heading{
+            width:70%;
+        }
+        .right thead tr td{
+            padding:10px;
+            text
+        }
+        th{
+            font-size:20px;
+            font-weight:bold;
+        }
+        th td{
+            text-transform: uppercase;
+        }
+    	.logo-container {
+			position: relative;
+			width: fit-content;
+			text-align: center;
+			padding: 20px;
+		  }
+		  
+		  
+		  
+		  .logo-text {
+			display: flex;
+			align-items: center;
+			position: relative;
+			z-index: 2;
+		  }
+		  
+		  .ss {
+			font-family: fantasy;
+			color: red;
+			font-size: 80px;
+			font-weight: 100;
+			line-height: 1;
+		  }
+		  
+		  .digital {
+			font-family: fantasy;
+			color: green;
+			font-size: 80px;
+			font-weight: 100;
+			text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff;
+			margin-top: -10px;
+		  }
+		  
+	</style>
+
+</head>
+
+<body id="app" class="app off-canvas">
+	{% comment %} <div id="preloader">
+		<h1 class="dash-cont loa"> <span class="ss">SS</span> <span class="digital">digital</span></h1>
+	</div> {% endcomment %}
+    
+    <div class="page page-invoice">
+        <div class="page-wrap">
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Invoice Start -->
+                    <button class="btn btn-primary mr5" type="submit" id="submitButton"  onclick="window.location.href='{% url "listbill" %}';">&larr; Back To Bills List</button>
+                    <div class="invoice-wrap" id= "content">
+                        <div class="clearfix invoice-head">
+							<span>
+								<img src="{% static 'images/SS_LOGO__1.png' %}"  width="200px" alt="">
+							</span>
+                            
+                        </div>
+
+                        
+
+                        <div class="row mb30">
+                            <div class="clearfix invoice-subhead mb20 col-md-6 right">
+                                <div class="group clearfix left">
+                                    <h3 class="text-uppercase text-muted text-bold mt15">Estimation</h3>
+                                    <p class="text-bold mb5">Bill No - {{ billId }}</p>
+                                    <p class="small">Date: {{current_date}}</p>
+                                    <div class="group clearfix">
+                                        <a href="#" onclick="downloadPDF()" id="print" class="btn btn-default"><i class="ion ion ion-archive"></i>Download</a>
+                                        <a href="javascript:;" onclick="printPDF()" id="print" class="btn btn-default"><i class="ion ion ion-archive"></i>Print</a>
+                                    </div>
+                                </div>
+    
+                            </div>
+                            <div class="col-md-6 left">
+                                <div class="address-wrap">
+                                    <div class="address-title">
+                                        <p class="mb5 text-bold mb0">Sent To :</p>
+                                        <h4 class="mt0 ">{% if data2.Customer_Id %}{{ data2.Customer_Id }}{% else %}{{ data2.Agent_Id }}{% endif %}</h4>
+                                        <h4 class="mt0 ">{{ data2.Customer_Name |upper }}</h4>
+                                        <h4 class="mt0 ">{{ data2.Phone_No }}</h4>
+                                        <p>{{data3.Address | upper}}</p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                           
+                        </div>
+
+                        <!-- invoice table -->
+                        <div class="invo-table">
+                            <center>
+                                <h1><strong>JOB DETAILS</strong></h1>
+                            </center>
+                            <table class="table table-bordered invoice-table mb30">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>PRODUCT NAME</th>
+                                        <th>CATEGORY</th>
+                                        <th>SUB CATEGORY</th>
+                                        <th>SIZE</th>
+                                        
+                                        <th>QUANTITY</th>
+                                        
+                                        <th>REMARKS</th>
+                                        <th>TOTAL</th>
+                                        <th>CHARGES</th>
+                                    </tr>
+                                </thead>
+    
+                                <tbody>
+                                    {% for item in data %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{item.Product_Name}}</td>
+                                        <td>{{item.Category_Name}}</td>
+                                        <td>{{item.Sub_Category}}</td>
+                                        <td>{{item.Length}} X {{item.Height}}</td>
+                                        
+                                        <td>{{item.Quantity}}</td>
+                                        
+                                        <td>{{item.Remarks}}</td>
+                                        <td>{% if item.Modified_Cost == 0 %}{{ item.Actual_Cost }}{% else %}{{ item.Modified_Cost }}{% endif %}</td>
+                                        <td>{{item.Additional_Charges}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- #end invoice table -->
+
+
+
+                        <center>
+                            <h1><strong>PAYMENT DETAILS</strong></h1>
+                        </center>
+                        <!-- invoice table -->
+                        <table class="table table-bordered invoice-table mb30">
+                            <thead>
+                                <tr>
+                                    <th>PAYMENT MODE</th>
+                                    <th>UTR or REASON</th>
+                                    <th>MOBILE No.</th>
+                                    <th>PAYMENT DATE</th>
+                                    <th>AMOUNT</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for item in data5 %}
+                                <tr>
+                                    <td>{{item.Payment_Mode}}</td>
+                                    <td>{{item.Utr_Or_Reason}}</td>
+                                    <td>{{item.Mobile_No}}</td>
+                                    <td>{{item.Payment_Date}}</td>
+                                    <td>{{item.Paid_Amount}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- #end invoice table -->
+
+                        <div>
+                            <table class="right table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <td><div class="col-12"><strong>Bill Amount : </strong> ₹{{data2.Grand_Total}}</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div class="col-12"><strong>Advance Paid : </strong> ₹ {% if data4 %}{% for i in data4 %}{{i.Paid_Amount}}{% endfor %}{% else %}0{% endif %}</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div class="col-12"><strong>Balance Amount :</strong>  ₹ {% if data4 %}{% for i in data4 %}{{i.Pending_Amount}}{% endfor %}{% else %}{{data2.Grand_Total}}{% endif %}</div></td>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+
+
+                        {% for i in data4 %}
+                      
+                        <div class="row">
+                            <div class="col-md-6 qrCode">
+                                <img src="data:image/png;base64,{{ qr_base64 }}" width="200px" alt="">
+                                <div>
+                                    <h3><strong>Pay Using This QR Code</strong></h3>
+                                    <h5>ssenterpriseabu@okhdfcbank</h5>
+                                    <img src="{% static 'images\payments_gateways.png' %}" alt="payments_gateways" width="150px">
+                                </div>
+    
+                            </div>
+                        </div>
+                        
+                        {% endfor %}
+
+                        
+
+
+                 
+                        <h5 class="text-center large mt30">SS Digital || Tiruvallur || 9629932649</h5>
+
+
+                    </div>
+
+                </div> <!-- Invoice End -->
+            </div> <!-- #end row -->
+
+        </div> <!-- #end page-wrap -->
+
+    </div>
+    <div id="loadingOverlay" style="
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding-top: 20%;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+">
+    Generating PDF, please wait...
+</div>
+
+
+    <script>
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+    
+            const content = document.getElementById("content");
+            const print = document.getElementById("print");
+            const submit = document.getElementById("submitButton");
+            const loadingOverlay = document.getElementById("loadingOverlay");
+    
+            // Show loading overlay
+            loadingOverlay.style.display = "block";
+    
+            // Hide buttons before capture
+            print.style.display = "none";
+            submit.style.display = "none";
+    
+            html2canvas(content, {
+                scale: 4,
+                useCORS: true,
+                logging: false,
+                willReadFrequently: true
+            }).then(canvas => {
+                const imgData = canvas.toDataURL("image/png", 1.0);
+                const pdf = new jsPDF("p", "mm", "a4");
+    
+                const imgWidth = 210;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                const pageHeight = 297;
+    
+                let position = 0;
+                let heightLeft = imgHeight;
+    
+                pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    
+                heightLeft -= pageHeight;
+    
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+    
+                pdf.save("{{ billId }}.pdf");
+    
+                // Hide loading and show buttons
+                setTimeout(() => {
+                    loadingOverlay.style.display = "none";
+                    print.style.display = "inline-block";
+                    submit.style.display = "inline-block";
+                }, 1000);
+            });
+        }
+    </script>
+    
+
+    
+    <script>
+        function printPDF() {
+            const { jsPDF } = window.jspdf;
+            let content = document.getElementById("content");
+            let print = document.getElementById("print");
+            let submit = document.getElementById("submitButton");
+        
+            print.style.display = "none";
+            submit.style.display = "none";
+        
+            html2canvas(content, {
+                scrollY: -window.scrollY,
+                scale: 3 // High resolution capture
+            }).then(canvas => {
+                let imgData = canvas.toDataURL('image/png');
+                let pdf = new jsPDF('p', 'mm', 'a5');
+                let imgWidth = 148;
+                let pageHeight = 210;
+                let imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+                let heightLeft = imgHeight;
+                let position = 0;
+        
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+        
+                while (heightLeft > 0) {
+                    position -= pageHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+        
+                pdf.autoPrint();
+        
+                const pdfBlob = pdf.output('blob');
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                const printWindow = window.open(blobUrl);
+        
+                if (printWindow) {
+                    printWindow.onload = function () {
+                        printWindow.focus();
+                        printWindow.print();
+                    };
+                } else {
+                    alert("Popup blocked! Please allow popups for this website.");
+                }
+            });
+        
+            print.style.display = "inline-block";
+            submit.style.display = "inline-block";
+        }
+                
+    </script>
+        
+    
+
+
+</body>
+
+</html>
