@@ -890,7 +890,7 @@
 				</div>
 				<div class="biling-buttons">
 					<button class="btn btn-primary mr5" type="submit" id="submitButton">Bill</button>
-					<button class="btn btn-primary mr5" type="submit" id="estimate">Estimate</button>
+					{% comment %} <button class="btn btn-primary mr5" type="submit" id="estimate">Estimate</button> {% endcomment %}
 					<button class="btn btn-primary mr5" type="submit" id="quote">Quote</button>
 					<button class="btn btn-primary mr5" type="submit" id="billAndPay">Bill and Pay</button>
 				</div>
@@ -1728,7 +1728,7 @@
 			const addButton = document.querySelector("button[type='button']");
 			const submitButton = document.getElementById("submitButton");
 			const bill_and_payButton = document.getElementById("billAndPay");
-			const estimate = document.getElementById("estimate");
+			//const estimate = document.getElementById("estimate");
 			const quote = document.getElementById("quote");
 			const form = document.getElementById("form");
 			const tableBody = document.querySelector("#entriesTable tbody");
@@ -1780,7 +1780,7 @@
 				bill_and_payButton.disabled = !hasRows; // Disables clicking
 				//bill_and_payButton.style.pointerEvents = "auto"; // Disables clicking
 				//bill_and_payButton.style.opacity = "1"; // Makes it visually appear disabled
-				estimate.disabled = !hasRows;
+				//estimate.disabled = !hasRows;
 				quote.disabled = !hasRows;
 				calculateGrandTotal();
 			}
@@ -2015,9 +2015,9 @@
 			bill_and_payButton.addEventListener("click", function () {
 				submitData(`/bill_and_pay/{{ new_id }}`, {}, false);  // Use Django syntax correctly
 			});
-			estimate.addEventListener("click", function () {
-				submitData("/estimate/");
-			});
+			//estimate.addEventListener("click", function () {
+			//	submitData("/estimate/");
+			//});
 
 			quote.addEventListener("click", function () {
 				submitData("/quote/");
@@ -2039,7 +2039,7 @@
 				document.getElementById("grandTotal").textContent = "0.00";
 				addButton.disabled = true;
 				submitButton.disabled = true;
-				estimate.disabled = true;
+				//estimate.disabled = true;
 				quote.disabled = true;
 				bill_and_payButton.disabled = true;
 				//bill_and_payButton.style.pointerEvents = "none";
@@ -2053,7 +2053,7 @@
 			bill_and_payButton.disabled = true;
 			//bill_and_payButton.style.pointerEvents = "none"; // Disables clicking
 			//bill_and_payButton.style.opacity = "0.7"; // Makes it visually appear disabled
-			estimate.disabled = true;
+			//estimate.disabled = true;
 			quote.disabled = true;
 		});
 

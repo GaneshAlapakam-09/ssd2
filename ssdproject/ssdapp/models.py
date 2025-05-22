@@ -218,15 +218,17 @@ class BillingDetails(models.Model):
 
 class QuoteMaster(models.Model):
     Quote_Id = models.CharField(primary_key = True , max_length=15)
+    S_No = models.IntegerField(null=True)
     Customer_Id = models.CharField(max_length=15)
-    Agent_Id = models.CharField(max_length=50,null=True)
+    Agent_Id = models.CharField( max_length=15,null=True)
     Type = models.CharField(null=True, max_length=15)
     Customer_Name =models.CharField(max_length=50)
     Phone_No = models.BigIntegerField()
     Grand_Total = models.IntegerField()
     Grand_Total_With_Gst = models.IntegerField()
-    Date = models.DateField(null=True, auto_now=False, auto_now_add=False)
+
     Added_By = models.CharField(null=True, max_length=50)
+    Date = models.DateField(null=True,auto_now=False, auto_now_add=False)
     Status = models.IntegerField(default=1)
 
 
@@ -236,14 +238,13 @@ class QuoteMaster(models.Model):
 
 class QuoteDetails(models.Model):
     Quote_Id = models.ForeignKey("ssdapp.QuoteMaster", on_delete=models.CASCADE)
-    Item_Id = models.CharField(null=True, max_length=50)
-    Customer_Id = models.CharField(max_length=50)
-    Agent_Id = models.CharField( max_length=50,null=True)
-    Type = models.CharField(null=True, max_length=50)
+    Item_Id = models.CharField(null=True, max_length=15)
+    Customer_Id = models.CharField(max_length=15)
+    Agent_Id = models.CharField(max_length=15,null=True)
+    Type = models.CharField(null=True, max_length=15)
     Customer_Name =models.CharField(max_length=50)
     Phone_No = models.BigIntegerField()
     Product_Name = models.CharField(max_length=50)
-    Custom_Product = models.CharField(max_length=50)
     Category_Name = models.CharField( max_length=50)
     Sub_Category = models.CharField(null=True, max_length=50)
     Length = models.FloatField(default=0)
@@ -252,18 +253,19 @@ class QuoteDetails(models.Model):
     Quantity = models.IntegerField(default=0)
     Cost_Per_Sqft = models.FloatField(default=0)
     Difference_Amount = models.IntegerField(null=True)
-    Modified_Cost = models.IntegerField(null=True,default=0)
+    Modified_Cost = models.IntegerField(null=True)
     Actual_Cost = models.FloatField(null=True)
-    GST = models.CharField(max_length=50)
-    HSN_Code = models.CharField(max_length=50)
-    Total_Cost = models.CharField(max_length=50)
-    Final_Total_Cost = models.CharField(max_length=50,null=True)
-    Total_Cost_With_Gst = models.CharField(max_length=50)
-    Final_Total_Cost_With_Gst = models.CharField(max_length=50, null=True)
+    GST = models.CharField(max_length=15,null=True)
+    HSN_Code = models.CharField(max_length=15,null=True)
+    Total_Cost = models.CharField(max_length=15)
+    Final_Total_Cost = models.CharField(null=True, max_length=15)
+    Total_Cost_With_Gst = models.CharField(max_length=15)
+    Final_Total_Cost_With_Gst = models.CharField(max_length=15, null=True)
     Remarks = models.CharField(null=True, max_length=50)
-    Size = models.CharField(null=True, max_length=50)
-    Date = models.DateField(null=True, auto_now=False, auto_now_add=False)
+    Size = models.CharField(null=True, max_length=15)
     Added_By = models.CharField(null=True, max_length=50)
+    Date = models.DateField(null=True,auto_now=False, auto_now_add=False)
+    Additional_Charges = models.FloatField(null=True)
     Status = models.IntegerField(default=1)
 
 
@@ -368,9 +370,4 @@ class Payment_Details(models.Model):
     Bill_Id = models.CharField(default="BILL0001", max_length=50)
     Added_By = models.CharField(null=True, max_length=50)
     Date = models.DateField(null=True, auto_now=False, auto_now_add=True)
-
-
-
-
-
 

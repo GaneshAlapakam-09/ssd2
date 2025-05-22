@@ -54,8 +54,8 @@
         .clearfix.invoice-head{
             display:flex;
         }
-        .clearfix.invoice-head span{
-            width:30%;
+        .clearfix.invoice-head .invoice-logo{
+            width:70%;
         }
         .clearfix.invoice-head .estimation-heading{
             width:70%;
@@ -131,6 +131,9 @@
             width:80px;
             padding-left:10px;
         }
+        .invoice-wrap.quote-invoice{
+            padding:30px 100px ;
+        }
 
 
 		  
@@ -149,22 +152,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <!-- Invoice Start -->
-                    <button class="btn btn-primary mr5" type="submit" id="submitButton"  onclick="window.location.href='{% url "listbill" %}';">&larr; Back To Bills List</button>
-                    <div class="invoice-wrap" id= "content">
+                    <button class="btn btn-primary mr5" type="submit" id="submitButton"  onclick="window.location.href='{% url "listquote" %}';">&larr; Back To Quotaions List</button>
+                    <div class="invoice-wrap quote-invoice" id= "content">
                         <div class="clearfix invoice-head">
-							<span>
+							<div class="invoice-logo">
 								<img src="{% static 'images/SS_LOGO__1.png' %}"  width="200px" alt="">
-							</span>
-                            
-                        </div>
-
-                        
-
-                        <div class="row mb30">
-                            <div class="clearfix invoice-subhead mb20 col-md-6 right">
+							</div>
+                            <div>
                                 <div class="group clearfix left">
-                                    <h3 class="text-uppercase text-bold mt15">Estimation</h3>
-                                    <p class="text-bold mb5 bill-no">Bill No - {{ billId }}</p>
+                                    <h3 class="text-uppercase text-bold mt15">Quotation</h3>
+                                    <p class="text-bold mb5 bill-no">Quote No - {{ billId }}</p>
                                     <p class="small  bill-no">Date: {{current_date}}</p>
                                     <div class="group clearfix">
                                         <a href="#" onclick="downloadPDF()" id="down" class="btn btn-default"><i class="ion ion ion-archive"></i>Download</a>
@@ -173,14 +170,32 @@
                                 </div>
     
                             </div>
+                            
+                        </div>
+                        
+
+                        
+
+                        <div class="row mb30">
+                            
                             <div class="col-md-6 left">
                                 <div class="address-wrap">
                                     <div class="address-title">
-                                        <p class="mb5 text-bold mb0">Sent To :</p>
+                                        <p class="mb5 text-bold mb0">To :</p>
                                         <h4 class="mt0 ">{% if data2.Customer_Id %}{{ data2.Customer_Id }}{% else %}{{ data2.Agent_Id }}{% endif %}</h4>
                                         <h4 class="mt0 ">{{ data2.Customer_Name |upper }}</h4>
                                         <h4 class="mt0 ">{{ data2.Phone_No }}</h4>
                                         <p>{{data3.Address | upper}}</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 right">
+                                <div class="address-wrap">
+                                    <div class="address-title">
+                                        <p class="mb5 text-bold mb0">Sub : </p>
+                                        <input type="text" class="form-control">
+                                        <textarea name="" id="" class="form-control"></textarea>
                                     </div>
                                 </div>
 
@@ -192,7 +207,7 @@
                         <!-- invoice table -->
                         <div class="invo-table">
                             <center>
-                                <h1><strong>JOB DETAILS</strong></h1>
+                                <h1><strong>Quotation DETAILS</strong></h1>
                             </center>
                             <table class="table table-bordered invoice-table mb30">
                                 <thead>
@@ -233,71 +248,25 @@
                         <!-- #end invoice table -->
 
 
-
-                        <center>
-                            <h1><strong>PAYMENT DETAILS</strong></h1>
-                        </center>
-                        <!-- invoice table -->
-                        <table class="table table-bordered invoice-table mb30">
-                            <thead>
-                                <tr>
-                                    <th>PAYMENT MODE</th>
-                                    <th>UTR or REASON</th>
-                                    <th>MOBILE No.</th>
-                                    <th>PAYMENT DATE</th>
-                                    <th>AMOUNT</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {% for item in data5 %}
-                                <tr>
-                                    <td>{{item.Payment_Mode}}</td>
-                                    <td>{{item.Utr_Or_Reason}}</td>
-                                    <td>{{item.Mobile_No}}</td>
-                                    <td>{{item.Payment_Date}}</td>
-                                    <td>{{item.Paid_Amount}}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        <!-- #end invoice table -->
-
                         <div>
                             <table class="right table-bordered table-striped bill-calculation">
                                 <thead>
                                     <tr>
-                                        <td><div class="col-12"><strong>Bill Amount : </strong> <span> ₹{{data2.Grand_Total}}</span></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><div class="col-12"><strong>Advance Paid : </strong> <span>₹ {% if data4 %}{% for i in data4 %}{{i.Paid_Amount}}{% endfor %}{% else %}0{% endif %}</span></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><div class="col-12"><strong>Balance Amount :</strong> <span>₹ {% if data4 %}{% for i in data4 %}{{i.Pending_Amount}}{% endfor %}{% else %}{{data2.Grand_Total}}{% endif %}</span></div></td>
+                                        <td><div class="col-12"><strong>Total Quote Amount : </strong> <span> ₹{{data2.Grand_Total}}</span></div></td>
                                     </tr>
                                 </thead>
                             </table>
-                        </div>
-
-
-                        {% for i in data4 %}
-                      
-                        <div class="row">
-                            <div class="col-md-6 qrCode">
-                                <img src="data:image/png;base64,{{ qr_base64 }}" width="250px" alt="">
-                                <div>
-                                    <h3><strong>Pay Using This QR Code</strong></h3>
-                                    <h5>ssenterpriseabu@okhdfcbank</h5>
-                                    <img src="{% static 'images\payments_gateways.png' %}" alt="payments_gateways" width="200px">
-                                </div>
-    
+                            <div>
+                                <p><strong>Note :</strong>If GST needed 18% Extra</p>
                             </div>
                         </div>
-                        
-                        {% endfor %}
 
-                        
 
+                    
+                      
+                        <div class="row">
+
+                        </div>
 
                  
                         <h5 class="text-center large mt30 footer">SS Digital || Tiruvallur || 9629932649</h5>

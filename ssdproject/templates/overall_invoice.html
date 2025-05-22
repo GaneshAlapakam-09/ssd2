@@ -39,6 +39,13 @@
             display: flex;
             align-items:center;
         }
+        .qrCode div h3{
+            font-size:22px;
+        }
+        .qrCode div h5{
+            font-size:20px;
+        }
+
 
         .row.total-sum.total-sum2{
             display:flex;
@@ -96,6 +103,36 @@
 			text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff;
 			margin-top: -10px;
 		  }
+
+        thead tr{
+            font-size:30px;
+        }
+        tbody tr{
+            font-size:20px;
+        }
+        .footer{
+            font-size: 20px;
+        }
+        .bill-no{
+            font-size:20px;
+        }
+        .bill-calculation thead tr{
+            font-size : 20px;
+        }
+        .bill-calculation{
+            margin-right: 70px;
+        }
+        .bill-calculation div{
+            width: 308px;
+            display: flex;
+            justify-content: end;
+        }
+        .bill-calculation span{
+            width:80px;
+            padding-left:10px;
+        }
+
+
 		  
 	</style>
 
@@ -126,11 +163,11 @@
                         <div class="row mb30">
                             <div class="clearfix invoice-subhead mb20 col-md-6 right">
                                 <div class="group clearfix left">
-                                    <h3 class="text-uppercase text-muted text-bold mt15">Estimation</h3>
-                                    <p class="text-bold mb5">Bill No - {{ billId }}</p>
-                                    <p class="small">Date: {{current_date}}</p>
+                                    <h3 class="text-uppercase text-bold mt15">Estimation</h3>
+                                    <p class="text-bold mb5 bill-no">Bill No - {{ billId }}</p>
+                                    <p class="small  bill-no">Date: {{current_date}}</p>
                                     <div class="group clearfix">
-                                        <a href="#" onclick="downloadPDF()" id="print" class="btn btn-default"><i class="ion ion ion-archive"></i>Download</a>
+                                        <a href="#" onclick="downloadPDF()" id="down" class="btn btn-default"><i class="ion ion ion-archive"></i>Download</a>
                                         <a href="javascript:;" onclick="printPDF()" id="print" class="btn btn-default"><i class="ion ion ion-archive"></i>Print</a>
                                     </div>
                                 </div>
@@ -227,16 +264,16 @@
                         <!-- #end invoice table -->
 
                         <div>
-                            <table class="right table-bordered table-striped">
+                            <table class="right table-bordered table-striped bill-calculation">
                                 <thead>
                                     <tr>
-                                        <td><div class="col-12"><strong>Bill Amount : </strong> ₹{{data2.Grand_Total}}</div></td>
+                                        <td><div class="col-12"><strong>Bill Amount : </strong> <span> ₹{{data2.Grand_Total}}</span></div></td>
                                     </tr>
                                     <tr>
-                                        <td><div class="col-12"><strong>Advance Paid : </strong> ₹ {% if data4 %}{% for i in data4 %}{{i.Paid_Amount}}{% endfor %}{% else %}0{% endif %}</div></td>
+                                        <td><div class="col-12"><strong>Advance Paid : </strong> <span>₹ {% if data4 %}{% for i in data4 %}{{i.Paid_Amount}}{% endfor %}{% else %}0{% endif %}</span></div></td>
                                     </tr>
                                     <tr>
-                                        <td><div class="col-12"><strong>Balance Amount :</strong>  ₹ {% if data4 %}{% for i in data4 %}{{i.Pending_Amount}}{% endfor %}{% else %}{{data2.Grand_Total}}{% endif %}</div></td>
+                                        <td><div class="col-12"><strong>Balance Amount :</strong> <span>₹ {% if data4 %}{% for i in data4 %}{{i.Pending_Amount}}{% endfor %}{% else %}{{data2.Grand_Total}}{% endif %}</span></div></td>
                                     </tr>
                                 </thead>
                             </table>
@@ -247,11 +284,11 @@
                       
                         <div class="row">
                             <div class="col-md-6 qrCode">
-                                <img src="data:image/png;base64,{{ qr_base64 }}" width="200px" alt="">
+                                <img src="data:image/png;base64,{{ qr_base64 }}" width="250px" alt="">
                                 <div>
                                     <h3><strong>Pay Using This QR Code</strong></h3>
                                     <h5>ssenterpriseabu@okhdfcbank</h5>
-                                    <img src="{% static 'images\payments_gateways.png' %}" alt="payments_gateways" width="150px">
+                                    <img src="{% static 'images\payments_gateways.png' %}" alt="payments_gateways" width="200px">
                                 </div>
     
                             </div>
@@ -263,7 +300,7 @@
 
 
                  
-                        <h5 class="text-center large mt30">SS Digital || Tiruvallur || 9629932649</h5>
+                        <h5 class="text-center large mt30 footer">SS Digital || Tiruvallur || 9629932649</h5>
 
 
                     </div>
@@ -298,6 +335,7 @@
             const { jsPDF } = window.jspdf;
     
             const content = document.getElementById("content");
+            const down = document.getElementById("down");
             const print = document.getElementById("print");
             const submit = document.getElementById("submitButton");
             const loadingOverlay = document.getElementById("loadingOverlay");
@@ -307,6 +345,7 @@
     
             // Hide buttons before capture
             print.style.display = "none";
+            down.style.display = "none";
             submit.style.display = "none";
     
             html2canvas(content, {
@@ -342,6 +381,7 @@
                 setTimeout(() => {
                     loadingOverlay.style.display = "none";
                     print.style.display = "inline-block";
+                    down.style.display = "inline-block";
                     submit.style.display = "inline-block";
                 }, 1000);
             });
@@ -355,9 +395,11 @@
             const { jsPDF } = window.jspdf;
             let content = document.getElementById("content");
             let print = document.getElementById("print");
+            let down = document.getElementById("down");
             let submit = document.getElementById("submitButton");
         
             print.style.display = "none";
+            down.style.display = "none";
             submit.style.display = "none";
         
             html2canvas(content, {
@@ -400,6 +442,7 @@
             });
         
             print.style.display = "inline-block";
+            down.style.display = "inline-block";
             submit.style.display = "inline-block";
         }
                 

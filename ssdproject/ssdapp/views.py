@@ -888,55 +888,113 @@ def quote(request):
             entries = data.get("entries", [])
             # Save each entry into the database
             for entry in entries:
-                last_bill = QuoteMaster.objects.order_by('-Quote_Id').first()
+                last_bill = QuoteMaster.objects.order_by('-S_No').first()
                 if last_bill:
                     last_id = int(last_bill.Quote_Id[4:])  # Extract the numeric part
                     new_id = f"QUOT{last_id + 1:04d}"
+                    last_s_no = last_bill.S_No
+                    s_no = last_s_no + 1
                 else:
                     new_id = "QUOT0001"
+                    s_no = 1
+
                 detail_id = QuoteMaster.objects.create(
+                    S_No = s_no,
                     Quote_Id= new_id,
-                    Customer_Id=data.get("customer_id"),
-                    Customer_Name=data.get("customer_name"),
-                    Phone_No=data.get("customer_phone"),
+                    Customer_Id= data.get("customer_id" , "None") ,
+                    Agent_Id = data.get("agent_id" , "None"),
+                    Type = "Agent" if data.get("agent_id") else "Customer",
+                    Customer_Name=data.get("customer_name") if data.get("customer_name") else data.get("agent_name"),
+                    Phone_No=data.get("customer_phone") if data.get("customer_phone") else data.get("agent_phone"),
+                    Date = data.get("bill_date"),
                     Grand_Total = int(data.get("grand_total", 0)) if data.get("grand_total") not in [None, "", "None"] else 0,
-                    Grand_Total_With_Gst = int(data.get("grand_total_with_gst", 0)) if data.get("grand_total_with_gst") not in [None, "", "None"] else 0,
+                    Grand_Total_With_Gst = 0,
+                    Added_By = request.user.username,
                 )
+               
+
                 break
+
+            
+
             for entry in entries:
-                last_bill = QuoteDetails.objects.order_by('-Item_Id').first()
-                if last_bill:
-                    last_id = int(last_bill.Item_Id[12:])  # Extract the numeric part
+                last_quote = QuoteDetails.objects.order_by('-Item_Id').first()
+                if last_quote:
+                    last_id = int(last_quote.Item_Id[12:])  # Extract the numeric part
                     new_id = f"ITM{last_id + 1:01d}-{detail_id}"
                 else:
                     new_id = f"ITM1-{detail_id}"
-                QuoteDetails.objects.create(
+
+                specification = entry.get("product", "NONE") if entry.get("product") not in [None, "", "None"] else "NONE"
+                splitted_spec = specification.split(",")
+
+                costs = entry.get("cost", "NONE") if entry.get("cost") not in [None, "", "None"] else "NONE"
+                charge = entry.get("charges", 0) if entry.get("charges") not in [None, "", 0] else 0
+                
+                manual_amount = 0
+              
+                
+
+                dimetions = entry.get("dimension")
+                dimention_parts = dimetions.split("X")
+                length , height = float(dimention_parts[0].strip()), float(dimention_parts[1].split("=")[0].strip())
+
+
+                whatsData = QuoteDetails.objects.create(
                     Quote_Id= detail_id,
+                    Date = data.get("bill_date"),
                     Item_Id= new_id,
-                    Customer_Id=data.get("customer_id"),
-                    Customer_Name=data.get("customer_name"),
-                    Phone_No=data.get("customer_phone"),
-                    Product_Name=entry.get("product", "NONE") if entry.get("product") not in [None, "", "None"] else "NONE",
-                    Custom_Product=entry.get("custom", "NONE") if entry.get("custom") not in [None, "", "None"] else "NONE",
-                    Category_Name=entry.get("category", "NONE") if entry.get("category") not in [None, "", "None"] else "NONE",
-                    Sub_Category=entry.get("sub_category", "NONE") if entry.get("sub_category") not in [None, "", "None"] else "NONE",
-                    Length=int(entry.get("length", 0)) if entry.get("length") not in [None, "", "None"] else 0,
-                    Height=int(entry.get("width", 0)) if entry.get("width") not in [None, "", "None"] else 0,
-                    Total_Sqft=int(entry.get("total_sqft", 0)) if entry.get("total_sqft") not in [None, "", "None"] else 0,
+                    Added_By = request.user.username,
+                    Customer_Id= data.get("customer_id" , "None") ,
+                    Agent_Id = data.get("agent_id" , "None"),
+                    Customer_Name=data.get("customer_name") if data.get("customer_name") else data.get("agent_name"),
+                    Phone_No=data.get("customer_phone") if data.get("customer_phone") else data.get("agent_phone"),
+                    Product_Name=splitted_spec[0] ,
+                    Category_Name=splitted_spec[1],
+                    Sub_Category=splitted_spec[2],
+                    Size = entry.get("size", "NONE") if entry.get("size") not in [None, "", "None"] else "NONE",
+                    Length= length,
+                    Height = height,
+                    Total_Sqft = float(entry.get("total_sqft", 0) if entry.get("total_sqft") not in [None, "", "None"] else 0),
                     Quantity=int(entry.get("quantity", 0)),  # Convert to int (default 0 if missing)
-                    Cost_Per_Sqft=float(entry.get("cost", 0)) if entry.get("cost") not in [None, "", "None"] else 0,  # Convert to float (default 0 if missing)
+                    Cost_Per_Sqft= float(entry.get("cost_per_sqft", 0)),
+                    Actual_Cost = float(costs) - float(charge),
+                    Modified_Cost = manual_amount,
                     GST=float(entry.get("gst", 0)) if entry.get("gst") not in [None, "", "None"] else 0,  # Convert to float (default 0 if missing)
                     HSN_Code=entry.get("hsn", "NONE") if entry.get("hsn") not in [None, "", "None"] else "NONE",
-                    Total_Cost=float(entry.get("total", 0)),  # Convert to float
-                    Total_Cost_With_Gst=float(entry.get("total_with_gst", 0))  # Convert to float
+                    Total_Cost = float(costs) - float(charge),  # Convert to float
+                    Total_Cost_With_Gst=float(entry.get("total_with_gst", 0)),  # Convert to float
+                    Remarks = entry.get("remarks", "NONE") if entry.get("remarks") not in [None, "", "None"] else "NONE",
+                    Additional_Charges = entry.get("charges", 0) if entry.get("charges") not in [None, "", 0] else 0,
+                    Difference_Amount = int(float(entry.get("cost", "NONE"))) if entry.get("cost") not in [None, "", "None"] else 0
                 )
+
+            
             return redirect("listquote")
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
         except Exception as e:
             traceback.print_exc()  # This prints the full error traceback in the console
             return JsonResponse({"error": str(e)}, status=500)
-    return redirect('listquote')
+
+    last_quote = QuoteMaster.objects.order_by('-S_No').first()
+    if last_quote:
+        last_id = int(last_quote.Bill_Id[4:])  # Extract the numeric part
+        new_id = f"BILL{last_id + 1:04d}"
+    else:
+        new_id = "BILL0001"
+
+    data = CustomerDetails.objects.filter(Status = 1,Type = 'customer')
+    data3 = CustomerDetails.objects.filter(Status = 1, Type = 'agent')
+    data2 = BillingMaster.objects.all()
+    category = CategoriesMaster.objects.filter(Status = 1)
+    products = ProductMaster.objects.filter(Status = 1)
+    cos = CostMaster.objects.filter(Status = 1)
+        
+    context = {'new_id':new_id, 'category':category, 'products':products, 'data': data,'data2': data2,'data3':data3, 'cos': cos, 'new_id': new_id }
+
+    
+    return render(request,'bill3.html',context)
 
 @login_required(login_url='signin')
 def listQuote(request):
@@ -951,6 +1009,73 @@ def quoteDetails(request,id):
     context = {'data':data, 'data2':data2}
     return render(request,'quote_details.html',context)
 
+
+@login_required(login_url='signin')
+def bill_quotation(request,id):
+    data = QuoteMaster.objects.filter(Quote_Id = id)
+    data2 = QuoteDetails.objects.filter(Quote_Id = id)
+    last_bill = BillingMaster.objects.order_by('-S_No').first()
+    if last_bill:
+        last_id = int(last_bill.Bill_Id[4:])  # Extract the numeric part
+        new_id = f"BILL{last_id + 1:04d}"
+        last_s_no = last_bill.S_No
+        s_no = last_s_no + 1
+    else:
+        new_id = "BILL0001"
+        s_no = 1
+
+    for item in data:
+        generate_bill = BillingMaster.objects.create(
+            S_No = s_no,
+            Bill_Id = new_id,
+            Customer_Id = item.Customer_Id,
+            Agent_Id = item.Agent_Id,
+            Customer_Name = item.Customer_Name,
+            Phone_No = item.Phone_No,
+            Grand_Total = item.Grand_Total,
+            Grand_Total_With_Gst = item.Grand_Total_With_Gst,
+            Pending_Amount = item.Grand_Total,
+            Added_By = request.user.username,
+            Date = item.Date
+        )
+        break
+
+    for item in data2:
+        last_bill = BillingDetails.objects.order_by('-Item_Id').first()
+        if last_bill:
+            last_id = int(last_bill.Item_Id[12:])  # Extract the numeric part
+            new_id = f"ITM{last_id + 1:01d}-{generate_bill}"
+        else:
+            new_id = f"ITM1-{generate_bill}"
+        BillingDetails.objects.create(
+            Bill_Id= generate_bill,
+            Date = item.Date,
+            Item_Id= new_id,
+            Added_By = request.user.username,
+            Customer_Id= item.Customer_Id,
+            Agent_Id = item.Agent_Id,
+            Customer_Name = item.Customer_Name,
+            Phone_No = item.Phone_No,
+            Product_Name= item.Product_Name ,
+            Custom_Product= "N/A",
+            Category_Name=item.Category_Name,
+            Sub_Category = item.Sub_Category,
+            Size = item.Size,
+            Length = item.Length,
+            Height = item.Height,
+            Total_Sqft = item.Total_Sqft,
+            Quantity = item.Quantity,
+            Cost_Per_Sqft = item.Cost_Per_Sqft,
+            Actual_Cost = item.Actual_Cost,
+            GST = '00',  
+            HSN_Code = "00",
+            Total_Cost = item.Total_Cost,
+            Total_Cost_With_Gst = "00",  
+            Remarks = item.Remarks,
+            Additional_Charges = item.Additional_Charges,
+            Difference_Amount = item.Difference_Amount
+        )
+    return redirect('listbill')
 
 @login_required(login_url='signin')
 def estimate(request):
@@ -1137,12 +1262,41 @@ def invoice(request,id):
         context = {'data':data, 'data2':data2,'data3':data3,'current_date':current_date}
         return render(request,'invoive_no_gst.html',context)
     elif id.startswith("QUOT"):
-        data = QuoteDetails.objects.filter(Quote_Id = id , Status =1)
-        data2 = QuoteMaster.objects.get(Quote_Id = id , Status =1)
-        data3 = CustomerDetails.objects.get(Customer_Id = data2.Customer_Id)
-        current_date=datetime.today()
-        context = {'data':data, 'data2':data2,'data3':data3,'current_date':current_date}
-        return render(request,'invoice_quote.html',context)
+        data = BillingDetails.objects.filter(Bill_Id = billId , Status =1)
+        data2 = BillingMaster.objects.get(Bill_Id = billId , Status =1)
+        if data2.Customer_Id:
+            data3 = CustomerDetails.objects.get(Customer_Id = data2.Customer_Id)
+        else:
+            data3 = CustomerDetails.objects.get(Agent_Id = data2.Agent_Id)
+        data4 = Payment_Master.objects.filter(Payment_Id=id)
+        data5 = Payment_Details.objects.filter(Payment_Id=id)
+        current_date = datetime.today()
+
+        if data4:
+            for item in data4:
+                amount = item.Pending_Amount
+        else:
+            amount = data2.Grand_Total
+
+        upi_link = f"upi://pay?pa={upi_id}&pn=Payee&am={amount}&cu=INR"
+
+        # Generate QR code
+        qr = qrcode.QRCode(box_size=10, border=4)
+        qr.add_data(upi_link)
+        qr.make(fit=True)
+        
+        # Convert QR to image
+        img = qr.make_image(fill="black", back_color="white").resize((400, 400))
+
+        # Convert image to Base64 to embed in HTML
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+
+
+        context = {'data':data, 'data2':data2,'data3':data3,'current_date':current_date,'data4':data4,'billId':billId,'invoice_no':id,'data5':data5,'qr_base64': qr_base64}
+        return render(request,'invoice.html',context)
     return redirect('bill')
 
 
@@ -1454,6 +1608,51 @@ def overall_invoice(request,id):
 
     context = {'data':data, 'data2':data2,'data3':data3,'current_date':current_date,'data4':data4,'billId':id,'invoice_no':id,'data5':data5,'qr_base64': qr_base64}
     return render(request,'overall_invoice.html',context)
+
+
+@login_required(login_url='signin')
+def quote_invoice(request,id):
+    data = QuoteDetails.objects.filter(Quote_Id = id , Status =1)
+    data2 = QuoteMaster.objects.get(Quote_Id = id , Status =1)
+
+
+    if data2.Customer_Id:
+        data3 = CustomerDetails.objects.get(Customer_Id = data2.Customer_Id)
+    else :
+        data3 = CustomerDetails.objects.get(Agent_Id = data2.Agent_Id)
+
+
+    data4 = QuoteMaster.objects.filter(Quote_Id=id)
+    data5 = QuoteDetails.objects.filter(Quote_Id=id)
+
+    time_now = datetime.now(ZoneInfo("Asia/Kolkata"))
+    current_date = time_now.strftime("%B %d, %Y, %I:%M %p")
+
+    upi_id = "ssenterprisesabu@okhdfcbank" 
+
+   
+    amount = data2.Grand_Total
+
+    upi_link = f"upi://pay?pa={upi_id}&pn=Payee&am={amount}&cu=INR"
+
+    # Generate QR code
+    qr = qrcode.QRCode(box_size=10, border=4)
+    qr.add_data(upi_link)
+    qr.make(fit=True)
+    
+    # Convert QR to image
+    img = qr.make_image(fill="black", back_color="white").resize((400, 400))
+
+    # Convert image to Base64 to embed in HTML
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    context = {'data':data, 'data2':data2,'data3':data3,'current_date':current_date,'data4':data4,'billId':id,'invoice_no':id,'data5':data5,'qr_base64': qr_base64}
+    return render(request,'quote_invoice.html',context)
+
+
+
 
 
 @login_required(login_url='signin')

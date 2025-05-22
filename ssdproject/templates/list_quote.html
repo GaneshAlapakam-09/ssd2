@@ -38,6 +38,15 @@
 	<!-- Match Media polyfill for IE9 -->
 	<!--[if IE 9]> <script src="scripts/ie/matchMedia.js"></script>  <![endif]--> 
 
+
+<style>
+	.panel-heading.addbill-heading{
+		display:flex;
+		justify-content:space-between;
+		align-items:center;
+	}
+</style>
+
 	
 </head>
 <body id="app" class="app off-canvas">
@@ -249,7 +258,10 @@
 		<!-- Data Table -->
 		<div class="col-md-11">
 			<div class="panel panel-lined table-responsive panel-hovered mb20 data-table" style="padding-bottom: 20px">
-				<div class="panel-heading">Bills List</div>
+				<div class="panel-heading addbill-heading">
+					<div>Qutaions List</div>
+					<div><a class="btn btn-primary mr5" href="{% url "bill" %}">Add Bill</a></div>
+				</div>
 				<div class="panel-body">
 					<div class="small text-bold left mt5">
 						Show&nbsp;
@@ -299,14 +311,7 @@
 														</div>
 													</th>
 													<th>
-														Bill Amount
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Bill Amount With GST
+														Quote Amount
 														<div class="th">
 															<i class="fa fa-caret-up icon-up"></i>
 															<i class="fa fa-caret-down icon-down"></i>
@@ -452,12 +457,10 @@
 					Customer_Name: "{{ item.Customer_Name|escapejs }}", 
 					Phone_No: "{{ item.Phone_No|escapejs }}", 
 					Grand_Total: "{{ item.Grand_Total|escapejs }}", 
-					Grand_Total_With_Gst: "{{ item.Grand_Total_With_Gst|escapejs }}", 
 					action: `<div class="btn-group list-cust">
-								{% comment %} <a href=""><button type="button" class="btn btn-default ion icon ion-md-create"></button></a> {% endcomment %}
-								<a href="{% url "quotedetails" item.Quote_Id %}"><button type="button" class="btn btn-default ion icon ion-md-list"></button></a>
-								<a href="{% url "invoice" item.Quote_Id %}"><button type="button" class="btn btn-default ion icon ion-md-paper"></button></a> 
-								{% comment %} <a class="del-btn" href=""><button type="button" class="btn btn-default ion icon ion-md-trash waves-effect"></button></a> {% endcomment %}
+								<a title = "Quote Details" href="{% url 'quotedetails' item.Quote_Id %}"><button type="button" class="btn btn-default ion icon ion-md-list"></button></a>
+								<a title = "Quote Invoice" href="{% url 'quote_invoice' item.Quote_Id %}"><button type="button" class="btn btn-default ion icon ion-md-print"></button></a> 
+								<a title = "Bill Quote" href="{% url 'bill_quotation' item.Quote_Id %}"><button type="button" class="btn btn-default ion icon ion-md-paper"></button></a> 
 							</div>`
 				}{% if not loop.last %},{% endif %}
 				{% endfor %}
@@ -471,7 +474,6 @@
 					{ data: "Customer_Name" },
 					{ data: "Phone_No" },
 					{ data: "Grand_Total" },
-					{ data: "Grand_Total_With_Gst" },
 					{ data: "action" }
 				],
 				searching: true,
