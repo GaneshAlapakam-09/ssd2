@@ -26,10 +26,10 @@ SECRET_KEY = 'django-insecure-8er()voaf8-314b%!2225izw83vfcpnz5eh%(y3!4q887hid&8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://ssd.jrbilling.in",
-    "https://ssd.jrbilling.in"
-]
+#CSRF_TRUSTED_ORIGINS = [
+#    "http://ssd.jrbilling.in",
+#    "https://ssd.jrbilling.in"
+#]
 
 
 # ALLOWED_HOSTS = ['ssd.jrbilling.in','198.38.89.78']
@@ -81,23 +81,23 @@ WSGI_APPLICATION = 'ssdproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'jrbilling_ssd',
-        'USER': 'jrbilling_ssd',
-        'PASSWORD': '$DrOK8laryvF',
-        'HOST': 'localhost',
-        'PORT': '3306',  # Default MySQL port
-    }
-}
+     'default': {
+         'ENGINE': 'django.db.backends.sqlite3',
+         'NAME': BASE_DIR / 'db.sqlite3',
+     }
+ }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'jrbilling_ssd',
+#        'USER': 'jrbilling_ssd',
+#        'PASSWORD': '$DrOK8laryvF',
+#        'HOST': 'localhost',
+#        'PORT': '3306',  # Default MySQL port
+#    }
+#}
 
 
 MEDIA_URL = '/media/'
@@ -141,13 +141,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # This is where collectstatic will copy files
-STATICFILES_DIRS = [
- 
-    BASE_DIR/'static',
-
-]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
 # Default primary key field type
