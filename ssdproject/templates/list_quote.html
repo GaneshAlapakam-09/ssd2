@@ -47,6 +47,55 @@
 	}
 </style>
 
+
+<style>
+		.dash-cont{
+			text-align:center; 
+			font-weight:900; 
+			font-size:70px
+		}
+		@media  (max-width: 760px)  {
+			.dash-cont{
+				font-size:50px;
+			}
+		}
+		
+		  
+		.logo-container {
+			position: relative;
+			width: fit-content;
+			text-align: center;
+			padding: 20px;
+		  }
+		  
+		  
+		  
+		  .logo-text {
+			display: flex;
+			align-items: center;
+			position: relative;
+			z-index: 2;
+		  }
+		  
+		  .ss {
+			font-family: fantasy;
+			color: red;
+			font-size: 80px;
+			font-weight: 100;
+			line-height: 1;
+		  }
+		  
+		  .digital {
+			font-family: fantasy;
+			color: green;
+			font-size: 80px;
+			font-weight: 100;
+			text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff;
+			margin-top: -10px;
+		  }
+		  
+</style>
+
 	
 </head>
 <body id="app" class="app off-canvas">
@@ -226,7 +275,7 @@
                             <li><a href="{% url 'bill' %}">Add Bill</a></li>
                             <li><a href="{% url 'listbill' %}">List Bill</a></li>
                             <li><a href="{% url 'listquote' %}">List Quotation</a></li>
-                            <li><a href="{% url 'listestimate' %}">List Estimation</a></li>
+                             
                         </ul>
                     </li>
                     <li>

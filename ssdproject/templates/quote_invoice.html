@@ -132,7 +132,15 @@
             padding-left:10px;
         }
         .invoice-wrap.quote-invoice{
-            padding:30px 100px ;
+            padding:50px 110px ;
+        }
+
+        .row.message{
+            margin:60px 0px;
+        }
+
+        .row.mt30.mb30.second-sec{
+            margin:50px 0px;
         }
 
 
@@ -158,25 +166,14 @@
 							<div class="invoice-logo">
 								<img src="{% static 'images/SS_LOGO__1.png' %}"  width="200px" alt="">
 							</div>
-                            <div>
-                                <div class="group clearfix left">
-                                    <h3 class="text-uppercase text-bold mt15">Quotation</h3>
-                                    <p class="text-bold mb5 bill-no">Quote No - {{ billId }}</p>
-                                    <p class="small  bill-no">Date: {{current_date}}</p>
-                                    <div class="group clearfix">
-                                        <a href="#" onclick="downloadPDF()" id="down" class="btn btn-default"><i class="ion ion ion-archive"></i>Download</a>
-                                        <a href="javascript:;" onclick="printPDF()" id="print" class="btn btn-default"><i class="ion ion ion-archive"></i>Print</a>
-                                    </div>
-                                </div>
-    
-                            </div>
+                            
                             
                         </div>
                         
 
                         
 
-                        <div class="row mb30">
+                        <div class="row mt30 mb30 second-sec">
                             
                             <div class="col-md-6 left">
                                 <div class="address-wrap">
@@ -191,17 +188,32 @@
 
                             </div>
                             <div class="col-md-6 right">
-                                <div class="address-wrap">
-                                    <div class="address-title">
-                                        <p class="mb5 text-bold mb0">Sub : </p>
-                                        <input type="text" class="form-control">
-                                        <textarea name="" id="" class="form-control"></textarea>
+                                <div class="group clearfix left">
+                                    <h3 class="text-uppercase text-bold mt15">Quotation</h3>
+                                    <p class="text-bold mb5 bill-no">Quote No - {{ billId }}</p>
+                                    <p class="small  bill-no">Date: {{current_date }}</p>
+                                    <div class="group clearfix">
+                                        <a href="#" onclick="downloadPDF()" id="down" class="btn btn-default"><i class="ion ion ion-archive"></i>Download</a>
+                                        <a href="javascript:;" onclick="printPDF()" id="print" class="btn btn-default"><i class="ion ion ion-archive"></i>Print</a>
                                     </div>
                                 </div>
-
+    
                             </div>
-
                            
+                        </div>
+                        <div class="row message">
+                            <div class="col-md-12">
+                                <div class="address-wrap">
+                                    <div class="address-title">
+                                        <div style="display:flex;align-items: baseline;">
+                                            <p class="mb5 text-bold mb0">Sub : </p>
+                                            <input style="width:95%;padding:0px 0px 0px 10px" type="text" class="form-control">
+                                        </div>
+                                        <br>
+                                        <textarea id="myTextarea" class="form-control" oninput="autoResize(this)"></textarea>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- invoice table -->
@@ -209,7 +221,7 @@
                             <center>
                                 <h1><strong>Quotation DETAILS</strong></h1>
                             </center>
-                            <table class="table table-bordered invoice-table mb30">
+                            <table class="table table-bordered invoice-table mb30" style="min-height: 65vh;">
                                 <thead>
                                     <tr>
                                         <th>S.No</th>
@@ -264,9 +276,23 @@
 
                     
                       
-                        <div class="row">
-
+                        <div style="width: 100%;display:flex;display:flex;align-items:center">
+                            <div class="col-8"  style="white-space: pre-wrap;width: 60%">
+                                <div>
+                                Payment Terms          : 75% Advance and 
+                                                                       Balance 25% on
+                                                                       Deliver the Hoardings
+                                </div>
+                                <span style="padding-left: 130px;display: flex;">Validity of Quotation  : <input type="date" class="form-control" style="width:25%"></span>
+                            </div>
+                            <div class="col-4" style="white-space: pre-wrap;">
+                                Thanks and Regards
+                                SS DIGITAL
+                                Mohamed Uwaise.H
+                                +91 9629932649
+                            </div>
                         </div>
+                        <p class="mt30 mb30" style="color: gainsboro;">Validity for digital signature</p>
 
                  
                         <h5 class="text-center large mt30 footer">SS Digital || Tiruvallur || 9629932649</h5>
@@ -298,124 +324,174 @@
     Generating PDF, please wait...
 </div>
 
+<script>
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
 
-    <script>
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-    
-            const content = document.getElementById("content");
-            const down = document.getElementById("down");
-            const print = document.getElementById("print");
-            const submit = document.getElementById("submitButton");
-            const loadingOverlay = document.getElementById("loadingOverlay");
-    
-            // Show loading overlay
-            loadingOverlay.style.display = "block";
-    
-            // Hide buttons before capture
-            print.style.display = "none";
-            down.style.display = "none";
-            submit.style.display = "none";
-    
-            html2canvas(content, {
-                scale: 4,
-                useCORS: true,
-                logging: false,
-                willReadFrequently: true
-            }).then(canvas => {
-                const imgData = canvas.toDataURL("image/png", 1.0);
-                const pdf = new jsPDF("p", "mm", "a4");
-    
-                const imgWidth = 210;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                const pageHeight = 297;
-    
-                let position = 0;
-                let heightLeft = imgHeight;
-    
+        const content = document.getElementById("content");
+        const down = document.getElementById("down");
+        const print = document.getElementById("print");
+        const submit = document.getElementById("submitButton");
+        const loadingOverlay = document.getElementById("loadingOverlay");
+
+        // Show loading overlay
+        loadingOverlay.style.display = "block";
+
+        // Hide buttons before capture
+        print.style.display = "none";
+        down.style.display = "none";
+        submit.style.display = "none";
+
+        // Find all textarea elements and replace them with <div> for rendering
+        const textareas = content.querySelectorAll("textarea");
+        const replacements = [];
+
+        textareas.forEach(textarea => {
+            const div = document.createElement("div");
+            div.style.whiteSpace = "pre-wrap";
+            div.style.border = "1px solid #ccc";
+            div.style.padding = "6px";
+            div.style.minHeight = textarea.offsetHeight + "px";
+            div.style.fontFamily = "inherit";
+            div.style.fontSize = "inherit";
+            div.style.width = textarea.offsetWidth + "px";
+            div.textContent = textarea.value;
+
+            textarea.style.display = "none";
+            textarea.parentNode.insertBefore(div, textarea);
+            replacements.push({ textarea, div });
+        });
+
+        html2canvas(content, {
+            scale: 4,
+            useCORS: true,
+            logging: false,
+            willReadFrequently: true
+        }).then(canvas => {
+            const imgData = canvas.toDataURL("image/png", 1.0);
+            const pdf = new jsPDF("p", "mm", "a4");
+
+            const imgWidth = 210;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const pageHeight = 297;
+
+            let position = 0;
+            let heightLeft = imgHeight;
+
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
                 pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    
                 heightLeft -= pageHeight;
-    
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-    
-                pdf.save("{{ billId }}.pdf");
-    
-                // Hide loading and show buttons
-                setTimeout(() => {
-                    loadingOverlay.style.display = "none";
-                    print.style.display = "inline-block";
-                    down.style.display = "inline-block";
-                    submit.style.display = "inline-block";
-                }, 1000);
+            }
+
+            pdf.save("{{ billId }}.pdf");
+
+            // Restore original elements
+            replacements.forEach(({ textarea, div }) => {
+                div.remove();
+                textarea.style.display = "block";
             });
-        }
-    </script>
+
+            setTimeout(() => {
+                loadingOverlay.style.display = "none";
+                print.style.display = "inline-block";
+                down.style.display = "inline-block";
+                submit.style.display = "inline-block";
+            }, 1000);
+        });
+    }
+
+</script>
     
 
     
-    <script>
-        function printPDF() {
-            const { jsPDF } = window.jspdf;
-            let content = document.getElementById("content");
-            let print = document.getElementById("print");
-            let down = document.getElementById("down");
-            let submit = document.getElementById("submitButton");
-        
-            print.style.display = "none";
-            down.style.display = "none";
-            submit.style.display = "none";
-        
-            html2canvas(content, {
-                scrollY: -window.scrollY,
-                scale: 3 // High resolution capture
-            }).then(canvas => {
-                let imgData = canvas.toDataURL('image/png');
-                let pdf = new jsPDF('p', 'mm', 'a5');
-                let imgWidth = 148;
-                let pageHeight = 210;
-                let imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-                let heightLeft = imgHeight;
-                let position = 0;
-        
+<script>
+    function printPDF() {
+        const { jsPDF } = window.jspdf;
+        let content = document.getElementById("content");
+        let print = document.getElementById("print");
+        let down = document.getElementById("down");
+        let submit = document.getElementById("submitButton");
+
+        let textarea = content.querySelector("textarea");
+
+        // Create a clone div to replace textarea temporarily
+        let formattedTextDiv = document.createElement("div");
+        formattedTextDiv.style.whiteSpace = "pre-wrap";
+        formattedTextDiv.style.border = "1px solid #ccc";
+        formattedTextDiv.style.padding = "8px";
+        formattedTextDiv.style.minHeight = textarea.offsetHeight + "px";
+        formattedTextDiv.style.fontFamily = "inherit";
+        formattedTextDiv.style.fontSize = "inherit";
+        formattedTextDiv.style.width = "100%";
+        formattedTextDiv.textContent = textarea.value;
+
+        // Swap textarea with formatted div
+        textarea.style.display = "none";
+        textarea.parentNode.insertBefore(formattedTextDiv, textarea);
+
+        print.style.display = "none";
+        down.style.display = "none";
+        submit.style.display = "none";
+
+        html2canvas(content, {
+            scrollY: -window.scrollY,
+            scale: 3
+        }).then(canvas => {
+            let imgData = canvas.toDataURL('image/png');
+            let pdf = new jsPDF('p', 'mm', 'a5');
+            let imgWidth = 148;
+            let pageHeight = 210;
+            let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position -= pageHeight;
+                pdf.addPage();
                 pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
-        
-                while (heightLeft > 0) {
-                    position -= pageHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-        
-                pdf.autoPrint();
-        
-                const pdfBlob = pdf.output('blob');
-                const blobUrl = URL.createObjectURL(pdfBlob);
-                const printWindow = window.open(blobUrl);
-        
-                if (printWindow) {
-                    printWindow.onload = function () {
-                        printWindow.focus();
-                        printWindow.print();
-                    };
-                } else {
-                    alert("Popup blocked! Please allow popups for this website.");
-                }
-            });
-        
+            }
+
+            pdf.autoPrint();
+
+            const pdfBlob = pdf.output('blob');
+            const blobUrl = URL.createObjectURL(pdfBlob);
+            const printWindow = window.open(blobUrl);
+
+            if (printWindow) {
+                printWindow.onload = function () {
+                    printWindow.focus();
+                    printWindow.print();
+                };
+            } else {
+                alert("Popup blocked! Please allow popups for this website.");
+            }
+
+            // Restore original view
+            formattedTextDiv.remove();
+            textarea.style.display = "block";
             print.style.display = "inline-block";
             down.style.display = "inline-block";
             submit.style.display = "inline-block";
-        }
-                
-    </script>
+        });
+    }
+</script>
+
+<script>
+    function autoResize(textarea) {
+        textarea.style.height = 'auto'; // Reset height
+        textarea.style.height = (textarea.scrollHeight) + 'px'; // Set to scroll height
+    }
+</script>
         
     
 

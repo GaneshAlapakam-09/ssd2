@@ -1626,7 +1626,7 @@ def quote_invoice(request,id):
     data5 = QuoteDetails.objects.filter(Quote_Id=id)
 
     time_now = datetime.now(ZoneInfo("Asia/Kolkata"))
-    current_date = time_now.strftime("%B %d, %Y, %I:%M %p")
+    current_date = time_now.strftime("%B %d, %Y")
 
     upi_id = "ssenterprisesabu@okhdfcbank" 
 
@@ -1865,8 +1865,46 @@ def update_bill(request,id):
 
 
 
-def graph(request):
-    return render(request,'index.dashboard.html')
+def graph(request,filter_type):
+    today = now().date()
+    # Start and end of the week (Monday - Sunday)
+    start_of_week = today - timedelta(days=today.weekday())  # Monday of current week
+    end_of_week = start_of_week + timedelta(days=6)  # Sunday of current week
 
+    # Start and end of the month
+    start_of_month = today.replace(day=1)
+    next_month = start_of_month.replace(day=28) + timedelta(days=4)  # Jump to next month
+    end_of_month = next_month.replace(day=1) - timedelta(days=1)  # Get last day of current month
 
+    # Start and end of the year
+    start_of_year = today.replace(month=1, day=1)
+    end_of_year = today.replace(month=12, day=31)
 
+    # Filtering based on type
+    if filter_type == 'today':
+        data = Payment_Details.objects.filter(Payment_Date=today)
+        data2 = BillingMaster.objects.filter(Date=today).exclude(Grand_Total=F('Pending_Amount'))
+    elif filter_type == 'this_week':
+        data = Payment_Details.objects.filter(Payment_Date__range=(start_of_week, end_of_week))
+        data2 = BillingMaster.objects.filter(Date__range=(start_of_week, end_of_week)).exclude(Grand_Total=F('Pending_Amount'))
+    elif filter_type == 'this_month':
+        data = Payment_Details.objects.filter(Payment_Date__range=(start_of_month, end_of_month))
+        data2 = BillingMaster.objects.filter(Date__range=(start_of_month, end_of_month)).exclude(Grand_Total=F('Pending_Amount'))
+    elif filter_type == 'this_year':
+        data = Payment_Details.objects.filter(Payment_Date__range=(start_of_year, end_of_year))
+        data2 = BillingMaster.objects.filter(Date__range=(start_of_year, end_of_year)).exclude(Grand_Total=F('Pending_Amount'))
+    else:
+        data = Payment_Details.objects.all()
+        data2 = BillingMaster.objects.exclude(Grand_Total = F('Pending_Amount'))
+    grand_total = 0
+    paid_amount = 0
+    pending_amount = 0
+    for total in data2:
+        grand_total += total.Grand_Total
+        paid_amount += total.Paid_Amount
+        pending_amount += total.Pending_Amount
+
+        
+
+    context = {'data': data,'grand_total': grand_total,'paid_amount':paid_amount,'pending_amount':pending_amount}
+    return render(request,'index.dashboard.html',context)
