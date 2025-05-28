@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8er()voaf8-314b%!2225izw83vfcpnz5eh%(y3!4q887hid&8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 #CSRF_TRUSTED_ORIGINS = [
 #    "http://ssd.jrbilling.in",
@@ -33,7 +33,7 @@ DEBUG = True
 
 
 # ALLOWED_HOSTS = ['ssd.jrbilling.in','198.38.89.78']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['66.103.210.129']
 
 # Application definition
 
@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'ssdproject.urls'
@@ -81,27 +82,27 @@ WSGI_APPLICATION = 'ssdproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#      'default': {
-#          'ENGINE': 'django.db.backends.sqlite3',
-#          'NAME': BASE_DIR / 'db.sqlite3',
-#      }
-#  }
+
+#DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.mysql',
-       'NAME': 'jrbilling_ssd',
-       'USER': 'jrbilling_ssd',
-       'PASSWORD': '$DrOK8laryvF',
-       'HOST': 'localhost',
-       'PORT': '3306',  # Default MySQL port
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ssdproject_db',
+        'USER': 'ssduser',
+        'PASSWORD': '$DrOK8laryvF',
+        'HOST': 'localhost',
+        'PORT': '3306',  # Default MySQL port
+    }
 }
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 
 
@@ -142,13 +143,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATICFILES_DIRS = [
- 
-    BASE_DIR/'static',
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # your app's or project static files
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # folder for collectstatic output
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

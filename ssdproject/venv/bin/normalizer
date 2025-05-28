@@ -1,4 +1,4 @@
-#!/home/deployuser/ssd2/ssdproject/venv/bin/python3
+#!/opt/ssd2/ssdproject/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
