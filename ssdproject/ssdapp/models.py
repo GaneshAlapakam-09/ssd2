@@ -354,7 +354,6 @@ class Payment_Master(models.Model):
     Date = models.DateField(null=True, auto_now=False, auto_now_add=True)
 
 
-
 class Payment_Details(models.Model):
     Payment_Id = models.ForeignKey("ssdapp.Payment_Master", on_delete=models.CASCADE)
     Customer_Id = models.CharField(null=True, max_length=50)
@@ -371,3 +370,30 @@ class Payment_Details(models.Model):
     Added_By = models.CharField(null=True, max_length=50)
     Date = models.DateField(null=True, auto_now=False, auto_now_add=True)
 
+
+
+
+
+
+
+class Cash_Book_Master(models.Model):
+    S_No = models.IntegerField()
+    Expenses_Id = models.CharField(primary_key=True, max_length=50)
+    Date_Time= models.DateTimeField(auto_now=True, auto_now_add=False)
+    Date = models.DateField(auto_now=True, auto_now_add=False)
+    Cash_In = models.FloatField(default=1500.00)
+    Cash_Out = models.FloatField(default=0)
+    Balance = models.FloatField(default=0)
+
+class Cash_Book_Details(models.Model):
+    Expenses_Id = models.ForeignKey("ssdapp.Cash_Book_Master", on_delete=models.CASCADE)
+    Date = models.DateTimeField(auto_now=True, auto_now_add=False)
+    Expenses = models.CharField(max_length=50)
+    Expenses_Category = models.CharField(max_length=50)
+    Out_Mode = models.CharField(null=True, max_length=50)
+    Amount = models.FloatField(null=True)
+    Note = models.CharField(max_length=50)
+
+class Expense_Category(models.Model):
+    Category = models.CharField(max_length=50,null=True)
+    Expense_Name = models.CharField(max_length=50)

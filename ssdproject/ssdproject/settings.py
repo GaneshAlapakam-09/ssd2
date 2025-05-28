@@ -81,23 +81,23 @@ WSGI_APPLICATION = 'ssdproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.sqlite3',
-         'NAME': BASE_DIR / 'db.sqlite3',
-     }
- }
+# DATABASES = {
+#      'default': {
+#          'ENGINE': 'django.db.backends.sqlite3',
+#          'NAME': BASE_DIR / 'db.sqlite3',
+#      }
+#  }
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'jrbilling_ssd',
-#        'USER': 'jrbilling_ssd',
-#        'PASSWORD': '$DrOK8laryvF',
-#        'HOST': 'localhost',
-#        'PORT': '3306',  # Default MySQL port
-#    }
-#}
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'jrbilling_ssd',
+       'USER': 'jrbilling_ssd',
+       'PASSWORD': '$DrOK8laryvF',
+       'HOST': 'localhost',
+       'PORT': '3306',  # Default MySQL port
+   }
+}
 
 
 MEDIA_URL = '/media/'

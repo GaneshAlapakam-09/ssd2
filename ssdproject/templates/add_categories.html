@@ -288,7 +288,7 @@
                             <li><a href="{% url 'bill' %}">Add Bill</a></li>
                             <li><a href="{% url 'listbill' %}">List Bill</a></li>
                             <li><a href="{% url 'listquote' %}">List Quotation</a></li>
-                             
+                            <li><a href="{% url 'listestimate' %}">List Estimation</a></li>
                         </ul>
                     </li>
                     <li>
@@ -307,6 +307,19 @@
                         </ul>
                     </li>
 
+					<li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-wallet"></i>
+                            <span class="text">Cash Book</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'loadcash' %}">Load Cash</a></li>
+                            <li><a href="{% url 'cashbook' %}">Add Expences</a></li>
+                            <li><a href="{% url 'listcashbook' %}">List Expenses</a></li>
+                        </ul>
+                    </li>
+
 
 
                 </ul> <!-- #end navigation -->
@@ -320,7 +333,10 @@
 			<!-- col-left -->
 			<div class="col-sm-12 col-md-11">
 				<div class="panel panel-default panel-hovered panel-stacked mb30">
-					<div class="panel-heading">Add Categories</div>
+					<div class="panel-heading" style="display:flex;justify-content:space-between;align-items:center">
+						Add Categories
+						<a href="{% url 'listcategories' %}" class="btn btn-primary">List Categories </a>
+					</div>
 					{% if messages %}
 
         {% for message in messages %}

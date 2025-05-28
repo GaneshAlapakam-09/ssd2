@@ -122,15 +122,6 @@
         .bill-calculation{
             margin-right: 70px;
         }
-        .bill-calculation div{
-            width: 308px;
-            display: flex;
-            justify-content: end;
-        }
-        .bill-calculation span{
-            width:80px;
-            padding-left:10px;
-        }
 
 
 		  
@@ -267,13 +258,13 @@
                             <table class="right table-bordered table-striped bill-calculation">
                                 <thead>
                                     <tr>
-                                        <td><div class="col-12"><strong>Bill Amount : </strong> <span> ₹{{data2.Grand_Total}}</span></div></td>
+                                        <td><div class="col-12"><strong style="white-space: break-spaces;">Bill Amount         : </strong> <span id="grandtotal" data-value="{{data2.Grand_Total}}"></span></div></td>
                                     </tr>
                                     <tr>
-                                        <td><div class="col-12"><strong>Advance Paid : </strong> <span>₹ {% if data4 %}{% for i in data4 %}{{i.Paid_Amount}}{% endfor %}{% else %}0{% endif %}</span></div></td>
+                                        <td><div class="col-12"><strong style="white-space: break-spaces;">Advance Paid      : </strong> <span id="paidAmount" data-value="{% if data4 %}{% for i in data4 %}{{ i.Paid_Amount }}{% endfor %}{% else %}0{% endif %}"></span></div></td>
                                     </tr>
                                     <tr>
-                                        <td><div class="col-12"><strong>Balance Amount :</strong> <span>₹ {% if data4 %}{% for i in data4 %}{{i.Pending_Amount}}{% endfor %}{% else %}{{data2.Grand_Total}}{% endif %}</span></div></td>
+                                        <td><div class="col-12"><strong style="white-space: break-spaces;">Balance Amount : </strong> <span id="pendingAmount" data-value="{% if data4 %}{% for i in data4 %}{{ i.Pending_Amount }}{% endfor %}{% else %}{{ data2.Grand_Total }}{% endif %}"></span></div></td>
                                     </tr>
                                 </thead>
                             </table>
@@ -349,7 +340,7 @@
             submit.style.display = "none";
     
             html2canvas(content, {
-                scale: 4,
+                scale: 2,
                 useCORS: true,
                 logging: false,
                 willReadFrequently: true
@@ -446,7 +437,32 @@
             submit.style.display = "inline-block";
         }
                 
-    </script>
+</script>
+
+
+<!--Script for showing amount in currency formate-->
+<script>
+  function formatINRCurrency(value) {
+    return Number(value).toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2
+    });
+  }
+
+  const grandtotalSpan = document.getElementById('grandtotal');
+  const pendingSpan = document.getElementById('pendingAmount');
+  const paidSpan = document.getElementById('paidAmount');
+
+  const grandtotalValue = grandtotalSpan.dataset.value;
+  const pendingValue = pendingSpan.dataset.value;
+  const paidValue = paidSpan.dataset.value;
+
+  pendingSpan.textContent = formatINRCurrency(pendingValue);
+  grandtotalSpan.textContent = formatINRCurrency(grandtotalValue);
+  paidSpan.textContent = formatINRCurrency(paidValue);
+</script>
+
         
     
 

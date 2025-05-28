@@ -280,7 +280,7 @@
                             <li><a href="{% url 'bill' %}">Add Bill</a></li>
                             <li><a href="{% url 'listbill' %}">List Bill</a></li>
                             <li><a href="{% url 'listquote' %}">List Quotation</a></li>
-                             
+                            <li><a href="{% url 'listestimate' %}">List Estimation</a></li>
                         </ul>
                     </li>
                     <li>
@@ -296,6 +296,19 @@
                             <li><a href="{% url 'filtered_data' 'this_month' %}">This Month</a></li>
                             <li><a href="{% url 'filtered_data' 'this_year' %}">This Year</a></li>
                             <li><a href="{% url 'outstanding'  %}">Outstanting Bills</a></li>
+                        </ul>
+                    </li>
+
+					<li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-wallet"></i>
+                            <span class="text">Cash Book</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'loadcash' %}">Load Cash</a></li>
+                            <li><a href="{% url 'cashbook' %}">Add Expences</a></li>
+                            <li><a href="{% url 'listcashbook' %}">List Expenses</a></li>
                         </ul>
                     </li>
 
@@ -539,57 +552,6 @@
     <script src="{% static 'scripts/index.init.js' %}"></script>
 
 
-    <script>
-        // Convert Django template data to JavaScript array
-        const data = [
-            {% for catg in category %}
-        {
-            category_name: "{{ catg.Categories_Name|escapejs }}",
-            sub_category: "{{ catg.Sub_Categories|escapejs }}",
-            product_name: "{{ catg.Product_Name|escapejs }}"
-
-        } {% if not forloop.last %}, {% endif %}
-        {% endfor %}
-		];
-
-        document.getElementById("product").addEventListener("blur", function () {
-            let enteredProduct = this.value.trim(); // Get input value and remove extra spaces
-            const select = document.getElementById("category");  // Category dropdown
-            const select2 = document.getElementById("subcategory"); // Sub-category dropdown
-
-            // Reset all dropdowns
-            select.innerHTML = '<option value="">Select a Category</option>';
-            select2.innerHTML = '<option value="">Select a Sub-category</option>';
-
-            // Filter data based on entered product name
-            const filteredData = data.filter(item => item.product_name === enteredProduct);
-
-            // Extract unique categories
-            const categories = [...new Set(filteredData.map(item => item.category_name))];
-
-            // Append unique categories as options
-            categories.forEach(category => {
-                const option = document.createElement("option");
-                option.value = category;
-                option.textContent = category;
-                select.appendChild(option);
-            });
-
-            // Extract unique sub-categories
-            const subcategories = [...new Set(filteredData.map(item => item.sub_category))];
-
-            // Append unique sub-categories as options
-            subcategories.forEach(subcategory => {
-                const option = document.createElement("option");
-                option.value = subcategory;
-                option.textContent = subcategory;
-                select2.appendChild(option);
-            });
-
-            
-        });
-
-    </script>
 
     <script>
         document.getElementById("form").addEventListener("submit", function(event) {
@@ -608,65 +570,6 @@
                 event.preventDefault(); // Stop form submission if user cancels
             }
         });
-    </script>
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Get the required elements
-            let sizeCostRadio = document.getElementById("size_cost");
-            let unitCostRadio = document.getElementById("unit_cost");
-            let lengthInput = document.getElementById("length");
-            let heightInput = document.getElementById("height");
-            let dimentionDiv = document.getElementById("dimention");
-    
-            function toggleFields() {
-                if (unitCostRadio.checked) {
-                    // Remove required attribute
-                    lengthInput.removeAttribute("required");
-                    heightInput.removeAttribute("required");
-                    // Hide the dimention section
-                    dimentionDiv.style.display = "none";
-                } else {
-                    // Add required attribute
-                    lengthInput.setAttribute("required", "required");
-                    heightInput.setAttribute("required", "required");
-                    // Show the dimention section
-                    dimentionDiv.style.display = "flex";
-                }
-            }
-    
-            // Add event listeners to radio buttons
-            sizeCostRadio.addEventListener("change", toggleFields);
-            unitCostRadio.addEventListener("change", toggleFields);
-    
-            // Run once on page load to set the correct state
-            toggleFields();
-        });
-    </script>
-
-    <script>
-        function validateQty() {
-            let sellingCost = parseFloat(document.getElementById("selling_cost").value) || 0;
-            let customerCost = parseFloat(document.getElementById("cost").value) || 0;
-            let agentCost = parseFloat(document.getElementById("cost_for_agent").value) || 0;
-            let submitBtn = document.getElementById("submitButton");
-
-            if (customerCost < sellingCost) {
-                alert("Customer Cost cannot be greater than Selling Cost!");
-                submitBtn.disabled = true; // Disable button
-            } else if (agentCost < sellingCost) {
-                alert("Agent Cost cannot be greater than Selling Cost!");
-                submitBtn.disabled = true; // Disable button
-            } else {
-                submitBtn.disabled = false; // Enable button
-            }
-        }
-        
-        // Attach the event listeners to input fields
-        document.getElementById("cost_for_agent").addEventListener("change", validateQty);
-        document.getElementById("cost").addEventListener("change", validateQty);
-        document.getElementById("selling_cost").addEventListener("input", validateQty);
     </script>
 
     <script>

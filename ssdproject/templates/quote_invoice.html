@@ -119,18 +119,7 @@
         .bill-calculation thead tr{
             font-size : 20px;
         }
-        .bill-calculation{
-            margin-right: 70px;
-        }
-        .bill-calculation div{
-            width: 308px;
-            display: flex;
-            justify-content: end;
-        }
-        .bill-calculation span{
-            width:80px;
-            padding-left:10px;
-        }
+        
         .invoice-wrap.quote-invoice{
             padding:50px 110px ;
         }
@@ -205,7 +194,7 @@
                             <div class="col-md-12">
                                 <div class="address-wrap">
                                     <div class="address-title">
-                                        <div style="display:flex;align-items: baseline;">
+                                        <div style="display:flex;">
                                             <p class="mb5 text-bold mb0">Sub : </p>
                                             <input style="width:95%;padding:0px 0px 0px 10px" type="text" class="form-control">
                                         </div>
@@ -264,7 +253,7 @@
                             <table class="right table-bordered table-striped bill-calculation">
                                 <thead>
                                     <tr>
-                                        <td><div class="col-12"><strong>Total Quote Amount : </strong> <span> ₹{{data2.Grand_Total}}</span></div></td>
+                                        <td><div class="col-12"><strong>Total Quote Amount : </strong> <span id="grandtotal" data-value="{{data2.Grand_Total}}"></span></div></td>
                                     </tr>
                                 </thead>
                             </table>
@@ -363,7 +352,7 @@
         });
 
         html2canvas(content, {
-            scale: 4,
+            scale: 2,
             useCORS: true,
             logging: false,
             willReadFrequently: true
@@ -486,11 +475,32 @@
     }
 </script>
 
+<!--Script for textarea input field-->
 <script>
     function autoResize(textarea) {
         textarea.style.height = 'auto'; // Reset height
         textarea.style.height = (textarea.scrollHeight) + 'px'; // Set to scroll height
     }
+</script>
+
+
+<!--Script for showing amount in currency formate-->
+<script>
+  function formatINRCurrency(value) {
+    return Number(value).toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2
+    });
+  }
+
+  const grandtotalSpan = document.getElementById('grandtotal');
+
+
+  const grandtotalValue = grandtotalSpan.dataset.value;
+
+
+  grandtotalSpan.textContent = formatINRCurrency(grandtotalValue);
 </script>
         
     

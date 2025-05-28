@@ -264,7 +264,7 @@
                             <li><a href="{% url 'bill' %}">Add Bill</a></li>
                             <li><a href="{% url 'listbill' %}">List Bill</a></li>
                             <li><a href="{% url 'listquote' %}">List Quotation</a></li>
-                             
+                            <li><a href="{% url 'listestimate' %}">List Estimation</a></li>
                         </ul>
                     </li>
                     <li>
@@ -280,6 +280,19 @@
                             <li><a href="{% url 'filtered_data' 'this_month' %}">This Month</a></li>
                             <li><a href="{% url 'filtered_data' 'this_year' %}">This Year</a></li>
                             <li><a href="{% url 'outstanding'  %}">Outstanting Bills</a></li>
+                        </ul>
+                    </li>
+
+					<li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-wallet"></i>
+                            <span class="text">Cash Book</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'loadcash' %}">Load Cash</a></li>
+                            <li><a href="{% url 'cashbook' %}">Add Expences</a></li>
+                            <li><a href="{% url 'listcashbook' %}">List Expenses</a></li>
                         </ul>
                     </li>
 
@@ -440,7 +453,7 @@
 						<td>{{ item.Pending_Amount}}</td>
 						<td>{{ item.Paid_Amount}}</td>
 						<td><div class="btn-group list-cust">
-							<a title="Ganerate Invoice" href="{% url 'invoice' item.Payment_Id %}"><button type="button" class="btn btn-default ion icon ion-md-paper"></button></a>
+							<a title="Ganerate Invoice" href="{% url 'invoice' item.Payment_Id %}"><button type="button" class="btn btn-default ion icon ion-md-print"></button></a>
 							<a title="List Payments" href="{% url 'paymentterms' item.Payment_Id %}"><button type="button" class="btn btn-default ion icon ion-md-list"></button></a> 
 						</div></td>
 					</tr>

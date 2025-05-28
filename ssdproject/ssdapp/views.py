@@ -1,7 +1,7 @@
 import traceback
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
-from ssdapp.models import CustomerMaster,CustomerDetails,MaterialMaster,InwardMaster,ProductMaster,CategoriesMaster,CostMaster,BillingMaster,QuoteMaster, EstimateMaster, BillingDetails, QuoteDetails, EstimateDetails, Payment_Master, Payment_Details
+from .models import Cash_Book_Details, CustomerMaster,CustomerDetails, Expense_Category,MaterialMaster,InwardMaster,ProductMaster,CategoriesMaster,CostMaster,BillingMaster,QuoteMaster, EstimateMaster, BillingDetails, QuoteDetails, EstimateDetails, Payment_Master, Payment_Details,Cash_Book_Master, Employee, OutwardMaster
 from django.contrib import messages
 
 from django.http import HttpResponse
@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from django.contrib.auth.hashers import make_password
-from .models import Employee, OutwardMaster
+
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib.auth import authenticate,login,logout
@@ -541,6 +541,7 @@ def editProduct(request,id):
 
     return render(request,'edit_product.html',context)
 
+
 @login_required(login_url='signin')
 @user_passes_test(is_admin)  # Only admin can add employees
 def deleteProduct(request,id):
@@ -593,6 +594,25 @@ def addCategories(request):
     context = {'data':new_id, 'products':products}
 
     return render(request,'add_categories.html',context)
+
+
+
+@login_required(login_url='signin')
+@user_passes_test(is_admin)  # Only admin can add employees
+def editCategories(request,id):
+    if request.method == 'POST':
+        product_name = request.POST['product_name']
+        category_name = request.POST['category_name']
+        sub_category = request.POST['sub_category']
+        
+        CategoriesMaster.objects.filter(Categories_Id=id).update(Product_Name = product_name, Categories_Name = category_name.upper(), Sub_Categories = sub_category.upper())
+
+        return redirect('listcategories')
+    data = CategoriesMaster.objects.get(Categories_Id = id)
+    
+    context = {'data':data}
+
+    return render(request,'edit_categories.html',context)
 
 @login_required(login_url='signin')
 @user_passes_test(is_admin)  # Only admin can add employees
@@ -664,12 +684,10 @@ def editCost(request,id):
         sub_category = request.POST['sub_category']
         cost_for_agent = request.POST['cost_for_agent']
         cost = request.POST['cost']
-        length = request.POST['length']
-        height = request.POST['height']
         selling_cost = request.POST['selling_cost']
         
 
-        CostMaster.objects.filter(Cost_Id = id).update(Cost_Id = id, Product_Name = product_name ,Date = date, Category_Name = category_name, Sub_Category = sub_category, Fixed_Cost = cost,Length = length, Height = height, Cost_for_Agent = cost_for_agent, Selling_Cost = selling_cost )
+        CostMaster.objects.filter(Cost_Id = id).update(Cost_Id = id, Product_Name = product_name ,Date = date, Category_Name = category_name, Sub_Category = sub_category, Fixed_Cost = cost, Cost_for_Agent = cost_for_agent, Selling_Cost = selling_cost )
         return redirect('listcost')
     
 
@@ -1308,6 +1326,7 @@ def signout(request):
 
 @login_required(login_url='signin')
 def add_payment(request, id):
+    # Cash_Book_Master.objects.all().delete()
     if request.method == "POST":
         try:
             data = json.loads(request.body)  # Load request data once
@@ -1349,8 +1368,10 @@ def add_payment(request, id):
                 Paid_Amount = int(float(data.get("totalAmount"))) - int(float(data.get("finalPending"))),
                 Pending_Amount = int(float(data.get("finalPending")))
                 )
-                
+            
+            incomming_amount = 0
             for entry in table_data:
+                incomming_amount+=int(float(entry.get("amount")))
                 Payment_Details.objects.create(
                     Payment_Id=paym_id,
                     Customer_Id = customer_id,
@@ -1370,6 +1391,29 @@ def add_payment(request, id):
                     BillingMaster.objects.filter(Bill_Id = id.split("-")[0]).update(
                     Force_Paid=1 if entry.get("payment_mode") == "MANUAL CLOSE" else 0,  # Set Force_Paid if MANUAL_CLOSE
                     )
+
+
+            # for updating Cash_Book
+            time_now = datetime.now(ZoneInfo("Asia/Kolkata"))
+            current_date = time_now.strftime("%Y-%m-%d")
+            today_expences = Cash_Book_Master.objects.filter(Date = current_date)
+            
+            if today_expences:
+                for item in today_expences:
+                    today_income = item.Cash_In
+                Cash_Book_Master.objects.filter(Date = current_date).update(Cash_In = today_income + incomming_amount)
+            else:
+                last_cash = Cash_Book_Master.objects.order_by('-S_No').first()
+                if last_cash:
+                    last_id = int(last_cash.Expenses_Id[3:])  # Extract the numeric part
+                    new_id = f"EXP{last_id + 1:04d}"
+                    last_s_no = last_cash.S_No
+                    s_no = last_s_no + 1
+                else:
+                    new_id = "EXP0001"
+                    s_no = 1
+
+                Cash_Book_Master.objects.create(S_No = s_no, Expenses_Id = new_id, Cash_In = 1500 + incomming_amount)
 
             
             return JsonResponse({"message": "Data received successfully"}, status=200)
@@ -1448,8 +1492,9 @@ def bill_and_pay(request,id):
                 break
 
             
-
+            incomming_amount = 0
             for entry in entries:
+                incomming_amount+=int(float(entry.get("amount")))
                 last_bill = BillingDetails.objects.order_by('-Item_Id').first()
                 if last_bill:
                     last_id = int(last_bill.Item_Id[12:])  # Extract the numeric part
@@ -1501,6 +1546,31 @@ def bill_and_pay(request,id):
                     Additional_Charges = entry.get("charges", 0) if entry.get("charges") not in [None, "", 0] else 0,
                     Difference_Amount = int(float(entry.get("cost", "NONE"))) if entry.get("cost") not in [None, "", "None"] else 0
                 )
+                            
+            
+            # for updating Cash_Book
+            time_now = datetime.now(ZoneInfo("Asia/Kolkata"))
+            current_date = time_now.strftime("%Y-%m-%d")
+            today_expences = Cash_Book_Master.objects.filter(Date = current_date)
+            
+            if today_expences:
+                for item in today_expences:
+                    today_income = item.Cash_In
+                Cash_Book_Master.objects.filter(Date = current_date).update(Cash_In = today_income + incomming_amount)
+            else:
+                last_cash = Cash_Book_Master.objects.order_by('-S_No').first()
+                if last_cash:
+                    last_id = int(last_cash.Expenses_Id[3:])  # Extract the numeric part
+                    new_id = f"EXP{last_id + 1:04d}"
+                    last_s_no = last_cash.S_No
+                    s_no = last_s_no + 1
+                else:
+                    new_id = "EXP0001"
+                    s_no = 1
+
+                Cash_Book_Master.objects.create(S_No = s_no, Expenses_Id = new_id, Cash_In = 1500 + incomming_amount)
+
+            
             return redirect("addpayment", id=id)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
@@ -1688,29 +1758,40 @@ def filtered_data(request, filter_type):
     if filter_type == 'today':
         data = Payment_Details.objects.filter(Payment_Date=today)
         data2 = BillingMaster.objects.filter(Date=today).exclude(Grand_Total=F('Pending_Amount'))
+        data3 = BillingMaster.objects.filter(Date=today)
+        data4 = "Today"
     elif filter_type == 'this_week':
         data = Payment_Details.objects.filter(Payment_Date__range=(start_of_week, end_of_week))
         data2 = BillingMaster.objects.filter(Date__range=(start_of_week, end_of_week)).exclude(Grand_Total=F('Pending_Amount'))
+        data3 = BillingMaster.objects.filter(Date__range=(start_of_week, end_of_week))
+        data4 = "This Week"
     elif filter_type == 'this_month':
         data = Payment_Details.objects.filter(Payment_Date__range=(start_of_month, end_of_month))
         data2 = BillingMaster.objects.filter(Date__range=(start_of_month, end_of_month)).exclude(Grand_Total=F('Pending_Amount'))
+        data3 = BillingMaster.objects.filter(Date__range=(start_of_month, end_of_month))
+        data4 = "This Month"
     elif filter_type == 'this_year':
         data = Payment_Details.objects.filter(Payment_Date__range=(start_of_year, end_of_year))
         data2 = BillingMaster.objects.filter(Date__range=(start_of_year, end_of_year)).exclude(Grand_Total=F('Pending_Amount'))
+        data3 = BillingMaster.objects.filter(Date__range=(start_of_year, end_of_year))
+        data4 = "This Year"
     else:
         data = Payment_Details.objects.all()
         data2 = BillingMaster.objects.exclude(Grand_Total = F('Pending_Amount'))
+        data3 = BillingMaster.objects.all()
+        data4 = "Overall"
+ 
     grand_total = 0
     paid_amount = 0
     pending_amount = 0
-    for total in data2:
+    for total in data3:
         grand_total += total.Grand_Total
         paid_amount += total.Paid_Amount
         pending_amount += total.Pending_Amount
 
         
 
-    context = {'data': data,'grand_total': grand_total,'paid_amount':paid_amount,'pending_amount':pending_amount}
+    context = {'data': data,'grand_total': grand_total,'paid_amount':paid_amount,'pending_amount':pending_amount,'data3':data3,'data4':data4}
     return render(request, 'list_all_payments.html', context)
 
 
@@ -1865,46 +1946,123 @@ def update_bill(request,id):
 
 
 
-def graph(request,filter_type):
-    today = now().date()
-    # Start and end of the week (Monday - Sunday)
-    start_of_week = today - timedelta(days=today.weekday())  # Monday of current week
-    end_of_week = start_of_week + timedelta(days=6)  # Sunday of current week
+def graph(request):
+    return render(request,'index.dashboard.html')
 
-    # Start and end of the month
-    start_of_month = today.replace(day=1)
-    next_month = start_of_month.replace(day=28) + timedelta(days=4)  # Jump to next month
-    end_of_month = next_month.replace(day=1) - timedelta(days=1)  # Get last day of current month
+def Cash_Book(request):
+    if request.method == 'POST':
+        try:
+            entries_json = request.POST.get('entries')
+            total_amount = int(request.POST.get('total_amount'))
+            available_amount = int(request.POST.get('available_amount'))
+            category = Expense_Category.objects.all()
+            print("===========",entries_json)
+            entries = json.loads(entries_json) 
 
-    # Start and end of the year
-    start_of_year = today.replace(month=1, day=1)
-    end_of_year = today.replace(month=12, day=31)
+            time_now = datetime.now(ZoneInfo("Asia/Kolkata"))
+            current_date = time_now.strftime("%Y-%m-%d")
+            id_for_details  = Cash_Book_Master.objects.get(Date = current_date)
+            today_expences = Cash_Book_Master.objects.filter(Date = current_date).update(Cash_In = available_amount - total_amount, Cash_Out = id_for_details.Cash_Out + total_amount)
 
-    # Filtering based on type
-    if filter_type == 'today':
-        data = Payment_Details.objects.filter(Payment_Date=today)
-        data2 = BillingMaster.objects.filter(Date=today).exclude(Grand_Total=F('Pending_Amount'))
-    elif filter_type == 'this_week':
-        data = Payment_Details.objects.filter(Payment_Date__range=(start_of_week, end_of_week))
-        data2 = BillingMaster.objects.filter(Date__range=(start_of_week, end_of_week)).exclude(Grand_Total=F('Pending_Amount'))
-    elif filter_type == 'this_month':
-        data = Payment_Details.objects.filter(Payment_Date__range=(start_of_month, end_of_month))
-        data2 = BillingMaster.objects.filter(Date__range=(start_of_month, end_of_month)).exclude(Grand_Total=F('Pending_Amount'))
-    elif filter_type == 'this_year':
-        data = Payment_Details.objects.filter(Payment_Date__range=(start_of_year, end_of_year))
-        data2 = BillingMaster.objects.filter(Date__range=(start_of_year, end_of_year)).exclude(Grand_Total=F('Pending_Amount'))
+            for entry in entries:
+                Cash_Book_Details.objects.create(
+                    Expenses_Id = id_for_details,
+                    Expenses = entry.get('expense', "N/A"),
+                    Expenses_Category = entry.get('category',"N/A"),
+                    Out_Mode = entry.get('paymentMode', "N/A"),
+                    Amount = entry.get('amount',0),
+                    Note = entry.get('remarks',"N/A")
+                )
+                for item in category:
+                    if item.Expense_Name != entry.get('expense', "N/A"):
+                        Expense_Category.objects.create(Expense_Name = entry.get('expense', "N/A"))
+
+            return JsonResponse({
+                'success': True,
+                'message': 'Payments saved successfully',
+                'new_available_amount': 'new_available_amount'  # Optional
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    # for updating Cash_Book
+    time_now = datetime.now(ZoneInfo("Asia/Kolkata"))
+    current_date = time_now.strftime("%Y-%m-%d")
+    today_expences = Cash_Book_Master.objects.filter(Date = current_date)
+    cash_in_hand = 0
+
+    if today_expences:
+        for item in today_expences:
+            cash_in_hand += item.Cash_In
     else:
-        data = Payment_Details.objects.all()
-        data2 = BillingMaster.objects.exclude(Grand_Total = F('Pending_Amount'))
-    grand_total = 0
-    paid_amount = 0
-    pending_amount = 0
-    for total in data2:
-        grand_total += total.Grand_Total
-        paid_amount += total.Paid_Amount
-        pending_amount += total.Pending_Amount
+        last_cash = Cash_Book_Master.objects.order_by('-S_No').first()
+        if last_cash:
+            last_id = int(last_cash.Expenses_Id[3:])  # Extract the numeric part
+            new_id = f"EXP{last_id + 1:04d}"
+            last_s_no = last_cash.S_No
+            s_no = last_s_no + 1
+        else:
+            new_id = "EXP0001"
+            s_no = 1
+        Cash_Book_Master.objects.create(S_No = s_no, Expenses_Id = new_id)
 
-        
+        # If there is no income done today 
+        today_expences = Cash_Book_Master.objects.filter(Date = current_date)
+        if today_expences:
+            for item in today_expences:
+                cash_in_hand += item.Cash_In
 
-    context = {'data': data,'grand_total': grand_total,'paid_amount':paid_amount,'pending_amount':pending_amount}
-    return render(request,'index.dashboard.html',context)
+    category = Expense_Category.objects.all()
+
+    context = {'cash_in_hand':cash_in_hand,'category':category}
+    
+    return render(request,'cash_book.html',context)
+
+
+def list_cash_book(request):
+    data = Cash_Book_Master.objects.all()
+    context = {'data':data}
+    return render(request,'list_cash_book.html',context)
+
+def expenses_details(request,id):
+    data = Cash_Book_Details.objects.filter(Expenses_Id = id)
+    context = {'data':data}
+    return render(request,'expenses_details.html',context)
+
+def load_cash(request):
+    if request.method == "POST":
+        time_now = datetime.now(ZoneInfo("Asia/Kolkata"))
+        current_date = time_now.strftime("%Y-%m-%d")
+        today_expences = Cash_Book_Master.objects.get(Date = current_date)
+        loaded_amount = int(request.POST['loaded_amount'])
+        Cash_Book_Master.objects.filter(Date = current_date).update(Cash_In = today_expences.Cash_In + loaded_amount)
+        return redirect('cashbook')
+
+
+    # for updating Cash_Book
+    time_now = datetime.now(ZoneInfo("Asia/Kolkata"))
+    current_date = time_now.strftime("%Y-%m-%d")
+    today_expences = Cash_Book_Master.objects.filter(Date = current_date)
+    cash_in_hand = 0
+
+    if today_expences:
+        for item in today_expences:
+            cash_in_hand += item.Cash_In
+    else:
+        last_cash = Cash_Book_Master.objects.order_by('-S_No').first()
+        if last_cash:
+            last_id = int(last_cash.Expenses_Id[3:])  # Extract the numeric part
+            new_id = f"EXP{last_id + 1:04d}"
+            last_s_no = last_cash.S_No
+            s_no = last_s_no + 1
+        else:
+            new_id = "EXP0001"
+            s_no = 1
+        Cash_Book_Master.objects.create(S_No = s_no, Expenses_Id = new_id)
+    context={'cash_in_hand':cash_in_hand}
+    return render(request,'load_cash.html',context)
+
+

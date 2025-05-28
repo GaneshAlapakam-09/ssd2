@@ -22,6 +22,7 @@ urlpatterns = [
     path('deleteProduct/<str:id>/',views.deleteProduct,name='deleteProduct'),
     path('addcategories/',views.addCategories,name='addcategories'),
     path('listcategories/',views.listCategories,name='listcategories'),
+    path('editCategories/<str:id>/',views.editCategories,name='editCategories'),
     path('addcost/',views.add_Cost,name='addcost'),
     path('listcost/',views.listCost,name='listcost'),
     path('bill/',views.bill,name='bill'),
@@ -64,8 +65,12 @@ urlpatterns = [
     path('editcost/<str:id>/',views.editCost,name='editcost'),
     path('update_bill/<str:id>/',views.update_bill,name='update_bill'),
 
-    path('graph/<str:filter_type>/',views.graph,name='graph')
+    path('graph/',views.graph,name='graph'),
 
+    path('cashbook/',views.Cash_Book,name="cashbook"),
+    path('listcashbook/',views.list_cash_book,name="listcashbook"),
+    path('loadcash/',views.load_cash,name="loadcash"),
+    path('detailexpenses/<str:id>',views.expenses_details,name="detailexpenses"),
 
 ]
 

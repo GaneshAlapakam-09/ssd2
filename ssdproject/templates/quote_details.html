@@ -37,7 +37,54 @@
 
 	<!-- Match Media polyfill for IE9 -->
 	<!--[if IE 9]> <script src="scripts/ie/matchMedia.js"></script>  <![endif]--> 
-
+<style>
+	.panel-heading.addbill-heading{
+		display:flex;
+		justify-content:space-between;
+		align-items:center;
+	}
+	th {
+		display:flex';
+		white-space: nowrap;
+        text-align :center;
+	}
+    td{
+        text-align :center;
+    }
+	.logo-container {
+			position: relative;
+			width: fit-content;
+			text-align: center;
+			padding: 20px;
+		  }
+		  
+		  
+		  
+		  .logo-text {
+			display: flex;
+			align-items: center;
+			position: relative;
+			z-index: 2;
+		  }
+		  
+		  .ss {
+			font-family: fantasy;
+			color: red;
+			font-size: 80px;
+			font-weight: 100;
+			line-height: 1;
+		  }
+		  
+		  .digital {
+			font-family: fantasy;
+			color: green;
+			font-size: 80px;
+			font-weight: 100;
+			text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff;
+			margin-top: -10px;
+		  }
+		  
+	</style>
 	
 </head>
 <body id="app" class="app off-canvas">
@@ -217,7 +264,7 @@
                             <li><a href="{% url 'bill' %}">Add Bill</a></li>
                             <li><a href="{% url 'listbill' %}">List Bill</a></li>
                             <li><a href="{% url 'listquote' %}">List Quotation</a></li>
-                             
+                            <li><a href="{% url 'listestimate' %}">List Estimation</a></li>
                         </ul>
                     </li>
                     <li>
@@ -236,6 +283,19 @@
                         </ul>
                     </li>
 
+					<li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-wallet"></i>
+                            <span class="text">Cash Book</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'loadcash' %}">Load Cash</a></li>
+                            <li><a href="{% url 'cashbook' %}">Add Expences</a></li>
+                            <li><a href="{% url 'listcashbook' %}">List Expenses</a></li>
+                        </ul>
+                    </li>
+
 
 
                 </ul> <!-- #end navigation -->
@@ -249,152 +309,102 @@
 		<!-- Data Table -->
 		<div class="col-md-11">
 			<div class="panel panel-lined table-responsive panel-hovered mb20 data-table" style="padding-bottom: 20px">
-				<div class="panel-heading">Bills List</div>
-				<div class="panel-body">
-					<div class="small text-bold left mt5">
-						Show&nbsp;
-						<select class="lengthSelect">
-							<option value="5">5</option>
-							<option value="10" selected>10</option>
-							<option value="20">20</option>
-							<option value="50">50</option>
-						</select> 
-						&nbsp;entries
+				<!-- <div class="panel-heading">Payments List</div> -->
+				<div class="panel-heading addbill-heading">
+					<div><a class="btn btn-primary mr5" href="{% url "listquote" %}">List Quote</a></div>
+					<div>
+						<a href="{% url 'quote_invoice' data2.Quote_Id %}" title="Ganerate Invoice"><button type="button" class="btn btn-default icon ion-md-print waves-effect"></button></a>
+						{% if data2.Pending_Amount > 0 %}<a href="{% url "addpayment" id %}" title="Make Payment"  class="btn btn-primary mr5"  >Make Payment</a>{% endif %}
+					</div>
+				</div>
+
+                <div class="table-2">
+
+					<div>
+						<center><h3 style="margin:0px 0px 10px 0px;font-weight:bold">Bill Details</h1></center>
 					</div>
 
-					<form class="form-horizontal right col-lg-4" action="javascript:;">
-						<input type="text" class="form-control input-sm searchInput" placeholder="Type keyword">
-					</form>
-				</div>
-										<!-- data table -->
-										<table class="table table-bordered table-striped">
-											<thead>
-												<tr>
-													<th>
-														 Bill ID
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-													 Customer Id
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-                                                        Customer Name
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Phone Number
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Product Name
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Custom Product
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Category Name
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Sub Category
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Length 
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Width 
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Quantity 
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Cost Per Quantity
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														GST 
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														HSN 
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Total 
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-													<th>
-														Total With GST 
-														<div class="th">
-															<i class="fa fa-caret-up icon-up"></i>
-															<i class="fa fa-caret-down icon-down"></i>
-														</div>
-													</th>
-												</tr>
-											</thead>
-											<tbody>
-												<!-- data initialize via script, can also be load via ajax -->
-											</tbody>
-										</table>
-										<!-- #end data table -->
+                    
+                    <table class="table table-bordered table-striped table-responsive">
+                        <thead>
+                            <tr>
+                                <th>
+                                     Date
+                                     
+                                </th>
+                               
+                                <th>
+                                    Product
+                                     
+                                </th>
+                               
+                                <th>
+                                    Category
+                                     
+                                </th>
+                                <th>
+                                    Sub-Category
+                                     
+                                </th>
+                               
+                                <th>
+                                    Size(L X H)
+                                     
+                                </th>
+                                <th>
+                                    Quantity 
+                                     
+                                </th>
+                                <th>
+                                    Total Sqft 
+                                     
+                                </th>
+                                <th>
+                                    Cost
+                                     
+                                </th>
+                               
+                                <th>
+                                    Amount 
+                                     
+                                </th>
+								<th>
+									Charges
+								
+								</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in data %}
+                            
+                            <tr>
+                                <td>{{ item.Date }}</td>
+                                <td>{{ item.Product_Name }}</td>
+                                <td>{{ item.Category_Name }}</td>
+                                <td>{{ item.Sub_Category }}</td>
+                                <td>{{ item.Length|floatformat:"-2" }} X {{ item.Height|floatformat:"-2" }}</td>
+                                <td>{{ item.Quantity }}</td>
+                                <td>{{ item.Total_Sqft|floatformat:"-2" }}</td>
+                                <td>{{ item.Cost_Per_Sqft }}</td>
+                                <td>{% if item.Modified_Cost == 0 %}{{ item.Actual_Cost }}{% else %}{{ item.Modified_Cost }}{% endif %}</td>
+                                <td>{{ item.Additional_Charges }}</td>
+                            </tr>
+    
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+				
+				
+
+               
+
+
+                
 			
 		</div>
-		<div class="generate-inv">
-			<p><strong>Grand Total:</strong> <span id="grandTotal">{{data2.Grand_Total}}</span></p>
-			<p><strong>Grand Total with GST:</strong> <span id="grandTotalGST">{{data2.Grand_Total_With_Gst}}</span></p>
-			<button class="btn btn-primary mr5" type="submit" id="submitButton"  onclick="window.location.href='{% url "invoice" data2.Quote_Id %}';">Generate Invoice</button>
+
 		</div>
 		</div>
 
@@ -487,111 +497,7 @@
 <script src="{% static 'scripts/plugins/waves.min.js' %}"></script>
 <script src="{% static 'scripts/plugins/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'scripts/app.js' %}"></script>
-{% comment %} <script src="{% static 'scripts/tables.init.js' %}"></script> {% endcomment %}
 
-<script>
-	$(function () {
-		"use strict";
-	
-		function toggleBasicTableFns() {
-			var $btable = $(".basic-table");
-			var btns = [".btable-bordered", ".btable-striped", ".btable-condensed", ".btable-hover"];
-	
-			btns.forEach(function (btn) {
-				$btable.find(btn).on("click touchstart", function (e) {
-					var tableClass = $(this).data("table-class");
-					e.preventDefault();
-					$(this).toggleClass("active");
-					$btable.find("table").toggleClass(tableClass);
-				});
-			});
-		}
-	
-		function initDataTable() {
-			var $dataTable = $(".data-table");
-			var $table = $dataTable.find("table");
-	
-			var datas = [
-				{% for item in data %}
-				{ 
-					Quote_Id: "{{ item.Quote_Id|escapejs }}", 
-					Customer_Id: "{{ item.Customer_Id|escapejs }}", 
-					Customer_Name: "{{ item.Customer_Name|escapejs }}",  
-					Phone_No: "{{ item.Phone_No|escapejs }}", 
-					Product_Name: "{{ item.Product_Name|escapejs }}", 
-					Custom_Product: "{{ item.Custom_Product|escapejs }}", 
-					Category_Name: "{{ item.Category_Name|escapejs }}", 
-					Sub_Category: "{{ item.Sub_Category|escapejs }}", 
-					Length: "{{ item.Length|escapejs }}", 
-					Width: "{{ item.Width|escapejs }}", 
-					Quantity: "{{ item.Quantity|escapejs }}", 
-					Cost_Per_Quantity: "{{ item.Cost_Per_Quantity|escapejs }}",
-					GST: "{{ item.GST|escapejs }}", 
-					HSN_Code: "{{ item.HSN_Code|escapejs }}", 
-					Total_Cost: "{{ item.Total_Cost|escapejs }}", 
-					Total_Cost_With_Gst: "{{ item.Total_Cost_With_Gst|escapejs }}"
-				}{% if not loop.last %},{% endif %}
-				{% endfor %}
-			];
-	
-			var table = $table.DataTable({
-				data: datas,
-				columns: [
-					{ data: "Quote_Id" },
-					{ data: "Customer_Id" },
-					{ data: "Customer_Name" },
-					{ data: "Phone_No" },
-					{ data: "Product_Name" },
-					{ data: "Custom_Product" },
-					{ data: "Category_Name" },
-					{ data: "Sub_Category" },
-					{ data: "Length" },
-					{ data: "Width" },
-					{ data: "Quantity" },
-					{ data: "Cost_Per_Quantity" },
-					{ data: "GST" },
-					{ data: "HSN_Code" },
-					{ data: "Total_Cost" },
-					{ data: "Total_Cost_With_Gst" }
-				],
-				searching: true,
-				dom: "rtip",
-				pageLength: 10
-			});
-	
-			$dataTable.find(".searchInput").on("keyup", function () {
-				table.search(this.value).draw();
-			});
-	
-			$dataTable.find(".lengthSelect").on("change", function () {
-				table.page.len(this.value).draw();
-			});
-	
-			$dataTable.find(".dataTables_info").css({
-				"margin-left": "20px",
-				"font-size": "12px"
-			});
-	
-			// Confirmation alert before deleting
-			$(document).on("click", ".del-btn", function (e) {
-				e.preventDefault(); // Prevent default navigation
-				var deleteUrl = $(this).attr("href");
-				if (confirm("Are you sure you want to delete this Item?")) {
-					window.location.href = deleteUrl; // Proceed with deletion
-				}
-			});
-		}
-	
-		function _init() {
-			toggleBasicTableFns();
-			initDataTable();
-		}
-	
-		_init();
-	});
-	
-
-</script>
 	
 
 

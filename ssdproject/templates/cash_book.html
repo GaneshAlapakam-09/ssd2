@@ -91,6 +91,60 @@
 			text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff;
 			margin-top: -10px;
 		  }
+
+        .dropdown.category {
+			width: 100%;
+			/* Full width */
+			padding: 10px;
+			font-size: 16px;
+			border: 2px solid #ccc;
+			border-radius: 0px;
+			background-color: #fff;
+			cursor: pointer;
+			outline: none;
+			transition: border-color 0.3s, box-shadow 0.3s;
+		}
+
+		/* Focus effect */
+		.dropdown.category:focus {
+			border-color: #007bff;
+			box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+		}
+
+		/* Disabled option */
+		.dropdown.category option:disabled {
+			color: #aaa;
+		}
+
+		/* Hover effect */
+		.dropdown.category:hover {
+			border-color: #0056b3;
+		}
+
+		/* Custom styling for when dropdown is open */
+		.dropdown.category:active,
+		.dropdown.category:focus-within {
+			background-color: #f9f9f9;
+		}
+
+          /* Style the autocomplete dropdown */
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            z-index: 99;
+            width: 500px;
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-items div:hover {
+            background-color: #f1f1f1;
+        }
 		  
 	</style>
 
@@ -331,20 +385,15 @@
            <!-- Selects -->
 						<div class="col-sm-12 col-md-11">
 							<div class="panel-heading addbill-heading">
-								<div><a class="btn btn-primary mr5" href="{% url "listbill" %}">List Bill</a></div>
+								<div><a class="btn btn-primary mr5" href="{% url "listbill" %}">List Bill</a> <a class="btn btn-primary mr5" href="{% url "loadcash" %}">Load Amount</a></div>
 							</div>
 							<div class="panel panel-default mb20">
 								<div class="row">
 									<div class=" col-md-6">
 										<div class="panel-body">
-											<h3>BILL No. : <span id="paymentId">{{new_pay_id}}</span></h3>
-											<h3>Total Bill Amount : ₹<span id="billAmount">{{data.Grand_Total}}</span></h3>
-											
-											<h3>Pending Amount : ₹<span id="actualPending">{% if data.Payment_Id %}{{data.Pending_Amount}}{% else  %}{{data.Grand_Total}}{% endif %}</span></h3>
-											
-											
-
-											
+											{% comment %} <h3>BILL No. : <span id="paymentId">{{new_pay_id}}</span></h3> {% endcomment %}
+											<h3>Available Amount : ₹<span id="availbleAmount">{{cash_in_hand}}</span></h3>
+											{% comment %} <h3>Pending Amount : ₹<span id="actualPending">{% if data.Payment_Id %}{{data.Pending_Amount}}{% else  %}{{data.Grand_Total}}{% endif %}</span></h3> {% endcomment %}
 
 										</div>
 									</div>
@@ -359,72 +408,53 @@
 									<form role="form" id="paymentform">
 										{% csrf_token %}
 										<div>
-											<!-- Single Select -->
+		
+											
+											<div class="form-group">
+                                                <label class="control-label small">Expense</label>
+                                                <input type="text" id="search" placeholder="Search here.." class="form-control" autocomplete="off" />
+                                                <div id="autocomplete-list" class="autocomplete-items"></div>
+											</div>
+
+                                            
+
+											<!-- Category -->
+											<div class="form-group">
+												<label class="control-label small">Category</label>
+												<select id="category" class="dropdown category" style="width: 100%" data-placeholder="Select Payment Method">
+													<option>Select Category</option>	<!-- empty, for placeholder -->
+                                                    <option value="Refershment">Refreshment</option>
+                                                    <option value="Office Expences">Office Expences</option>
+                                                    <option value="Drawings">Drawings</option>
+                                                    <option value="Porter">Porter</option>
+                                                    <option value="Traveling">Traveling</option>
+                                                    {% comment %} {% for item in category %}
+													    <option value="{{item.Category}}">{{item.Category}}</option>                                                    
+                                                    {% endfor %} {% endcomment %}
+												</select>
+											</div>
+
+											<!-- Amount -->
+											<div class="form-group">
+												<label class="control-label small">Amount</label>
+                                                <input type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
+											</div>
+
+                                            <!-- Payment Mode -->
 											<div class="form-group">
 												<label class="control-label small">Mode Of Payment</label>
-												<select id="paymentMode" style="width: 100%" data-placeholder="Select Payment Method">
-													<option></option>	<!-- empty, for placeholder -->
+												<select id="paymentMode" class="dropdown category">
+													<option>Select Payment Mode</option>	<!-- empty, for placeholder -->
 													<option value="CASH">Cash</option>
 													<option value="UPI">UPI</option>
-													<option value="CHEQUE">CHEQUE</option>
-													<option value="IMPS_NIFT">IMPS/NEFT</option>
-													<option value="DISCOUNTED">DISCOUNTED</option>
 												</select>
-																																	
-																								
-												<!-- Cash Payment Fields -->
-												<div id="cashDiv" style="display: none;padding:20px 0px">
-													<label for="">Enter Amount</label>
-													<input type="number" id="cashAmount" class="form-control" placeholder="Enter Cash Amount">
-													<label for="">Pending</label>
-													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
+											</div>
 
-												</div>
 
-												<!-- UPI Payment Fields -->
-												<div id="upiDiv" style="display: none;padding:20px 0px">
-													<label for="">Enter Amount</label>
-													<input type="number" id="upiAmount" class="form-control" placeholder="Enter UPI Amount">
-													<label for="">Pending Amount</label>
-													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
-													<label for="">Enter Mobile Number</label>
-													<input type="text" id="upiMobile" class="form-control" placeholder="Enter Mobile Number">
-													<label for="">Enter UTR No.</label>
-													<input type="text" id="upiUtr" class="form-control" placeholder="Enter UTR Number">
-
-												</div>
-
-												<!-- Account Transfer Fields -->
-												<div id="transferDiv" style="display: none;padding:20px 0px">
-													<label for="">Enter Amount</label>
-													<input type="number" id="transferAmount" class="form-control" placeholder="Enter Transfer Amount">
-													<label for="">Pending Amount</label>
-													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
-													<label for="">Enter UTR No.</label>
-													<input type="text" id="transferUtr" class="form-control" placeholder="Enter UTR Number">
-
-												</div>
-
-												<div id="chequeDiv" style="display: none;padding:20px 0px">
-													<label for="">Enter Amount</label>
-													<input type="number" id="chequeAmount" class="form-control" placeholder="Enter Cheque Amount">
-													<label for="">Pending Amount</label>
-													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
-													<label for="">Cheque Date</label>
-													<input type="date" id="chequeDate" class="form-control" placeholder="Enter UTR Number">
-
-												</div>
-
-												<!-- Discount Fields -->
-												<div id="manualDiv" style="display: none; padding:20px 0px">
-													<label for="">Enter Amount</label>
-													<input type="number" id="manualAmount" class="form-control" placeholder="Enter Amount">
-													<label for="">Pending Amount</label>
-													<input type="text" class="pendingAmount form-control" placeholder="Pending Amount" readonly>
-													<label for="">Enter the Reason For Discount</label>
-													<input type="text" id="manualReason" class="form-control" placeholder="Enter Reason for Bad Debts">
-
-												</div>
+											<!-- Remarks -->
+											<div class="form-group">
+												<label class="control-label small">Remarks</label>
+                                                <textarea name="remarks" id="remarks" class="form-control" placeholder="Remarks"></textarea>
 											</div>
 
 										</div>
@@ -447,28 +477,29 @@
 									<thead>
 										<tr>
 											<th>
+												Expences
+												<div class="th">
+													<i class="fa fa-caret-up icon-up"></i>
+													<i class="fa fa-caret-down icon-down"></i>
+												</div>
+											</th>
+											
+											<th>
+												Expence Category
+												<div class="th">
+													<i class="fa fa-caret-up icon-up"></i>
+													<i class="fa fa-caret-down icon-down"></i>
+												</div>
+											</th>
+
+											<th>
 												Payment Mode
 												<div class="th">
 													<i class="fa fa-caret-up icon-up"></i>
 													<i class="fa fa-caret-down icon-down"></i>
 												</div>
 											</th>
-											
-											<th>
-												UTR / Reason / Cheque Date
-												<div class="th">
-													<i class="fa fa-caret-up icon-up"></i>
-													<i class="fa fa-caret-down icon-down"></i>
-												</div>
-											</th>
-											
-											<th>
-												Mobile Number
-												<div class="th">
-													<i class="fa fa-caret-up icon-up"></i>
-													<i class="fa fa-caret-down icon-down"></i>
-												</div>
-											</th>
+
 											<th>
 												Amount
 												<div class="th">
@@ -477,26 +508,27 @@
 												</div>
 											</th>
 											<th>
-												Pending Amount
+												Remarks
 												<div class="th">
 													<i class="fa fa-caret-up icon-up"></i>
 													<i class="fa fa-caret-down icon-down"></i>
 												</div>
 											</th>
 											
-											<!--<th>
+											<th>
 												Action
 												<div class="th">
 													<i class="fa fa-caret-up icon-up"></i>
 													<i class="fa fa-caret-down icon-down"></i>
 												</div>
-											</th>-->
+											</th>
 										</tr>
 									</thead>
 									<tbody>
 										<!-- Data initializes via script, can also be loaded via AJAX -->
 									</tbody>
 								</table>
+                                {% comment %} <h3 id = "totalAmountDisplay">Total Amount</h3> {% endcomment %}
 							</div>
 							<div class="addpays">
 								<button id="sendData" class="btn-tag-primary">Submit The Payments</button>
@@ -610,287 +642,182 @@
 <!-- Scripts -->
 {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
 {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> {% endcomment %}
-<script>
-	$(document).ready(function () {
-		"use strict";
 
-		const totalAmount = parseFloat($("#billAmount").text()) || 0; // Ensure numeric value
-		let actualPending = parseFloat($("#actualPending").text().trim());
-		if (isNaN(actualPending)) {
-			actualPending = 0; // Set to 0 if not available
-		}
 
-		$("#paymentMode").select2();
+ <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            //Sample data (you will replace this with Django dynamic data)
+            var customerData = [
+                {% for item in category %}
+                    "{{item.Expense_Name}}",
+                {% endfor %}
+            ];
 
-		function resetPaymentFields() {
-			$(".payment-div").hide().find("input").val("");
-		}
 
-		function getTotalEnteredAmount() {
-			let total = 0;
-			$("#entriesTable tbody tr").each(function () {
-				total += parseFloat($(this).find("td:nth-child(4)").text().replace("₹", "")) || 0;
-			});
-			return total;
-		}
+            var input = document.getElementById("search");
+            var autocompleteList = document.getElementById("autocomplete-list");
 
-		function updatePendingAmount() {
-			let enteredAmount = parseFloat($(this).val()) || 0;
-			let totalEnteredAmount = getTotalEnteredAmount();
-			let remaining = actualPending - totalEnteredAmount - enteredAmount;
-			if (remaining < 0) remaining = 0;
-			$(".pendingAmount").val(remaining.toFixed(2)); // Update pendingAmount field
-		}
+            input.addEventListener("input", function () {
+                var val = this.value;
+                autocompleteList.innerHTML = ""; // Clear previous results
 
-		// Function to get the last row's pending amount or bill amount
-		function getPendingAmount() {
-			let table = $("#entriesTable tbody");
-			let rows = table.find("tr");
-		
-			// If there are rows in the table
-			if (rows.length > 0) {
-				// Get the last row's pending amount
-				let lastRow = rows.last();
-				let pendingAmountCell = lastRow.find("td:nth-child(5)");
-				let pendingAmount = parseFloat(pendingAmountCell.text().replace("₹", "").trim()) || 0;
-		
-				// Enable the send button
-				$("#sendData").prop("disabled", false);
-		
-				return pendingAmount;
-			} else {
-				// Disable the send button if no rows exist
-				$("#sendData").prop("disabled", true);
-		
-				// Return actualPending if it's a valid number, otherwise return 0
-				return !isNaN(actualPending) ? actualPending : 0;
-			}
-		}
+                if (!val) return; // Stop if input is empty
 
-		// Initialize pending amount on page load
-		$(".pendingAmount").val(getPendingAmount().toFixed(2));
+                customerData.forEach(function (item) {
+                    if (item.toLowerCase().includes(val.toLowerCase())) {
+                        var suggestion = document.createElement("div");
+                        suggestion.textContent = item;
+                        suggestion.addEventListener("click", function () {
+                            input.value = item; // Set input value on selection
+                            autocompleteList.innerHTML = ""; // Hide dropdown
+                        });
+                        autocompleteList.appendChild(suggestion);
+                    }
+                });
+            });
 
-		$("#paymentMode").on("change", function () {
-			resetPaymentFields();
-			let selectedMode = $(this).val();
-			if (selectedMode === "CASH") {
-				$("#cashDiv").show();
-				$("#upiDiv").hide();
-				$("#transferDiv").hide();
-				$("#manualDiv").hide();
-				$("#chequeDiv").hide();
-			} else if (selectedMode === "UPI") {
-				$("#upiDiv").show();
-				$("#cashDiv").hide();
-				$("#transferDiv").hide();
-				$("#manualDiv").hide();
-				$("#chequeDiv").hide();
-			} else if (selectedMode === "IMPS_NIFT") {
-				$("#transferDiv").show();
-				$("#cashDiv").hide();
-				$("#upiDiv").hide();
-				$("#manualDiv").hide();
-				$("#chequeDiv").hide();
-			} else if (selectedMode === "CHEQUE") {
-				$("#chequeDiv").show();
-				$("#transferDiv").hide();
-				$("#cashDiv").hide();
-				$("#upiDiv").hide();
-				$("#manualDiv").hide();
-			} else if (selectedMode === "DISCOUNTED") {
-				$("#manualDiv").show();
-				$("#cashDiv").hide();
-				$("#upiDiv").hide();
-				$("#transferDiv").hide();
-				$("#chequeDiv").hide();
-			} else {
-				$("#cashDiv").hide();
-				$("#upiDiv").hide();
-				$("#transferDiv").hide();
-				$("#chequeDiv").hide();
-				$("#manualDiv").hide();
-			}
-		});
-
-		$("#cashAmount, #upiAmount, #transferAmount, #manualAmount, #chequeAmount").on("keyup", function () {
-			let enteredAmount = parseFloat($(this).val()) || 0;
-			let totalEnteredAmount = getTotalEnteredAmount();
-			let pending = actualPending - totalEnteredAmount;
-
-			if (enteredAmount > pending) {
-				alert("Entered amount exceeds the pending amount!");
-				$(this).val("");
-				enteredAmount = 0;
-			} else if (enteredAmount < 0) {
-				alert("Enter a positive amount");
-				$(this).val("");
-				enteredAmount = 0;
-			}
-
-			// Recalculate the total entered amount after potential correction
-			totalEnteredAmount = getTotalEnteredAmount();
-			let remaining = actualPending - totalEnteredAmount;
-			if (remaining < 0) remaining = 0;
-
-			$(".pendingAmount").val(remaining.toFixed(2));
-		});
-
-		$("#addEntryBtn").on("click", function () {
-			let mode = $("#paymentMode").val();
-			if (!mode) return alert("Please select a payment mode.");
-
-			let amount = "", utrOrReason = "", mobile = "";
-			if (mode === "CASH") amount = $("#cashAmount").val();
-			else if (mode === "UPI") {
-				amount = $("#upiAmount").val();
-				mobile = $("#upiMobile").val();
-				utrOrReason = $("#upiUtr").val();
-			} else if (mode === "IMPS_NIFT") {
-				amount = $("#transferAmount").val();
-				utrOrReason = $("#transferUtr").val();
-			} else if (mode === "CHEQUE") {
-				amount = $("#chequeAmount").val();
-				utrOrReason = $("#chequeDate").val();
-			} else if (mode === "DISCOUNTED") {
-				amount = $("#manualAmount").val();
-				utrOrReason = $("#manualReason").val();
-			}
-
-			if (!amount || amount <= 0) return alert("Enter a valid amount.");
-			let enteredAmount = parseFloat(amount);
-			let pendingAmount = actualPending - getTotalEnteredAmount() - enteredAmount;
-			if (pendingAmount < 0) pendingAmount = 0;
-
-			// Confirmation alert
-			let confirmationMessage = `Bill Amount: ₹${totalAmount.toFixed(2)}\nPaying Amount: ₹${enteredAmount.toFixed(2)}\nPending Amount: ₹${pendingAmount.toFixed(2)}\nAre you sure you want to add this payment?`;
-			if (!confirm(confirmationMessage)) return;
-
-			// Add entry to the table
-			$("#entriesTable tbody").append(`
-				<tr>
-					<td>${mode.replace("_", "/")}</td>
-					<td>${utrOrReason || "N/A"}</td>
-					<td>${mobile || "N/A"}</td>
-					<td>${parseFloat(amount).toFixed(2)}</td>
-					<td>${pendingAmount.toFixed(2)}</td>
-				</tr>
-			`);
-
-			// Update pending amount
-			$(".pendingAmount").val(pendingAmount.toFixed(2));
-			resetPaymentFields();
-			document.getElementById("paymentform").reset();
-			$("#paymentMode").val(null).trigger("change");
-			getPendingAmount();
-		});
-	});
+            document.addEventListener("click", function (e) {
+                if (!input.contains(e.target) && !autocompleteList.contains(e.target)) {
+                    autocompleteList.innerHTML = ""; // Hide dropdown when clicking outside
+                }
+            });
+        });
 </script>
 
 
-
 <script>
-	document.getElementById("sendData").addEventListener("click", function () {
-		let tableData = [];
-	
-		document.querySelectorAll("#entriesTable tbody tr").forEach(row => {
-			let rowData = {
-				payment_mode: row.cells[0].textContent.trim(),
-				utr_reason: row.cells[1].textContent.trim(),
-				mobile_number: row.cells[2].textContent.trim(),
-				amount: row.cells[3].textContent.trim(),
-				pending_amount: row.cells[4].textContent.trim()
-			};
-			tableData.push(rowData);
-		});
-	
-		let paymentId = document.getElementById("paymentId").textContent.trim(); // Get the dynamic ID
-		let url = `/addpayment/${paymentId}/`;  // Use ID in URL
-	
-		// Get bill amount
-		let billAmountElement = document.getElementById("billAmount");
-		let totalAmount = billAmountElement ? billAmountElement.textContent.trim() : "0";
-	
-		console.log("🔹 billAmountElement:", billAmountElement); // Debugging
-		console.log("🔹 totalAmount:", totalAmount); // Debugging
-	
-		let table = $("#entriesTable tbody");
-		let rows = table.find("tr");
-	
-		let finalPending = "0"; // Default value
-	
-		if (rows.length > 0) {
-			// Get the last row
-			let lastRow = rows.last();
-			let pendingAmountCell = lastRow.get(0).querySelector("td:nth-child(5)");
-			finalPending = pendingAmountCell ? pendingAmountCell.textContent.replace("₹", "").trim() : "0";
-		} else {
-			// If no rows, return the bill amount
-			finalPending = totalAmount || "0"; // Ensure totalAmount is defined
-		}
-	
-		console.log("🔹 finalPending before sending:", finalPending); // Debugging
-	
-		let requestBody = JSON.stringify({ 
-			tableData: tableData,
-			finalPending: finalPending,
-			totalAmount: totalAmount // ✅ Fixed issue
-		});
-	
-		console.log("🔹 Request Payload:", requestBody); // Debugging
-	
-		fetch(url, {  
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value // Include CSRF token
-			},
-			body: requestBody // ✅ Now includes finalPending and totalAmount
-		})
-		.then(response => response.text())  // Read response as text
-		.then(data => {
-			console.log("🔹 Raw Response:", data);  // Debugging
-			try {
-				let jsonData = JSON.parse(data);
-				console.log("✅ Parsed JSON:", jsonData);
-				alert(jsonData.message);
-				// ✅ Refresh the page
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize variables
+        let entries = [];
+        const availableAmount = parseFloat(document.getElementById('availbleAmount').textContent) || 0;
 
-				// ✅ Redirect after a short delay (1 second)
-				
-				setTimeout(() => {
-					// Redirect to the desired page
-					// Clear the browser history state to prevent back navigation
-					history.pushState(null, null, window.location.href);
-					location.reload();
-				}, 100);
-				
-				// Listen for back navigation attempts and push the current state
-				window.onpopstate = function () {
-					history.pushState(null, null, window.location.href);
-				};
-				
-			} catch (error) {
-				console.error("❌ JSON Parse Error:", error);
-			}
-		})
-		.catch(error => {
-			console.error("❌ Fetch Error:", error);
-		});
-	});
-	
-	
-	
+        // Add entry button click handler
+        document.getElementById('addEntryBtn').addEventListener('click', function () {
+            const expense = document.getElementById('search').value.trim();
+            const category = document.getElementById('category').value;
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const paymentMode = document.getElementById('paymentMode').value;
+            const remarks = document.getElementById('remarks').value.trim();
+
+            if (!expense || !category || amount <= 0 || !paymentMode) {
+                alert('Please fill all required fields with valid values');
+                return;
+            }
+
+            const currentTotal = entries.reduce((sum, entry) => sum + entry.amount, 0);
+            const newTotal = currentTotal + amount;
+
+            if (newTotal > availableAmount) {
+                alert(`Total amount (₹${newTotal}) exceeds available amount (₹${availableAmount})`);
+                return;
+            }
+
+            const newEntry = {
+                expense,
+                category,
+                amount,
+                paymentMode,
+                remarks,
+                id: Date.now()
+            };
+            entries.push(newEntry);
+            updateTable();
+
+           document.getElementById('paymentform').reset();
+
+        });
+
+        // Update table function
+        function updateTable() {
+            const tbody = document.querySelector('#entriesTable tbody');
+            tbody.innerHTML = '';
+
+            let total = 0;
+
+            entries.forEach(entry => {
+                total += entry.amount;
+
+                const row = document.createElement('tr');
+                row.dataset.id = entry.id;
+
+                row.innerHTML = `
+                    <td>${entry.expense}</td>
+                    <td>${entry.category}</td>
+                    <td>${entry.paymentMode}</td>
+                    <td>₹${entry.amount.toFixed(2)}</td>
+                    <td>${entry.remarks}</td>
+                    <td><button class="btn btn-sm btn-danger delete-entry">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            const totalDiv = document.getElementById('totalAmountDisplay');
+            if (totalDiv) totalDiv.remove();
+
+            const totalDisplay = document.createElement('div');
+            totalDisplay.id = 'totalAmountDisplay';
+            totalDisplay.className = 'alert alert-info';
+            totalDisplay.innerHTML = `<strong>Total Amount:</strong> ₹${total.toFixed(2)} / ₹${availableAmount.toFixed(2)}`;
+
+            document.getElementById('entriesTable').insertAdjacentElement('afterend', totalDisplay);
+        }
+
+        // Delete entry handler
+        document.getElementById('entriesTable').addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('delete-entry')) {
+                const row = e.target.closest('tr');
+                const entryId = parseInt(row.dataset.id);
+                entries = entries.filter(entry => entry.id !== entryId);
+                updateTable();
+            }
+        });
+
+        // Submit data handler
+        document.getElementById('sendData').addEventListener('click', function () {
+            if (entries.length === 0) {
+                alert('Please add at least one entry before submitting');
+                return;
+            }
+
+            const totalAmount = entries.reduce((sum, entry) => sum + entry.amount, 0);
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+            const postData = new FormData();
+            postData.append('entries', JSON.stringify(entries));
+            postData.append('total_amount', totalAmount);
+            postData.append('available_amount', availableAmount);
+            postData.append('csrfmiddlewaretoken', csrfToken);
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: postData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Data submitted successfully!');
+                    entries = [];
+                    updateTable();
+                    // Optionally update availableAmount if server responds with a new value
+                    // document.getElementById('availbleAmount').textContent = data.new_available_amount;
+                } else {
+                    alert('Error: ' + (data.message || 'Submission failed'));
+                }
+            })
+            .catch(error => {
+                alert('Error submitting data: ' + error);
+            });
+        });
+    });
 </script>
 
-	
-
-	<script>
-		window.addEventListener("load", function () {
-		  const preloader = document.getElementById("preloader");
-		  preloader.style.opacity = "0";
-		  setTimeout(() => preloader.style.display = "none", 500);
-		});
-	</script>
+<script>
+    window.addEventListener("load", function () {
+        const preloader = document.getElementById("preloader");
+        preloader.style.opacity = "0";
+        setTimeout(() => preloader.style.display = "none", 500);
+    });
+</script>
 	
 </body>
 </html>

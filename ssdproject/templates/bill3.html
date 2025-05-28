@@ -291,151 +291,165 @@
 		<!-- main-navigation -->
 		 
 		<aside class="nav-wrap" id="site-nav" data-perfect-scrollbar>
-			<div class="nav-head">
-				<!-- site logo -->
-				<a href="{% url 'dashboard' %}" class="site-logo text-uppercase">
-					{% comment %} <i class="ion ion-disc"></i> {% endcomment %}
-					<img src="{% static 'images/SS_LOGO.webp' %}" alt="">
-					<span class="text">SS Digital</span>
-				</a>
-			</div>
+            <div class="nav-head">
+                <!-- site logo -->
+                <a href="{% url 'dashboard' %}" class="site-logo text-uppercase">
+                    {% comment %} <i class="ion ion-disc"></i> {% endcomment %}
+                    <img src="{% static 'images/SS_LOGO.webp' %}" alt="">
+                    <span class="text">SS Digital</span>
+                </a>
+            </div>
 
-			<!-- Site nav (vertical) -->
+            <!-- Site nav (vertical) -->
 
-			<nav class="site-nav clearfix" role="navigation">
-
-
-				<!-- navigation -->
-				<ul class="list-unstyled clearfix nav-list mb15">
-					<li class="active">
-						<a href="{% url 'dashboard' %}">
-							<i class="ion ion-monitor"></i>
-							<span class="text">Dashboard</span>
-						</a>
-					</li>
-					{% comment %} <li>
-						<a>
-							<i class="icon ion-md-people"></i>
-							<span class="text">Customer Management</span>
-						</a>
-					</li> {% endcomment %}
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-md-people"></i>
-							<span class="text">Customer Management</span>
-							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'addcustomer' %}">Add Customer</a></li>
-							<li><a href="{% url 'listcustomer' %}">List Customer</a></li>
-						</ul>
-					</li>
-					{% if user.role == 'admin' %}
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-md-contact"></i>
-							<span class="text">Employee Management</span>
-							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'addemployee' %}">Add Employee</a></li>
-							<li><a href="{% url 'listemployee' %}">List Employee</a></li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-md-cube"></i>
-							<span class="text">Material Management</span>
-							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'addmaterial' %}">Add Material</a></li>
-							<li><a href="{% url 'listmaterial' %}">List Material</a></li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-logo-dropbox"></i>
-							<span class="text">Inward Management</span>
-							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'select_material' %}">Add Inward</a></li>
-							<li><a href="{% url 'listinward' %}">List Inward</a></li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-md-albums"></i>
-							<span class="text">Product Management</span>
-							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'addproduct' %}">Add Product</a></li>
-							<li><a href="{% url 'listproduct' %}">List Product</a></li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-md-apps"></i>
-							<span class="text">Category Management</span>
-							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'addcategories' %}">Add Category</a></li>
-							<li><a href="{% url 'listcategories' %}">List Category</a></li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-md-pricetag"></i>
-							<span class="text">Cost Management</span>
-							{% comment %} <i class="icon ion-md-pricetag"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'addcost' %}">Add Cost</a></li>
-							<li><a href="{% url 'listcost' %}">List Cost</a></li>
-						</ul>
-					</li>
-					{% endif %}
+            <nav class="site-nav clearfix" role="navigation">
 
 
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-md-paper"></i>
-							<span class="text">Billing Management</span>
-							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'bill' %}">Add Bill</a></li>
-							<li><a href="{% url 'listbill' %}">List Bill</a></li>
-							<li><a href="{% url 'listquote' %}">List Quotation</a></li>
-							 
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="icon ion-md-cash"></i>
-							<span class="text">Payment Management</span>
-							{% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
-						</a>
-						<ul class="inner-drop list-unstyled">
-							<li><a href="{% url 'filtered_data' 'all' %}">Overall</a></li>
-							<li><a href="{% url 'filtered_data' 'today' %}">Today</a></li>
-							<li><a href="{% url 'filtered_data' 'this_week' %}">This Week</a></li>
-							<li><a href="{% url 'filtered_data' 'this_month' %}">This Month</a></li>
-							<li><a href="{% url 'filtered_data' 'this_year' %}">This Year</a></li>
+                <!-- navigation -->
+                <ul class="list-unstyled clearfix nav-list mb15">
+                    <li class="active">
+                        <a href="{% url 'dashboard' %}">
+                            <i class="ion ion-monitor"></i>
+                            <span class="text">Dashboard</span>
+                        </a>
+                    </li>
+                    {% comment %} <li>
+                        <a>
+                            <i class="icon ion-md-people"></i>
+                            <span class="text">Customer Management</span>
+                        </a>
+                    </li> {% endcomment %}
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-people"></i>
+                            <span class="text">Customer Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addcustomer' %}">Add Customer</a></li>
+                            <li><a href="{% url 'listcustomer' %}">List Customer</a></li>
+                        </ul>
+                    </li>
+                    {% if user.role == 'admin' %}
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-contact"></i>
+                            <span class="text">Employee Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addemployee' %}">Add Employee</a></li>
+                            <li><a href="{% url 'listemployee' %}">List Employee</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-cube"></i>
+                            <span class="text">Material Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addmaterial' %}">Add Material</a></li>
+                            <li><a href="{% url 'listmaterial' %}">List Material</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-logo-dropbox"></i>
+                            <span class="text">Inward Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'select_material' %}">Add Inward</a></li>
+                            <li><a href="{% url 'listinward' %}">List Inward</a></li>
+                            <li><a href="{% url 'listoutward' %}">List Outward</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-albums"></i>
+                            <span class="text">Product Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addproduct' %}">Add Product</a></li>
+                            <li><a href="{% url 'listproduct' %}">List Product</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-apps"></i>
+                            <span class="text">Category Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addcategories' %}">Add Category</a></li>
+                            <li><a href="{% url 'listcategories' %}">List Category</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-pricetag"></i>
+                            <span class="text">Cost Management</span>
+                            {% comment %} <i class="icon ion-md-pricetag"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'addcost' %}">Add Cost</a></li>
+                            <li><a href="{% url 'listcost' %}">List Cost</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-paper"></i>
+                            <span class="text">Billing Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'bill' %}">Add Bill</a></li>
+                            <li><a href="{% url 'listbill' %}">List Bill</a></li>
+                            <li><a href="{% url 'listquote' %}">List Quotation</a></li>
+                            <li><a href="{% url 'listestimate' %}">List Estimation</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-cash"></i>
+                            <span class="text">Payment Management</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'filtered_data' 'all' %}">Overall</a></li>
+                            <li><a href="{% url 'filtered_data' 'today' %}">Today</a></li>
+                            <li><a href="{% url 'filtered_data' 'this_week' %}">This Week</a></li>
+                            <li><a href="{% url 'filtered_data' 'this_month' %}">This Month</a></li>
+                            <li><a href="{% url 'filtered_data' 'this_year' %}">This Year</a></li>
                             <li><a href="{% url 'outstanding'  %}">Outstanting Bills</a></li>
-						</ul>
-					</li>
+                        </ul>
+                    </li>
+
+					<li>
+                        <a href="javascript:;">
+                            <i class="icon ion-md-wallet"></i>
+                            <span class="text">Cash Book</span>
+                            {% comment %} <i class="icon ion-md-arrow"></i> {% endcomment %}
+                        </a>
+                        <ul class="inner-drop list-unstyled">
+                            <li><a href="{% url 'loadcash' %}">Load Cash</a></li>
+                            <li><a href="{% url 'cashbook' %}">Add Expences</a></li>
+                            <li><a href="{% url 'listcashbook' %}">List Expenses</a></li>
+                        </ul>
+                    </li>
 
 
 
-				</ul> <!-- #end navigation -->
-			</nav>
+                </ul> <!-- #end navigation -->
+            </nav>
 
 
-		</aside>
+        </aside>
 		<!-- #end main-navigation -->
 
 		<div class="content-container fixedHeader nav-expand">
@@ -1863,7 +1877,11 @@
   				  : `${length} X ${width}`
 				}</td>
 				<td>${qty}</td>
-				<td>${(area === 1) ? 0 : area * qty}</td>
+				<td>${
+				(!length && !width && !area)
+					? 0
+					: length * width
+				}</td>
 				<td>${costDisplay} </td>
 				<td>${chargesValue} </td>
 				<td>${
@@ -1914,12 +1932,25 @@
 				let customerInput = document.getElementById("search").value.trim();
 				let customerData = customerInput.split("--");
 
+				let agentInput = document.getElementById("search2").value.trim();
+				let agentData = agentInput.split("--");
+
+
+				if (agentData.length !== 3 && customerData.length !== 3) {
+					alert("Invalid Agent/customer input format. Please use ID--Name--Phone.");
+					return false;
+				}
+
+
+
 				let customerId = customerData[0] || "";
 				let customerName = customerData[1] || "";
 				let customerPhone = customerData[2] || "";
 
-				let agentInput = document.getElementById("search2").value.trim();
-				let agentData = agentInput.split("--");
+				
+				
+
+
 
 				let agentId = agentData[0] || "";
 				let agentName = agentData[1] || "";
@@ -1972,6 +2003,9 @@
 			// Submit form and send all table data
 			function submitData(url, extraData = {}, showAlert = true) {
 				let data = collectTableData();
+				if (!data) {
+					return;
+				}
 
 				// Merge extraData into data
 				Object.assign(data, extraData);
