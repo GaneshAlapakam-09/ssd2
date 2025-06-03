@@ -836,12 +836,9 @@ def select_bill(request,id):
     request.session['whatsapp_url'] = whatsapp_url
     return redirect(service_success)
 
-@login_required(login_url='signin')
 def send_whatsapp_message(data):
     phone = str(data.Phone_No)
     name = data.Customer_Name
-
-    
     # message = f"Hello {name},\n\n Bill Id : {data.Bill_Id}\n Bill Amount : ₹ {data.Grand_Total}\n Piad Amount : ₹ {data.Paid_Amount}\n Balance : ₹ {data.Pending_Amount}\n\n Thank You For Reaching Us.\n Regards ' SSDIGITAL '\n For More Informantion\n +91 9629932649"
     message = f"Hello {name},\n\n" \
           f"Bill Id : {data.Bill_Id}\n" \

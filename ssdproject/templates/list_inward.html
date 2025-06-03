@@ -40,7 +40,41 @@
  	<link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
 
 	<!-- Match Media polyfill for IE9 -->
-	<!--[if IE 9]> <script src="scripts/ie/matchMedia.js"></script>  <![endif]--> 
+	<!--[if IE 9]> <script src="scripts/ie/matchMedia.js"></script>  <![endif]-->
+	
+<style>
+	.logo-container {
+		position: relative;
+		width: fit-content;
+		text-align: center;
+		padding: 20px;
+	}
+		
+	.logo-text {
+	display: flex;
+	align-items: center;
+	position: relative;
+	z-index: 2;
+	}
+	
+	.ss {
+	font-family: fantasy;
+	color: red;
+	font-size: 80px;
+	font-weight: 100;
+	line-height: 1;
+	}
+	
+	.digital {
+	font-family: fantasy;
+	color: green;
+	font-size: 80px;
+	font-weight: 100;
+	text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff;
+	margin-top: -10px;
+	}
+	
+</style>
 
 	
 </head>
@@ -221,7 +255,7 @@
                             <li><a href="{% url 'bill' %}">Add Bill</a></li>
                             <li><a href="{% url 'listbill' %}">List Bill</a></li>
                             <li><a href="{% url 'listquote' %}">List Quotation</a></li>
-                            <li><a href="{% url 'listestimate' %}">List Estimation</a></li>
+                             
                         </ul>
                     </li>
                     <li>

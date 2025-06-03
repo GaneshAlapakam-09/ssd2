@@ -33,7 +33,7 @@ DEBUG = False
 
 
 # ALLOWED_HOSTS = ['ssd.jrbilling.in','198.38.89.78']
-ALLOWED_HOSTS = ['66.103.210.129']
+ALLOWED_HOSTS = ['66.103.210.129','ssdigitaltrl.com']
 
 # Application definition
 

@@ -122,8 +122,7 @@
         .bill-calculation{
             margin-right: 70px;
         }
-
-
+        
 		  
 	</style>
 
@@ -185,7 +184,7 @@
                             <center>
                                 <h1><strong>JOB DETAILS</strong></h1>
                             </center>
-                            <table class="table table-bordered invoice-table mb30">
+                            <table class="table table-bordered invoice-table mb30 job-details">
                                 <thead>
                                     <tr>
                                         <th>S.No</th>
@@ -229,7 +228,7 @@
                             <h1><strong>PAYMENT DETAILS</strong></h1>
                         </center>
                         <!-- invoice table -->
-                        <table class="table table-bordered invoice-table mb30">
+                        <table class="table table-bordered invoice-table payment-details mb30">
                             <thead>
                                 <tr>
                                     <th>PAYMENT MODE</th>
@@ -291,7 +290,9 @@
 
 
                  
-                        <h5 class="text-center large mt30 footer">SS Digital || Tiruvallur || 9629932649</h5>
+                        {% comment %} <h5 class="text-center large mt30 footer">SS Digital || Tiruvallur || 9629932649</h5> {% endcomment %}
+
+                        <div style="min-height:100px"></div>
 
 
                     </div>
@@ -462,6 +463,42 @@
   grandtotalSpan.textContent = formatINRCurrency(grandtotalValue);
   paidSpan.textContent = formatINRCurrency(paidValue);
 </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tableBody = document.querySelector(".invoice-table.job-details tbody");
+    const currentRows = tableBody.querySelectorAll("tr").length;
+    const rowsToAdd = 15 - currentRows;
+
+    for (let i = 0; i < rowsToAdd; i++) {
+      const row = document.createElement("tr");
+      for (let j = 0; j < 9; j++) {
+        const cell = document.createElement("td");
+        cell.innerHTML = "&nbsp;";
+        row.appendChild(cell);
+      }
+      tableBody.appendChild(row);
+    }
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tableBody = document.querySelector(".invoice-table.payment-details tbody");
+    const currentRows = tableBody.querySelectorAll("tr").length;
+    const rowsToAdd = 4 - currentRows;
+
+    for (let i = 0; i < rowsToAdd; i++) {
+      const row = document.createElement("tr");
+      for (let j = 0; j < 5; j++) {
+        const cell = document.createElement("td");
+        cell.innerHTML = "&nbsp;";
+        row.appendChild(cell);
+      }
+      tableBody.appendChild(row);
+    }
+  });
+</script>
+
 
         
     
