@@ -26,14 +26,14 @@ SECRET_KEY = 'django-insecure-8er()voaf8-314b%!2225izw83vfcpnz5eh%(y3!4q887hid&8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-#CSRF_TRUSTED_ORIGINS = [
-#    "http://ssd.jrbilling.in",
-#    "https://ssd.jrbilling.in"
-#]
+CSRF_TRUSTED_ORIGINS = [
+    "http://ssdigitaltrl.com/",
+    "https://ssdigitaltrl.com/"
+]
 
 
 # ALLOWED_HOSTS = ['ssd.jrbilling.in','198.38.89.78']
-ALLOWED_HOSTS = ['66.103.210.129','ssdigitaltrl.com']
+ALLOWED_HOSTS = ['66.103.210.129','ssdigitaltrl.com','66.103.210.129:8099']
 
 # Application definition
 

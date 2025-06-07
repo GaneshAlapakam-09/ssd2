@@ -36,6 +36,13 @@ import base64
 
 from django.db.models import F
 
+# for graph data
+from django.db.models import Sum
+from django.db.models.functions import TruncDay
+from django.utils import timezone
+from collections import OrderedDict
+import calendar
+
 # Create your views here.
 
        
@@ -1754,27 +1761,27 @@ def filtered_data(request, filter_type):
     # Filtering based on type
     if filter_type == 'today':
         data = Payment_Details.objects.filter(Payment_Date=today)
-        data2 = BillingMaster.objects.filter(Date=today).exclude(Grand_Total=F('Pending_Amount'))
+        # data2 = BillingMaster.objects.filter(Date=today).exclude(Grand_Total=F('Pending_Amount'))
         data3 = BillingMaster.objects.filter(Date=today)
         data4 = "Today"
     elif filter_type == 'this_week':
         data = Payment_Details.objects.filter(Payment_Date__range=(start_of_week, end_of_week))
-        data2 = BillingMaster.objects.filter(Date__range=(start_of_week, end_of_week)).exclude(Grand_Total=F('Pending_Amount'))
+        # data2 = BillingMaster.objects.filter(Date__range=(start_of_week, end_of_week)).exclude(Grand_Total=F('Pending_Amount'))
         data3 = BillingMaster.objects.filter(Date__range=(start_of_week, end_of_week))
         data4 = "This Week"
     elif filter_type == 'this_month':
         data = Payment_Details.objects.filter(Payment_Date__range=(start_of_month, end_of_month))
-        data2 = BillingMaster.objects.filter(Date__range=(start_of_month, end_of_month)).exclude(Grand_Total=F('Pending_Amount'))
+        # data2 = BillingMaster.objects.filter(Date__range=(start_of_month, end_of_month)).exclude(Grand_Total=F('Pending_Amount'))
         data3 = BillingMaster.objects.filter(Date__range=(start_of_month, end_of_month))
         data4 = "This Month"
     elif filter_type == 'this_year':
         data = Payment_Details.objects.filter(Payment_Date__range=(start_of_year, end_of_year))
-        data2 = BillingMaster.objects.filter(Date__range=(start_of_year, end_of_year)).exclude(Grand_Total=F('Pending_Amount'))
+        # data2 = BillingMaster.objects.filter(Date__range=(start_of_year, end_of_year)).exclude(Grand_Total=F('Pending_Amount'))
         data3 = BillingMaster.objects.filter(Date__range=(start_of_year, end_of_year))
         data4 = "This Year"
     else:
         data = Payment_Details.objects.all()
-        data2 = BillingMaster.objects.exclude(Grand_Total = F('Pending_Amount'))
+        # data2 = BillingMaster.objects.exclude(Grand_Total = F('Pending_Amount'))
         data3 = BillingMaster.objects.all()
         data4 = "Overall"
  
@@ -1785,10 +1792,10 @@ def filtered_data(request, filter_type):
         grand_total += total.Grand_Total
         paid_amount += total.Paid_Amount
         pending_amount += total.Pending_Amount
-
+    
+    data2 = BillingMaster.objects.filter(Pending_Amount__gt = 0)
         
-
-    context = {'data': data,'grand_total': grand_total,'paid_amount':paid_amount,'pending_amount':pending_amount,'data3':data3,'data4':data4}
+    context = {'data': data,'grand_total': grand_total,'paid_amount':paid_amount,'pending_amount':pending_amount,'data2':data2,'data3':data3,'data4':data4}
     return render(request, 'list_all_payments.html', context)
 
 
@@ -1944,7 +1951,45 @@ def update_bill(request,id):
 
 
 def graph(request):
-    return render(request,'index.dashboard.html')
+    # Get current date info
+    today = timezone.now()
+    year = today.year
+    month = today.month
+    _, num_days = calendar.monthrange(year, month)  # total days in the current month
+
+    # Get totals grouped by date for current month
+    start_date = today.replace(day=1)
+    end_date = today.replace(day=num_days)
+
+    # Queryset for current month with daily sum
+    daily_totals = (
+        BillingMaster.objects
+        .filter(Date__year=year, Date__month=month)
+        .annotate(day=TruncDay('Date'))
+        .values('day')
+        .annotate(total=Sum('Grand_Total'))
+        .order_by('day')
+    )
+
+
+    daily_payments_totals = (
+        Payment_Master.objects
+        .filter(Date__year=year, Date__month=month)
+        .annotate(day=TruncDay('Date'))
+        .values('day')
+        .annotate(total=Sum('Paid_Amount'))
+        .order_by('day')
+    )
+
+    # Convert queryset to a dictionary with day number as key
+    day_totals = {entry['day'].day: entry['total'] for entry in daily_totals}
+    day_payments_totals = {entry['day'].day: entry['total'] for entry in daily_payments_totals}
+
+    # Build the final list with all days (1 to num_days)
+    result = {f'day{day}': float(day_totals.get(day, 0)) for day in range(1, num_days + 1)}
+    payment_result = {f'day{day}': float(day_payments_totals.get(day, 0)) for day in range(1, num_days + 1)}
+    context = {'data':result,'data2':payment_result}
+    return render(request,'index.dashboard.html',context)
 
 def Cash_Book(request):
     if request.method == 'POST':
@@ -1953,7 +1998,6 @@ def Cash_Book(request):
             total_amount = int(request.POST.get('total_amount'))
             available_amount = int(request.POST.get('available_amount'))
             category = Expense_Category.objects.all()
-            print("===========",entries_json)
             entries = json.loads(entries_json) 
 
             time_now = datetime.now(ZoneInfo("Asia/Kolkata"))

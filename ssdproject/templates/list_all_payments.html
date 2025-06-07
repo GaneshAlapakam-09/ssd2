@@ -342,7 +342,10 @@
 						<div>
 							<div class="panel-heading">Payment List</div>
 						</div>
-						<div><a class="btn btn-primary mr5" href="{% url 'listbill' %}">List Bill</a></div>
+						<div>
+							<a class="btn btn-primary mr5" href="{% url 'listbill' %}">List Bill</a>
+							<button id="printTable" class="btn btn-primary mr5 waves-effect">Print Table</button>
+						</div>
 					</div>
 					<div class="panel-body">
 						<div class="small text-bold left mt5">
@@ -441,11 +444,6 @@
 
 
 
-					<center>
-						<br>
-						<button id="printTable" class="btn btn-primary mr5 waves-effect">Print Table</button>
-					</center>
-
 					<!-- #end data table -->
 
 				</div>
@@ -515,11 +513,78 @@
 					</table>
 
 					<h2><strong>Total Business</strong></h2>
-					<div class="totals-section">
+					<div class="totals-section total-business">
 						<h3><strong>Total :</strong> ₹<span id="total-grand">{{grand_total}}</span></h3>
 						<h3><strong>Paid :</strong> ₹<span id="total-paid">{{paid_amount}}</span></h3>
 						<h3><strong>Pending :</strong> ₹<span id="total-pending">{{pending_amount}}</span></h3>
 					</div>
+
+				</div>
+
+				<div class="panel panel-lined table-responsive panel-hovered mb20" style="padding-bottom: 20px">
+					<center><h1>Overall Outstanding</h1></center>
+
+					<table class="table table-bordered table-striped ">
+						<thead>
+							<tr>
+								<th>
+									Bill Id
+
+								</th>
+								<th>
+									Customer Id
+
+								</th>
+								<th>
+									Name
+
+								</th>
+								<th>
+									Phone
+
+								</th>
+
+								<th>
+									Bill Amount
+
+								</th>
+								<th>
+									Advance
+
+								</th>
+								<th>
+									Pending Amount
+
+								</th>
+
+
+
+								<th>
+									Date
+
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for item  in data2 %}
+							<tr>
+								<td>{{item.Bill_Id}}</td>
+								{% if item.Customer_Id %}
+								   <td>{{item.Customer_Id}}</td>
+								{% else %}
+								  <td>{{item.Agent_Id}}</td>
+								{% endif %}
+								<td>{{item.Customer_Name}}</td>
+								<td>{{item.Phone_No}}</td>
+								<td>{{item.Grand_Total}}</td>
+								<td>{{item.Paid_Amount}}</td>
+								<td>{{item.Pending_Amount}}</td>
+								<td>{{item.Date}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
 
 				</div>
 
@@ -614,108 +679,8 @@
 		<script src="{% static 'scripts/plugins/waves.min.js' %}"></script>
 		<script src="{% static 'scripts/plugins/jquery.dataTables.min.js' %}"></script>
 		<script src="{% static 'scripts/app.js' %}"></script>
-		{% comment %}
-		<script src="{% static 'scripts/tables.init.js' %}"></script> {% endcomment %}
 
-		{% comment %}
-		<script>
-			$(function () {
-				"use strict";
-
-				function toggleBasicTableFns() {
-					var $btable = $(".basic-table");
-					var btns = [".btable-bordered", ".btable-striped", ".btable-condensed", ".btable-hover"];
-
-					btns.forEach(function (btn) {
-						$btable.find(btn).on("click touchstart", function (e) {
-							var tableClass = $(this).data("table-class");
-							e.preventDefault();
-							$(this).toggleClass("active");
-							$btable.find("table").toggleClass(tableClass);
-						});
-					});
-				}
-
-				function initDataTable() {
-					var $dataTable = $(".data-table");
-					var $table = $dataTable.find("table");
-
-					var datas = [
-						{% for item in data %}
-				{
-					Bill_Id: "{{item.Bill_Id|escapejs }}",
-						Customer_Id: "{{item.Customer_Id|escapejs }}",
-							Customer_Name: "{{item.Customer_Name|escapejs }}",
-								Payment_Mode: "{{item.Payment_Mode|escapejs }}",
-									Grand_Total: "{{ item.Grand_Total|escapejs }}",
-										Paid_Amount: "{{ item.Paid_Amount|escapejs }}",
-											Pending_Amount: "{{ item.Pending_Amount|escapejs }}",
-												Added_By: "{{ item.Added_By|escapejs }}",
-													Payment_Date: "{{ item.Payment_Date|escapejs }}"
-
-				} {% if not loop.last %}, {% endif %}
-				{% endfor %}
-			];
-
-				var table = $table.DataTable({
-					data: datas,
-					columns: [
-						{ data: "Bill_Id" },
-						{ data: "Customer_Id" },
-						{ data: "Customer_Name" },
-						{ data: "Payment_Mode" },
-						{ data: "Grand_Total" },
-						{ data: "Paid_Amount" },
-						{ data: "Pending_Amount" },
-						{ data: "Added_By" },
-						{ data: "Payment_Date" }
-					],
-					searching: true,
-					dom: "rtip",
-					pageLength: 10,
-					order: [[0, "desc"]],
-					createdRow: function (row, data, dataIndex) {
-						if (data.Pending_Amount == "0" || data.Pending_Amount == 0) {
-							$(row).css("background-color", "green").css("color", "white");
-						}
-
-					}
-				});
-
-				$dataTable.find(".searchInput").on("keyup", function () {
-					table.search(this.value).draw();
-				});
-
-				$dataTable.find(".lengthSelect").on("change", function () {
-					table.page.len(this.value).draw();
-				});
-
-				$dataTable.find(".dataTables_info").css({
-					"margin-left": "20px",
-					"font-size": "12px"
-				});
-
-				// Confirmation alert before deleting
-				$(document).on("click", ".del-btn", function (e) {
-					e.preventDefault(); // Prevent default navigation
-					var deleteUrl = $(this).attr("href");
-					if (confirm("Are you sure you want to delete this Item?")) {
-						window.location.href = deleteUrl; // Proceed with deletion
-					}
-				});
-			}
-	
-		function _init() {
-					toggleBasicTableFns();
-					initDataTable();
-				}
-	
-		_init();
-	});
-
-
-		</script>
-		{% endcomment %}
+		
 
 		<script>
 			$(function () {
@@ -757,12 +722,7 @@
 					searching: true,
 					dom: "rtip",
 					pageLength: 10,
-					order: [[0, "desc"]],
-					createdRow: function (row, data, dataIndex) {
-						if (data.Pending_Amount == "0" || data.Pending_Amount == 0) {
-							$(row).css("background-color", "green").css("color", "white");
-						}
-					}
+					order: [[0, "desc"]]
 				});
 
 				$dataTable.find(".searchInput").on("keyup", function () {
@@ -815,47 +775,126 @@
 						const dataTable = $(".data-table table").DataTable();
 						const allData = dataTable.rows().data(); // Get all rows, not just visible
 
-						// Build table HTML manually
-						let tableHTML = `
-				<table>
-				  <thead>
-					<tr>
-					  <th>Bill Id</th>
-					  <th>Customer Id</th>
-					  <th>Customer Name</th>
-					  <th>Payment Mode</th>
-					  <th>Grand Total</th>
-					  <th>Paid Amount</th>
-					  <th>Pending Amount</th>
-					  <th>Added By</th>
-					  <th>Payment Date</th>
-					</tr>
-				  </thead>
-				  <tbody>
-			  `;
+				// Build table HTML manually
+				let tableHTML = `
+								<table>
+								<thead>
+									<tr>
+									<th>Bill Id</th>
+									<th>Customer Id</th>
+									<th>Name</th>
+									<th>Phone</th>
+									<th>Bill Amount</th>
+									<th>Advance</th>
+									<th>Pending Amount</th>
+									<th>Added By</th>
+									<th>Date</th>
+									</tr>
+								</thead>
+								<tbody>
+							`;
 
-						for (let i = 0; i < allData.length; i++) {
-							const item = allData[i];
+				for (let i = 0; i < allData.length; i++) {
+					const item = allData[i];
 							tableHTML += `
-				  <tr>
-					<td>${item.Bill_Id}</td>
-					<td>${item.Customer_Id}</td>
-					<td>${item.Customer_Name}</td>
-					<td>${item.Payment_Mode}</td>
-					<td>${item.Grand_Total}</td>
-					<td>${item.Paid_Amount}</td>
-					<td>${item.Pending_Amount}</td>
-					<td>${item.Added_By}</td>
-					<td>${item.Payment_Date}</td>
-				  </tr>
-				`;
-						}
+									<tr>
+										<td>${item.Bill_Id}</td>
+										<td>${item.Customer_Id}</td>
+										<td>${item.Customer_Name}</td>
+										<td>${item.Phone_No}</td>
+										<td>${item.Grand_Total}</td>
+										<td>${item.Paid_Amount}</td>
+										<td>${item.Pending_Amount}</td>
+										<td>${item.Added_By}</td>
+										<td>${item.Payment_Date}</td>
+									</tr>
+									`;
+				}
 
-						tableHTML += "</tbody></table>";
+						
+
+				tableHTML += "</tbody></table>";
+
+				// Build table HTML manually
+				let tableHTML2 = `
+								<table>
+								<thead>
+									<tr>
+									<th>Bill Id</th>
+									<th>Customer Id</th>
+									<th>Customer Name</th>
+									<th>Payment Mode</th>
+									<th>Grand Total</th>
+									<th>Paid Amount</th>
+									<th>Pending Amount</th>
+									<th>Added By</th>
+									<th>Payment Date</th>
+									</tr>
+								</thead>
+								<tbody>
+							`;
+
+
+					{% for item in data3 %}
+							 tableHTML2 += `
+									<tr>
+										<td>{{item.Bill_Id}}</td>
+										<td>{{item.Customer_Id}}</td>
+										<td>{{item.Customer_Name}}</td>
+										<td>{{item.Phone_No}}</td>
+										<td>{{item.Grand_Total}}</td>
+										<td>{{item.Paid_Amount}}</td>
+										<td>{{item.Pending_Amount}}</td>
+										<td>{{item.Added_By}}</td>
+										<td>{{item.Date}}</td>
+									</tr>
+									`;
+					{% endfor %}
+
+						tableHTML2 += "</tbody></table>";
+
+				// Build table HTML manually
+				let tableHTML3 = `
+								<table>
+								<thead>
+									<tr>
+									<th>Bill Id</th>
+									<th>Customer Id</th>
+									<th>Customer Name</th>
+									<th>Payment Mode</th>
+									<th>Grand Total</th>
+									<th>Paid Amount</th>
+									<th>Pending Amount</th>
+									<th>Added By</th>
+									<th>Payment Date</th>
+									</tr>
+								</thead>
+								<tbody>
+							`;
+
+
+					{% for item in data2 %}
+							 tableHTML3 += `
+									<tr>
+										<td>{{item.Bill_Id}}</td>
+										<td>{{item.Customer_Id}}</td>
+										<td>{{item.Customer_Name}}</td>
+										<td>{{item.Phone_No}}</td>
+										<td>{{item.Grand_Total}}</td>
+										<td>{{item.Paid_Amount}}</td>
+										<td>{{item.Pending_Amount}}</td>
+										<td>{{item.Added_By}}</td>
+										<td>{{item.Date}}</td>
+									</tr>
+									`;
+					{% endfor %}
+
+						tableHTML3 += "</tbody></table>";
 
 						// Clone totals HTML
 						const totalsHTML = $(".totals-section").clone();
 						const coloectionHTML = $(".total-collection.totals-section").clone();
+						const coloectionHTML2 = $(".totals-section.total-business").clone();
 
 						// Open new window for printing
 						let win = window.open("", "", "height=700,width=900");
@@ -877,6 +916,14 @@
 						//win.document.write(totalsHTML.prop("outerHTML"));
 						win.document.write("<h3>Total Collection</h3>");
 						win.document.write(coloectionHTML.prop("outerHTML"));
+						
+						win.document.write("<h2>{{data4}} Bills</h2>");
+						win.document.write(tableHTML2);
+						win.document.write("<h3>Total Business</h3>");
+						win.document.write(coloectionHTML2.prop("outerHTML"));
+						
+						win.document.write("<h2>Overall Outstanding</h2>");
+						win.document.write(tableHTML3);
 						win.document.write("</body></html>");
 						win.document.close();
 						win.print();
