@@ -343,6 +343,7 @@ class Employee(AbstractUser):
     address = models.CharField(max_length=50, null=True)
     Date = models.DateField(null=True, auto_now=False, auto_now_add=False)
     Added_By = models.CharField(null=True, max_length=50)
+    Office_Branch = models.CharField(max_length=50, null=True)
     # Add related_name to avoid conflicts with auth.User
     groups = models.ManyToManyField(
         Group, related_name="employee_groups", blank=True)

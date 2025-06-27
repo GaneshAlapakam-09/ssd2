@@ -1,6 +1,8 @@
 from django.urls import path
 from ssdapp import views
 
+app_name = 'ssdapp'
+
 urlpatterns = [
     path('addcustomer/', views.addCustomer, name='addcustomer'),
     path('listcustomer/', views.listCustomer, name='listcustomer'),
@@ -57,6 +59,7 @@ urlpatterns = [
 
     path('service-success/', views.service_success, name='service_success'),
     path('whatsapp/<str:id>/', views.select_bill, name='whatsapp'),
+    
 
     path('add_inward/', views.select_material, name='select_material'),
     path('addoutward/<str:id>/', views.add_outward, name='addoutward'),

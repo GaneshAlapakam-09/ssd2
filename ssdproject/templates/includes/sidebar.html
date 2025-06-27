@@ -1,0 +1,141 @@
+	{% load static %}
+{% load branch_tags %}
+
+<aside class="nav-wrap" id="site-nav" data-perfect-scrollbar>
+    <div class="nav-head">
+        <a href="{% url branch_url|add:':dashboard' %}" class="site-logo text-uppercase">
+            <img src="{% static 'images/SS_LOGO.webp' %}" alt="">
+            <span class="text">SS Digital</span>
+        </a>
+    </div>
+
+    <nav class="site-nav clearfix" role="navigation">
+        <ul class="list-unstyled clearfix nav-list mb15">
+            <li class="active">
+                <a href="{% url branch_url|add:':dashboard' %}">
+                    <i class="ion ion-monitor"></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-people"></i>
+                    <span class="text">Customer Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':addcustomer' %}">Add Customer</a></li>
+                    <li><a href="{% url branch_url|add:':listcustomer' %}">List Customer</a></li>
+                </ul>
+            </li>
+
+            {% if user.role == 'admin' %}
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-contact"></i>
+                    <span class="text">Employee Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':addemployee' %}">Add Employee</a></li>
+                    <li><a href="{% url branch_url|add:':listemployee' %}">List Employee</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-cube"></i>
+                    <span class="text">Material Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':addmaterial' %}">Add Material</a></li>
+                    <li><a href="{% url branch_url|add:':listmaterial' %}">List Material</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-logo-dropbox"></i>
+                    <span class="text">Inward Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':select_material' %}">Add Inward</a></li>
+                    <li><a href="{% url branch_url|add:':listinward' %}">List Inward</a></li>
+                    <li><a href="{% url branch_url|add:':listoutward' %}">List Outward</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-albums"></i>
+                    <span class="text">Product Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':addproduct' %}">Add Product</a></li>
+                    <li><a href="{% url branch_url|add:':listproduct' %}">List Product</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-apps"></i>
+                    <span class="text">Category Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':addcategories' %}">Add Category</a></li>
+                    <li><a href="{% url branch_url|add:':listcategories' %}">List Category</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-pricetag"></i>
+                    <span class="text">Cost Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':addcost' %}">Add Cost</a></li>
+                    <li><a href="{% url branch_url|add:':listcost' %}">List Cost</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-paper"></i>
+                    <span class="text">Billing Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':bill' %}">Add Bill</a></li>
+                    <li><a href="{% url branch_url|add:':listbill' %}">List Bill</a></li>
+                    <li><a href="{% url branch_url|add:':listquote' %}">List Quotation</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-cash"></i>
+                    <span class="text">Payment Management</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':filtered_data' 'all' %}">Overall</a></li>
+                    <li><a href="{% url branch_url|add:':filtered_data' 'today' %}">Today</a></li>
+                    <li><a href="{% url branch_url|add:':filtered_data' 'this_week' %}">This Week</a></li>
+                    <li><a href="{% url branch_url|add:':filtered_data' 'this_month' %}">This Month</a></li>
+                    <li><a href="{% url branch_url|add:':filtered_data' 'this_year' %}">This Year</a></li>
+                    <li><a href="{% url branch_url|add:':outstanding' %}">Outstanding Bills</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="icon ion-md-wallet"></i>
+                    <span class="text">Cash Book</span>
+                </a>
+                <ul class="inner-drop list-unstyled">
+                    <li><a href="{% url branch_url|add:':loadcash' %}">Load Cash</a></li>
+                    <li><a href="{% url branch_url|add:':cashbook' %}">Add Expenses</a></li>
+                    <li><a href="{% url branch_url|add:':listcashbook' %}">List Expenses</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</aside>

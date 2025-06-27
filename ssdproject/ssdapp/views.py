@@ -12,6 +12,7 @@ from django.contrib import messages
 
 from django.http import HttpResponse
 from weasyprint import HTML
+from .decorators import main_branch_required
 
 
 import json
@@ -57,26 +58,36 @@ def is_employee(user):
     return user.is_authenticated and user.role == 'employee'
 
 
+
 def signin(request):
     if request.method == 'POST':
         username = request.POST['username']
+        upperuser=username.upper()
         password = request.POST['password']
-        user = authenticate(username=username, password=password)
+        Office_Branch = "main"
+        user = authenticate(username=upperuser, password=password)
         if user is not None:
-            login(request, user)
-            return redirect('dashboard')
+            if user.Office_Branch == Office_Branch:
+                login(request, user)
+                return redirect('ssdapp:dashboard')
+            else:
+                messages.info(request, "This user is not belongs to Main braanch")
+                return redirect('ssdapp:signin')
+
         else:
             messages.info(request, "username and password not match")
-            return redirect('signin')
+            return redirect('ssdapp:signin')
     return render(request, 'pages.signin.html')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def dashboard(request):
     return render(request, 'index.html')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def addCustomer(request):
     if request.method == 'POST':
         type_radio = request.POST['customer_type']
@@ -139,7 +150,7 @@ def addCustomer(request):
                 Type=type_radio
             )
 
-        return redirect('listcustomer')
+        return redirect('ssdapp:listcustomer')
     last_customer = CustomerMaster.objects.filter(
         Customer_Id__isnull=False
     ).order_by('-Customer_Id').first()
@@ -164,14 +175,16 @@ def addCustomer(request):
     return render(request, 'add_customer.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def listCustomer(request):
     data = CustomerDetails.objects.filter(Status=1)
     context = {'data': data}
     return render(request, 'list_customer.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def customerDetail(request, id):
     if id.startswith("SSDC"):
         data = CustomerDetails.objects.filter(Customer_Id=id, Status=1)
@@ -181,7 +194,8 @@ def customerDetail(request, id):
     return render(request, 'customer_details.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def editCustomer(request, id):
     if request.method == 'POST':
         if request.method == 'POST':
@@ -211,7 +225,7 @@ def editCustomer(request, id):
                     Email=email,
                     Address=address
                 )
-            return redirect('listcustomer')
+            return redirect('ssdapp:listcustomer')
 
     if id.startswith("SSDC"):
         data = CustomerDetails.objects.filter(Customer_Id=id, Status=1)
@@ -221,7 +235,8 @@ def editCustomer(request, id):
     return render(request, 'edit_customer.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def deleteCustomer(request, id):
     if id.startswith("SSDC"):
         existing_customer = BillingMaster.objects.filter(Customer_Id=id)
@@ -230,7 +245,7 @@ def deleteCustomer(request, id):
             CustomerMaster.objects.filter(Customer_Id=id).update(Status=0)
         else:
             messages.info(request, "This Custromer have Transactions With Us")
-            return redirect('listcustomer')
+            return redirect('ssdapp:listcustomer')
 
     elif id.startswith("SSDA"):
         existing_agent = BillingMaster.objects.filter(Agent_Id=id)
@@ -239,12 +254,13 @@ def deleteCustomer(request, id):
             CustomerMaster.objects.filter(Agent_Id=id).update(Status=0)
         else:
             messages.info(request, "This Agent have Transactions With Us")
-            return redirect('listcustomer')
+            return redirect('ssdapp:listcustomer')
 
-    return redirect('listcustomer')
+    return redirect('ssdapp:listcustomer')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def addMaterial(request):
     if request.method == "POST":
@@ -272,7 +288,7 @@ def addMaterial(request):
             Material_Size_In_Feet=material_size_in_feet,
             Additional_Info=additional_info
         )
-        return redirect('listmaterial')
+        return redirect('ssdapp:listmaterial')
 
     # Generate Material_Id starting with jremp0001 and display in front-end
     last_material = MaterialMaster.objects.order_by('-Material_Id').first()
@@ -286,7 +302,8 @@ def addMaterial(request):
     return render(request, 'add_material.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def listMaterial(request):
     data = MaterialMaster.objects.filter(Status=1)
@@ -294,7 +311,8 @@ def listMaterial(request):
     return render(request, 'list_material.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def editMaterial(request, id):
     if request.method == "POST":
@@ -312,13 +330,14 @@ def editMaterial(request, id):
             Material_Size_In_Meters=material_size_in_meters,
             Material_Size_In_Feet=material_size_in_feet,
             Additional_Info=additional_info)
-        return redirect('listmaterial')
+        return redirect('ssdapp:listmaterial')
     data = MaterialMaster.objects.filter(Material_Id=id, Status=1)
     context = {'data': data}
     return render(request, 'edit_material.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def materialDetails(request, id):
     data = MaterialMaster.objects.filter(Material_Id=id, Status=1)
@@ -326,14 +345,16 @@ def materialDetails(request, id):
     return render(request, 'material_details.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def deleteMaterial(request, id):
     MaterialMaster.objects.filter(Material_Id=id).update(Status=0)
-    return redirect('listmaterial')
+    return redirect('ssdapp:listmaterial')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def select_material(request):
     if request.method == 'POST':
         material_id = request.POST['material_id']
@@ -391,8 +412,8 @@ def select_material(request):
                 Additional_Info=additional_info)
         else:
             messages.info(request, "Material Id Not Available")
-            return redirect('select_material')
-        return redirect('listinward')
+            return redirect('ssdapp:select_material')
+        return redirect('ssdapp:listinward')
 
     mat_id = MaterialMaster.objects.filter(Status=1)
 
@@ -417,7 +438,8 @@ def select_material(request):
     return render(request, 'select_inward.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def addInward(request, id):
     if request.method == 'POST':
@@ -476,7 +498,7 @@ def addInward(request, id):
                 Additional_Info=additional_info)
         else:
             messages.info(request, "Material Id Not Available")
-        return redirect('listinward')
+        return redirect('ssdapp:listinward')
 
     mat_id = MaterialMaster.objects.filter(Material_Id=id, Status=1)
 
@@ -501,7 +523,8 @@ def addInward(request, id):
     return render(request, 'add_inward.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def listInward(request):
     data = InwardMaster.objects.filter(Status=1)
@@ -509,7 +532,8 @@ def listInward(request):
     return render(request, 'list_inward.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def inwardDetails(request, id):
     data = InwardMaster.objects.filter(Inward_Id=id, Status=1)
@@ -517,14 +541,16 @@ def inwardDetails(request, id):
     return render(request, 'inward_details.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def deleteInward(request, id):
     InwardMaster.objects.filter(Inward_Id=id).update(Status=0)
-    return redirect('listinward')
+    return redirect('ssdapp:listinward')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def add_outward(request, id):
     if request.method == "POST":
@@ -562,7 +588,7 @@ def add_outward(request, id):
         InwardMaster.objects.filter(Inward_Id=id).update(
             Invoice_Quantity=balance_quantity)
 
-        return redirect('listoutward')
+        return redirect('ssdapp:listoutward')
 
     data = InwardMaster.objects.filter(Inward_Id=id, Status=1)
 
@@ -577,7 +603,8 @@ def add_outward(request, id):
     return render(request, 'add_outward.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def list_outward(request):
     data = OutwardMaster.objects.all()
@@ -593,7 +620,8 @@ def city_autocomplete(request):
     return render(request, 'auto_complete.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def addProduct(request):
 
@@ -617,7 +645,7 @@ def addProduct(request):
             GST=gst,
             HSN_Code=hsn.upper())
 
-        return redirect('addproduct')
+        return redirect('ssdapp:addproduct')
 
     last_product = ProductMaster.objects.order_by('-Product_Id').first()
     if last_product:
@@ -631,7 +659,8 @@ def addProduct(request):
     return render(request, 'add_product.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def editProduct(request, id):
     if request.method == 'POST':
@@ -647,7 +676,7 @@ def editProduct(request, id):
             GST=gst,
             HSN_Code=hsn.upper())
 
-        return redirect('listproduct')
+        return redirect('ssdapp:listproduct')
 
     data = ProductMaster.objects.get(Product_Id=id)
     context = {'data': data}
@@ -655,7 +684,8 @@ def editProduct(request, id):
     return render(request, 'edit_product.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def deleteProduct(request, id):
     existing_product = ProductMaster.objects.get(Product_Id=id)
@@ -665,10 +695,11 @@ def deleteProduct(request, id):
             Product_Name=existing_product.Product_Name).update(Status=0)
         CostMaster.objects.filter(
             Product_Name=existing_product.Product_Name).update(Status=0)
-    return redirect('listproduct')
+    return redirect('ssdapp:listproduct')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def listProduct(request):
     data = ProductMaster.objects.filter(Status=1)
@@ -676,7 +707,8 @@ def listProduct(request):
     return render(request, 'list_product.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def addCategories(request):
     if request.method == 'POST':
@@ -699,7 +731,7 @@ def addCategories(request):
             Categories_Name=category_name.upper(),
             Sub_Categories=sub_category.upper())
 
-        return redirect('addcategories')
+        return redirect('ssdapp:addcategories')
 
     last_categories = CategoriesMaster.objects.order_by(
         '-Categories_Id').first()
@@ -717,7 +749,8 @@ def addCategories(request):
     return render(request, 'add_categories.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def editCategories(request, id):
     if request.method == 'POST':
@@ -731,7 +764,7 @@ def editCategories(request, id):
             Categories_Name=category_name.upper(),
             Sub_Categories=sub_category.upper())
 
-        return redirect('listcategories')
+        return redirect('ssdapp:listcategories')
     data = CategoriesMaster.objects.get(Categories_Id=id)
 
     context = {'data': data}
@@ -739,7 +772,8 @@ def editCategories(request, id):
     return render(request, 'edit_categories.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def listCategories(request):
     data = CategoriesMaster.objects.filter(Status=1)
@@ -747,7 +781,8 @@ def listCategories(request):
     return render(request, 'list_categories.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def add_Cost(request):
     if request.method == "POST":
@@ -782,7 +817,7 @@ def add_Cost(request):
                 Cost_for_Agent=cost_for_agent,
                 Selling_Cost=selling_cost,
                 Cost_Per_Unit_Status=1)
-            return redirect('addcost')
+            return redirect('ssdapp:addcost')
         elif cost_calculate == "Size Cost" and rate == "Sqft Rate":
             CostMaster.objects.create(
                 Cost_Id=new_id,
@@ -796,7 +831,7 @@ def add_Cost(request):
                 Cost_for_Agent=cost_for_agent,
                 Selling_Cost=selling_cost,
                 Cost_Per_Sqft_Status=1)
-            return redirect('addcost')
+            return redirect('ssdapp:addcost')
         elif cost_calculate == "Size Cost" and rate == "Fixed Rate":
             CostMaster.objects.create(
                 Cost_Id=new_id,
@@ -810,7 +845,7 @@ def add_Cost(request):
                 Fixed_Cost_Status=1,
                 Cost_for_Agent=cost_for_agent,
                 Selling_Cost=selling_cost)
-            return redirect('addcost')
+            return redirect('ssdapp:addcost')
 
     last_product = CostMaster.objects.order_by('-Cost_Id').first()
     if last_product:
@@ -827,7 +862,8 @@ def add_Cost(request):
     return render(request, 'add_cost4.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def editCost(request, id):
     if request.method == "POST":
@@ -849,7 +885,7 @@ def editCost(request, id):
             Cost_for_Agent=cost_for_agent,
             Selling_Cost=selling_cost
         )
-        return redirect('listcost')
+        return redirect('ssdapp:listcost')
 
     data = CostMaster.objects.get(Cost_Id=id)
 
@@ -858,7 +894,8 @@ def editCost(request, id):
     return render(request, 'edit_cost.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def listCost(request):
     data = CostMaster.objects.filter(Status=1)
@@ -866,7 +903,8 @@ def listCost(request):
     return render(request, 'list_cost.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def bill(request):
     # for adding multiple form entry in db
     if request.method == "POST":
@@ -977,7 +1015,7 @@ def bill(request):
                         "cost") not in [None, "", "None"] else 0
                 )
 
-            return redirect("listbill")
+            return redirect("ssdapp:listbill")
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
         except Exception as e:
@@ -1011,13 +1049,14 @@ def bill(request):
     return render(request, 'bill3.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def select_bill(request, id):
     whatsData = BillingMaster.objects.get(Bill_Id=id)
     # Store WhatsApp URL in session to use after redirect
     whatsapp_url = send_whatsapp_message(whatsData)
     request.session['whatsapp_url'] = whatsapp_url
-    return redirect(service_success)
+    return redirect('ssdapp:service_success') 
 
 
 def send_whatsapp_message(data):
@@ -1044,7 +1083,8 @@ def send_whatsapp_message(data):
     return f"https://wa.me/{phone}?text={encoded_message}"
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def service_success(request):
     # Get WhatsApp URL from session
     whatsapp_url = request.session.pop('whatsapp_url', None)
@@ -1052,21 +1092,24 @@ def service_success(request):
     return render(request, 'service_success.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def listBill(request):
     data = BillingMaster.objects.filter(Status=1).order_by("-Bill_Id")
     context = {'data': data}
     return render(request, 'list_bill.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def outstanding(request):
     data = BillingMaster.objects.exclude(Pending_Amount=0)
     context = {'data': data}
     return render(request, 'list_bill.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def billDetails(request, id):
     data = BillingDetails.objects.filter(Bill_Id=id, Status=1)
     data2 = BillingMaster.objects.get(Bill_Id=id, Status=1)
@@ -1074,7 +1117,8 @@ def billDetails(request, id):
     return render(request, 'bill_details.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def quote(request):
     # for adding multiple form entry in db
     if request.method == "POST":
@@ -1181,7 +1225,7 @@ def quote(request):
                         "cost") not in [None, "", "None"] else 0
                 )
 
-            return redirect("listquote")
+            return redirect("ssdapp:listquote")
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
         except Exception as e:
@@ -1215,14 +1259,16 @@ def quote(request):
     return render(request, 'bill3.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def listQuote(request):
     data = QuoteMaster.objects.filter(Status=1)
     context = {'data': data}
     return render(request, 'list_quote.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def quoteDetails(request, id):
     data = QuoteDetails.objects.filter(Quote_Id=id, Status=1)
     data2 = QuoteMaster.objects.get(Quote_Id=id, Status=1)
@@ -1230,7 +1276,8 @@ def quoteDetails(request, id):
     return render(request, 'quote_details.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def bill_quotation(request, id):
     data = QuoteMaster.objects.filter(Quote_Id=id)
     data2 = QuoteDetails.objects.filter(Quote_Id=id)
@@ -1295,10 +1342,11 @@ def bill_quotation(request, id):
             Additional_Charges=item.Additional_Charges,
             Difference_Amount=item.Difference_Amount
         )
-    return redirect('listbill')
+    return redirect('ssdapp:listbill')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def estimate(request):
 
     # for adding multiple form entry in db
@@ -1364,24 +1412,26 @@ def estimate(request):
                                      ),  # Convert to float
                     # Total_Cost_With_Gst=float(entry.get("total_with_gst", 0))  # Convert to float
                 )
-            return redirect("listestimate")
+            return redirect("ssdapp:listestimate")
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
         except Exception as e:
             traceback.print_exc()  # This prints the full error traceback in the console
             return JsonResponse({"error": str(e)}, status=500)
 
-    return redirect('bill')
+    return redirect('ssdapp:bill')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def listEstimate(request):
     data = EstimateMaster.objects.filter(Status=1)
     context = {'data': data}
     return render(request, 'list_estimate.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def estimateDetails(request, id):
     data = EstimateDetails.objects.filter(Estimation_Id=id, Status=1)
     data2 = EstimateMaster.objects.get(Estimation_Id=id, Status=1)
@@ -1389,7 +1439,8 @@ def estimateDetails(request, id):
     return render(request, 'estimate_details.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def add_employee(request):
     if request.method == 'POST':
@@ -1412,9 +1463,9 @@ def add_employee(request):
             new_id = "EMP0001"
 
         # Create employee user
-        user = Employee.objects.create(
+        user = Employee.objects.create_user(
             username=username.upper(),
-            password=make_password(password),  # Hashing the password
+            password=password,
             emp_id=new_id,
             first_name=name.upper(),  # Django default field
             phone=phone,
@@ -1422,10 +1473,11 @@ def add_employee(request):
             aadhar=aadhar,
             email=email,
             address=address,
-            role=role  # Default role as Employee
+            role=role ,
+            Office_Branch = "main"
         )
         messages.info(request, "employee added")
-        return redirect('addemployee')  # Redirect after successful creation
+        return redirect('ssdapp:addemployee')  # Redirect after successful creation
     last_emp = Employee.objects.order_by('-emp_id').first()
     if last_emp:
         last_emp = int(last_emp.emp_id[3:])  # Extract the numeric part
@@ -1438,7 +1490,8 @@ def add_employee(request):
     return render(request, 'add_employee.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def list_employee(request):
     data = Employee.objects.all()
@@ -1447,7 +1500,8 @@ def list_employee(request):
     return render(request, 'list_employee.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def invoice(request, id):
     splitted_billId = id.split("-")
     billId = splitted_billId[0]
@@ -1548,16 +1602,18 @@ def invoice(request, id):
             'data5': data5,
             'qr_base64': qr_base64}
         return render(request, 'invoice.html', context)
-    return redirect('bill')
+    return redirect('ssdapp:bill')
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def signout(request):
     logout(request)
-    return redirect("signin")
+    return redirect("ssdapp:signin")
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def add_payment(request, id):
     # Cash_Book_Master.objects.all().delete()
     if request.method == "POST":
@@ -1688,7 +1744,8 @@ def add_payment(request, id):
     return render(request, "add_payment.html", context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def list_payment(request, id):
 
     data = Payment_Master.objects.filter(Payment_Id__startswith=id)
@@ -1696,7 +1753,8 @@ def list_payment(request, id):
     return render(request, 'list_payments.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def bill_and_pay(request, id):
     # for adding multiple form entry in db
     if request.method == "POST":
@@ -1740,7 +1798,7 @@ def bill_and_pay(request, id):
 
             incomming_amount = 0
             for entry in entries:
-                incomming_amount += int(float(entry.get("amount")))
+                incomming_amount += int(float(entry.get("amount",0)))
                 last_bill = BillingDetails.objects.order_by('-Item_Id').first()
                 if last_bill:
                     # Extract the numeric part
@@ -1834,7 +1892,7 @@ def bill_and_pay(request, id):
                 Cash_Book_Master.objects.create(
                     S_No=s_no, Expenses_Id=new_id, Cash_In=1500 + incomming_amount)
 
-            return redirect("addpayment", id=id)
+            return redirect("ssdapp:addpayment", id=id)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
         except Exception as e:
@@ -1864,7 +1922,8 @@ def bill_and_pay(request, id):
     return render(request, 'bill3.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 @csrf_exempt
 def upload_pdf(request):
     if request.method == "POST" and request.FILES.get("pdf_file"):
@@ -1884,7 +1943,8 @@ def upload_pdf(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def send_pdf_whatsapp(to_number, pdf_url):
     access_token = "your_access_token"
     phone_number_id = "your_phone_number_id"
@@ -1908,7 +1968,8 @@ def send_pdf_whatsapp(to_number, pdf_url):
     return response.json()
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def overall_invoice(request, id):
     data = BillingDetails.objects.filter(Bill_Id=id, Status=1)
     data2 = BillingMaster.objects.get(Bill_Id=id, Status=1)
@@ -1958,7 +2019,8 @@ def overall_invoice(request, id):
     return render(request, 'overall_invoice.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def quote_invoice(request, id):
     data = QuoteDetails.objects.filter(Quote_Id=id, Status=1)
     data2 = QuoteMaster.objects.get(Quote_Id=id, Status=1)
@@ -2006,21 +2068,24 @@ def quote_invoice(request, id):
     return render(request, 'quote_invoice.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def list_payments_terms(request, id):
     data = Payment_Details.objects.filter(Payment_Id=id)
     context = {'data': data}
     return render(request, 'list_payment_terms.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def list_all_payments(request):
     data = Payment_Details.objects.all()
     context = {'data': data}
     return render(request, 'list_all_payments.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def filtered_data(request, filter_type):
     today = now().date()
     # Start and end of the week (Monday - Sunday)
@@ -2099,7 +2164,8 @@ def filtered_data(request, filter_type):
     return render(request, 'list_all_payments.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def bill_payment_details(request, id):
     data = BillingDetails.objects.filter(Bill_Id=id, Status=1)
     data2 = BillingMaster.objects.get(Bill_Id=id, Status=1)
@@ -2109,7 +2175,8 @@ def bill_payment_details(request, id):
     return render(request, 'list_bill_payment.html', context)
 
 
-@login_required(login_url='signin')
+@login_required(login_url='ssdapp:signin')
+@main_branch_required
 def update_bill(request, id):
     # for adding multiple form entry in db
     if request.method == "POST":
@@ -2126,7 +2193,7 @@ def update_bill(request, id):
             else:
                 type = "none"
                 messages.info(request, f"No Existing Bill")
-                return redirect('listbill')
+                return redirect('ssdapp:listbill')
             # Save each entry into the database
             for entry in entries:
 
@@ -2170,9 +2237,9 @@ def update_bill(request, id):
                 if last_bill:
                     # Extract the numeric part
                     last_id = int(last_bill.Item_Id[12:])
-                    new_id = f"ITM{last_id + 1:01d}-{detail_id}"
+                    new_id = f"ITM{last_id + 1:01d}-{id}"
                 else:
-                    new_id = f"ITM1-{detail_id}"
+                    new_id = f"ITM1-{id}"
 
                 specification = entry.get("product", "NONE") if entry.get(
                     "product") not in [None, "", "None"] else "NONE"
@@ -2235,7 +2302,7 @@ def update_bill(request, id):
                         "cost") not in [None, "", "None"] else 0
                 )
 
-            return redirect("listbill")
+            return redirect("ssdapp:listbill")
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
         except Exception as e:
@@ -2259,7 +2326,7 @@ def update_bill(request, id):
     else:
         type = "none"
         messages.info(request, f"No Existing Bill")
-        return redirect('listbill')
+        return redirect('ssdapp:listbill')
 
     context = {
         'new_id': id,
@@ -2417,7 +2484,7 @@ def load_cash(request):
         loaded_amount = int(request.POST['loaded_amount'])
         Cash_Book_Master.objects.filter(Date=current_date).update(
             Cash_In=today_expences.Cash_In + loaded_amount)
-        return redirect('cashbook')
+        return redirect('ssdapp:cashbook')
 
     # for updating Cash_Book
     time_now = datetime.now(ZoneInfo("Asia/Kolkata"))

@@ -1,0 +1,46 @@
+{% load static %}
+{% load branch_tags %}
+    
+    <header class="site-head" id="site-head">
+		<ul class="list-unstyled left-elems">
+			<!-- nav trigger/collapse -->
+			<li>
+				<a href="javascript:;" class="nav-trigger icon ion-md-menu"></a>
+			</li>
+			<!-- #end nav-trigger -->
+
+			<!-- site-logo for mobile nav -->
+			<li>
+				<div class="site-logo visible-xs">
+					<a href="javascript:;" class="text-uppercase h3">
+						<span class="text">SSD</span>
+					</a>
+				</div>
+			</li> <!-- #end site-logo -->
+
+
+			
+		</ul>
+        <ul class="list-unstyled right-elems">
+			<!-- profile drop -->
+			<li class="profile-drop hidden-xs dropdown">
+				<a href="javascript:;" data-toggle="dropdown">
+					<img src="{% static 'images/user.png' %}" alt="admin-pic">
+				</a>
+				<ul class="dropdown-menu dropdown-menu-right">
+					<li><a href="{% url branch_url|add:':signout' %}"><span class="ion ion-md-exit">&nbsp;&nbsp;</span>Logout</a></li>
+				</ul>
+			</li>
+			<!-- #end profile-drop -->
+
+			
+
+		</ul>
+
+		<ul class="list-unstyled right-elems">
+			
+
+
+		</ul>
+
+	</header>

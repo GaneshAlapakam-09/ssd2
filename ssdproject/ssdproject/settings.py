@@ -24,16 +24,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8er()voaf8-314b%!2225izw83vfcpnz5eh%(y3!4q887hid&8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://ssdigitaltrl.com/",
-    "https://ssdigitaltrl.com/"
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "http://ssdigitaltrl.com/",
+#     "https://ssdigitaltrl.com/"
+# ]
 
 
-# ALLOWED_HOSTS = ['ssd.jrbilling.in','198.38.89.78']
-ALLOWED_HOSTS = ['66.103.210.129','ssdigitaltrl.com','66.103.210.129:8099']
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['66.103.210.129','ssdigitaltrl.com','66.103.210.129:8099']
 
 # Application definition
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ssdapp',
+    'branchapp_one',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ssdproject.context_processors.branch_url_context',
             ],
         },
     },
@@ -83,23 +85,23 @@ WSGI_APPLICATION = 'ssdproject.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-#DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ssdproject_db',
-        'USER': 'ssduser',
-        'PASSWORD': '$DrOK8laryvF',
-        'HOST': 'localhost',
-        'PORT': '3306',  # Default MySQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ssdproject_db',
+#         'USER': 'ssduser',
+#         'PASSWORD': '$DrOK8laryvF',
+#         'HOST': 'localhost',
+#         'PORT': '3306',  # Default MySQL port
+#     }
+# }
 
 
 

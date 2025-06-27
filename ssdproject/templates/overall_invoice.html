@@ -139,7 +139,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <!-- Invoice Start -->
-                    <button class="btn btn-primary mr5" type="submit" id="submitButton"  onclick="window.location.href='{% url "listbill" %}';">&larr; Back To Bills List</button>
+                    <button class="btn btn-primary mr5" type="submit" id="submitButton"  onclick="window.location.href='{% url branch_url|add:':listbill' %}';">&larr; Back To Bills List</button>
                     <div class="invoice-wrap" id= "content">
                         <div class="clearfix invoice-head">
 							<span>

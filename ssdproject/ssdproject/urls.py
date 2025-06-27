@@ -23,9 +23,10 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('',include('ssdapp.urls'))
+    path('main/', include('ssdapp.urls', namespace='ssdapp')),
+    path('branch_one/', include('branchapp_one.urls', namespace='branch_one')),
 ]
+
 
 # Serve media files in development mode
 if settings.DEBUG:
