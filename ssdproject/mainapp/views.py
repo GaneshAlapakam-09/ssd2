@@ -36,3 +36,6 @@ def signin(request):
             messages.info(request, "username and password not match")
             return redirect('mainapp:signin')
     return render(request, 'pages.signin.html')
+
+def web_page(request):
+    return render(request,'web_page.html')

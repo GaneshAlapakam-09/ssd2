@@ -4,5 +4,6 @@ from mainapp import views
 app_name = 'mainapp'
 
 urlpatterns = [
-    path('',views.signin,name='signin')
+    path('signin/',views.signin,name='signin'),
+    path('',views.web_page,name='web_page')
 ]

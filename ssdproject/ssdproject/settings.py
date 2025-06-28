@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8er()voaf8-314b%!2225izw83vfcpnz5eh%(y3!4q887hid&8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # CSRF_TRUSTED_ORIGINS = [
 #     "http://ssdigitaltrl.com/",
@@ -32,8 +32,8 @@ DEBUG = True
 # ]
 
 
-ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['66.103.210.129','ssdigitaltrl.com','66.103.210.129:8099']
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['66.103.210.129','ssdigitaltrl.com','66.103.210.129:8099']
 
 # Application definition
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ssdapp',
     'branchapp_one',
+    'mainapp'
 ]
 
 MIDDLEWARE = [
@@ -85,23 +86,23 @@ WSGI_APPLICATION = 'ssdproject.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ssdproject_db',
-#         'USER': 'ssduser',
-#         'PASSWORD': '$DrOK8laryvF',
-#         'HOST': 'localhost',
-#         'PORT': '3306',  # Default MySQL port
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ssdproject_db',
+        'USER': 'ssduser',
+        'PASSWORD': '$DrOK8laryvF',
+        'HOST': 'localhost',
+        'PORT': '3306',  # Default MySQL port
+    }
+}
 
 
 

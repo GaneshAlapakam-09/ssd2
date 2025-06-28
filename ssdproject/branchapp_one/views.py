@@ -1499,7 +1499,7 @@ def add_employee(request):
 @branch_one_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def list_employee(request):
-    data = Employee.filter(Office_Branch = "branch_one")
+    data = Employee.objects.filter(Office_Branch = "branch_one")
     context = {'data': data}
 
     return render(request, 'list_employee.html', context)
