@@ -1494,7 +1494,7 @@ def add_employee(request):
 @main_branch_required
 @user_passes_test(is_admin)  # Only admin can add employees
 def list_employee(request):
-    data = Employee.objects.all()
+    data = Employee.objects.filter(Office_Branch = "main")
     context = {'data': data}
 
     return render(request, 'list_employee.html', context)
@@ -1609,7 +1609,7 @@ def invoice(request, id):
 @main_branch_required
 def signout(request):
     logout(request)
-    return redirect("ssdapp:signin")
+    return redirect("mainapp:signin")
 
 
 @login_required(login_url='ssdapp:signin')

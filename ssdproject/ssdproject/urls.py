@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    path('', include('mainapp.urls', namespace='mainapp')),
     path('main/', include('ssdapp.urls', namespace='ssdapp')),
     path('branch_one/', include('branchapp_one.urls', namespace='branch_one')),
 ]

@@ -9,6 +9,8 @@ def branch_url(context, view_name):
         branch = user.office_branch
         if branch == 'main':
             return f'ssdapp:{view_name}'
-        elif branch == 'branch1':
+        elif branch == 'branch_one':
             return f'branchapp_one:{view_name}'
-    return f'ssdapp:{view_name}'  # fallback
+        elif branch == 'admin':
+            return f'mainapp:{view_name}'
+    return f''  # fallback
