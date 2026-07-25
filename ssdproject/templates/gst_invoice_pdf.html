@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GST Invoice</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background: #fff; padding: 20px; color: #000; }
+        
+        .invoice-box {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            {% comment %} border: 1px solid #ddd; {% endcomment %}
+        }
+
+        .ss { font-family: fantasy; color: red; font-size: 60px; font-weight: 100; line-height: 1; }
+        .digital { font-family: fantasy; color: green; font-size: 60px; font-weight: 100; text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff; margin-top: -10px; }
+        .logo-text { display: flex; align-items: center; position: relative; z-index: 2; margin-bottom: 20px;}
+        
+        .header-table { width: 100%; margin-bottom: 10px; }
+        .header-table td { vertical-align: top; }
+        .title-td { width: 50%; }
+        .invoice-details { text-align: start; width: 20%; }
+        
+        table.items-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 20px; border-top: 1px solid #000; border-left: 1px solid #000; }
+        table.items-table th, table.items-table td { border-bottom: 1px solid #000; border-right: 1px solid #000; padding: 8px; text-align: center; font-size: 10px; }
+        table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
+        table.items-table td.desc { text-align: left; }
+        table.items-table td.amount { text-align: right; }
+        table.items-table td.desc { text-align: left; }
+        table.items-table td.amount { text-align: right; }
+        
+        .totals-table { width: 40%; float: right; margin-top: 10px; border-collapse: collapse; }
+        .totals-table td { padding: 5px 8px; text-align: right; border: 1px solid #000; }
+        .totals-table .bold { font-weight: bold; }
+        
+        .clearfix::after { content: ""; clear: both; display: table; }
+        
+        .print-btn, .back-btn, .download-btn { display: inline-block; margin: 10px; padding: 10px 15px; background: #007bff; color: white; text-align: center; cursor: pointer; border: none; border-radius: 5px; text-decoration: none;}
+        .download-btn { background: #28a745; }
+        @media print {
+            @page { margin: 0; }
+            body { margin: 1cm; padding: 0; }
+            .print-btn, .back-btn, .download-btn { display: none !important; }
+            .invoice-box { border: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="{% url branch_url|add:':listgstinvoices' %}" class="back-btn">&larr; Back To List</a>
+        <button class="print-btn" onclick="window.print()">Print Invoice</button>
+        <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+    </div>
+    
+    <div class="invoice-box" id="print-area">
+        <table class="header-table">
+            <tr>
+                <td class="title-td">
+                    <div class="logo-text">
+                        <img src="{% static 'images/ssd-enterprises-logo.webp' %}" alt="" width='150px'>
+                    </div>
+                </td>
+                <td class="invoice-details">
+                    <h4 style="margin:0; font-weight:bold;">TAX INVOICE</h4>
+                    <p style="margin:5px 0 0 0; font-size:13px;">
+                        <strong>Invoice No:</strong> {{ master.Invoice_No }}<br>
+                        <strong>Date:</strong> {{ master.Date|date:"d-m-Y" }}<br>
+                        {% if master.P_O_No %}<strong>P.O. No:</strong> {{ master.P_O_No }}{% endif %}
+                    </p>
+                </td>
+            </tr>
+        </table>
+        
+        <table class="header-table" style="margin-top: 10px; font-size: 14px;">
+            <tr>
+                <td style="text-align: left; width: 50%;">
+                    <strong>SS ENTERPRISES</strong><br>
+                    No.3/13, J.N.Road, Thiruvallur<br>
+                    Thiruvallur - 602 001.<br>
+                    GSTIN: 33HRYPM6809K1ZU
+                </td>
+                <td style="width: 30%;">
+                    <to>To,</to><br>
+                    <strong>{{ master.Customer_Name }}</strong><br>
+                    {% if customer_info.Address %}{{ customer_info.Address }}<br>{% endif %}
+                    {% comment %} {% if customer_info.Phone_No %}Phone: {{ customer_info.Phone_No }}<br>{% endif %} {% endcomment %}
+                    {% if customer_info.GSTIN %}GSTIN: {{ customer_info.GSTIN }}{% endif %}
+                </td>
+            </tr>
+        </table>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>DESCRIPTION</th>
+                    <th>HSN Code</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in details %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="desc" style="white-space: pre-wrap;">{{ item.Description }}</td>
+                    <td>{{ item.HSN_Code|default:"-" }}</td>
+                    <td>{{ item.Qty }}</td>
+                    <td>{{ item.Rate|floatformat:2 }}</td>
+                    <td class="amount">{{ item.Amount|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4" style="border-right: none;"></td>
+                    <td style="text-align: right; padding-right: 20px;"><strong>TOTAL</strong></td>
+                    <td class="amount"><strong>{{ master.Total_Amount|floatformat:2 }}</strong></td>
+                </tr>
+                {% if master.Tax_Type == 'SGST' %}
+                <tr>
+                    <td colspan="4" style="border-right: none;"></td>
+                    <td style="text-align: left;">
+                        SGST <span style="float: right;">9.00%</span>
+                    </td>
+                    <td class="amount"><strong>{{ master.SGST_Amount|floatformat:2 }}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="border-right: none;"></td>
+                    <td style="text-align: left;">
+                        CGST <span style="float: right;">9.00%</span>
+                    </td>
+                    <td class="amount"><strong>{{ master.CGST_Amount|floatformat:2 }}</strong></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="border-right: none;"></td>
+                    <td style="text-align: left;">
+                        IGST <span style="float: right;">18.00%</span>
+                    </td>
+                    <td class="amount"><strong>{{ master.IGST_Amount|floatformat:2 }}</strong></td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td colspan="4" style="border-right: none;"></td>
+                    <td style="text-align: right; padding-right: 20px; font-size: 14px; font-weight: bold;">GRAND TOTAL</td>
+                    <td class="amount" style='font-size: 14px; font-weight: bold;'><strong>{{ master.Grand_Total|floatformat:2 }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between;">
+            <div>
+                <p style="text-decoration: underline; margin-bottom: 5px;">Account Details</p>
+                <table style="font-size: 14px; border: none;">
+                    <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Account Name</td><td style="border: none; text-align: left;">: SS ENTERPRISES</td></tr>
+                    <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Account Number</td><td style="border: none; text-align: left;">: 502 000 751 892 50</td></tr>
+                    <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">IFSC Code</td><td style="border: none; text-align: left;">: HDFC0008935</td></tr>
+                    <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Branch</td><td style="border: none; text-align: left;">: KAKKALUR ROAD, THIRUVALLUR.</td></tr>
+                </table>
+            </div>
+        </div>
+        <div style="margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between;">
+            <div style="margin-top: 30px; font-size: 12px; color: #555; text-align: start; font-weight: bold;">
+                <p style="margin: 0;">No.3/13, J.N.Road (Opp. Uzhavar Sathai) Tiruvallur - 602 001. <br> Mob : +91 96299 32649 &nbsp;&nbsp;&nbsp; E-mail : ssenterprisesabu@gmail.com</p>
+                {% comment %} <p style="margin: 5px 0 0 0;"></p> {% endcomment %}
+            </div>
+            <div style="text-align: right; display: flex; flex-direction: column; justify-content: flex-end;">
+                <p style="margin: 0px;">Authorized Signature</p>
+            </div>
+        </div>
+        
+        
+    </div>
+    
+    {% comment %} <div style="position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background-color: #00a4d3; z-index: 1;">
+        <!-- bottom cyan bar -->
+        <div style="position: absolute; right: 20px; bottom: 0; width: 0; height: 0; border-bottom: 50px solid #005a9c; border-left: 50px solid transparent; z-index: 2;"></div>
+        <div style="position: absolute; right: -20px; bottom: 0; width: 0; height: 0; border-bottom: 80px solid #888; border-left: 80px solid transparent; z-index: 1;"></div>
+    </div> {% endcomment %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadPDF() {
+            var element = document.getElementById('print-area');
+            var opt = {
+                margin:       [0.5, 0.5, 0.2, 0.5], // 0.2 inches is approximately 20px for the bottom margin
+                filename:     'Invoice_{{ master.Invoice_No|slugify }}.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>

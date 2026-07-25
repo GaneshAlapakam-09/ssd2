@@ -74,4 +74,11 @@ urlpatterns = [
     path('loadcash/', views.load_cash, name="loadcash"),
     path('detailexpenses/<str:id>', views.expenses_details, name="detailexpenses"),
 
+
+    path('addgstinvoice/', views.add_gst_invoice, name='addgstinvoice'),
+    path('editgstinvoice/<path:invoice_no>/', views.edit_gst_invoice, name='editgstinvoice'),
+    path('listgstinvoices/', views.list_gst_invoices, name='listgstinvoices'),
+    path('deletegstinvoice/<path:invoice_no>/', views.delete_gst_invoice, name='deletegstinvoice'),
+    path('gst_invoice_pdf/<path:invoice_no>/', views.gst_invoice_pdf, name='gst_invoice_pdf'),
 ]
+

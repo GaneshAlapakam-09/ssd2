@@ -6,7 +6,8 @@ from django.urls import reverse
 from .models import (
     Cash_Book_Details, CustomerMaster, CustomerDetails, Expense_Category,
     MaterialMaster, InwardMaster, OutwardMaster, BillingMaster, QuoteMaster, EstimateMaster, BillingDetails, QuoteDetails,
-    EstimateDetails, Payment_Master, Payment_Details, Cash_Book_Master
+    EstimateDetails, Payment_Master, Payment_Details, Cash_Book_Master,
+    GSTInvoiceMaster, GSTInvoiceDetails
 )
 
 # models from main app 
@@ -137,7 +138,8 @@ def addCustomer(request):
                 Alt_Phone=altPhone,
                 Email=email,
                 Address=address,
-                Type=type_radio
+                Type=type_radio,
+                GSTIN=request.POST.get('gstin', '')
             )
         elif type_radio == "agent":
             CustomerMaster.objects.create(
@@ -152,7 +154,8 @@ def addCustomer(request):
                 Alt_Phone=altPhone,
                 Email=email,
                 Address=address,
-                Type=type_radio
+                Type=type_radio,
+                GSTIN=request.POST.get('gstin', '')
             )
 
         return redirect('branchapp_one:listcustomer')
@@ -212,23 +215,25 @@ def editCustomer(request, id):
             address = request.POST['address']
             if id.startswith("SSDC"):
                 CustomerDetails.objects.filter(
-                    Customer_Id=customerId
+                    Customer_Id=id
                 ).update(
-                    Customer_Name=name,
+                    Customer_Name=name.upper(),
                     Phone_No=phone,
                     Alt_Phone=altPhone,
                     Email=email,
-                    Address=address
+                    Address=address,
+                    GSTIN=request.POST.get('gstin', '')
                 )
             elif id.startswith("SSDA"):
                 CustomerDetails.objects.filter(
-                    Agent_Id=customerId
+                    Agent_Id=id
                 ).update(
-                    Customer_Name=name,
+                    Customer_Name=name.upper(),
                     Phone_No=phone,
                     Alt_Phone=altPhone,
                     Email=email,
-                    Address=address
+                    Address=address,
+                    GSTIN=request.POST.get('gstin', '')
                 )
             return redirect('branchapp_one:listcustomer')
 
@@ -2514,3 +2519,177 @@ def load_cash(request):
         Cash_Book_Master.objects.create(S_No=s_no, Expenses_Id=new_id)
     context = {'cash_in_hand': cash_in_hand}
     return render(request, 'load_cash.html', context)
+
+
+# ----------------- GST INVOICE MODULE -----------------
+
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def list_gst_invoices(request):
+    data = GSTInvoiceMaster.objects.filter(Status=1).order_by('-Invoice_No')
+    return render(request, 'list_gst_invoices.html', {'data': data})
+
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def add_gst_invoice(request):
+    if request.method == 'POST':
+        customer_id = request.POST.get('customer_id')
+        invoice_date = request.POST.get('invoice_date')
+        po_no = request.POST.get('po_no')
+        tax_type = request.POST.get('tax_type')
+        total_amount = request.POST.get('total_amount', 0)
+        sgst_amount = request.POST.get('sgst_amount', 0)
+        cgst_amount = request.POST.get('cgst_amount', 0)
+        igst_amount = request.POST.get('igst_amount', 0)
+        grand_total = request.POST.get('grand_total', 0)
+        added_by = request.user.username
+        
+        # Determine next Invoice_No
+        import datetime
+        now = datetime.datetime.now()
+        year = now.year
+        month = now.month
+        if month >= 4:
+            fin_year = f"{str(year)[-2:]}-{str(year+1)[-2:]}"
+        else:
+            fin_year = f"{str(year-1)[-2:]}-{str(year)[-2:]}"
+            
+        last_invoice = GSTInvoiceMaster.objects.filter(Invoice_No__contains=f"SSE/{fin_year}/").order_by('S_No').last()
+        if last_invoice and last_invoice.S_No:
+            s_no = last_invoice.S_No + 1
+        else:
+            s_no = 1
+        
+        invoice_no = f"SSE/{fin_year}/{s_no}"
+        
+        customer_name = ""
+        cust = CustomerDetails.objects.filter(Customer_Id=customer_id).first()
+        if not cust:
+            cust = CustomerDetails.objects.filter(Agent_Id=customer_id).first()
+        if cust:
+            customer_name = cust.Customer_Name
+            
+        master = GSTInvoiceMaster(
+            S_No=s_no,
+            Invoice_No=invoice_no,
+            Date=invoice_date,
+            Customer_Id=customer_id,
+            Agent_Id=customer_id,
+            Customer_Name=customer_name,
+            P_O_No=po_no,
+            Tax_Type=tax_type,
+            Total_Amount=total_amount,
+            SGST_Amount=sgst_amount,
+            CGST_Amount=cgst_amount,
+            IGST_Amount=igst_amount,
+            Grand_Total=grand_total,
+            Added_By=added_by
+        )
+        master.save()
+        
+        # Save details
+        descs = request.POST.getlist('desc[]')
+        hsns = request.POST.getlist('hsn[]')
+        qtys = request.POST.getlist('qty[]')
+        rates = request.POST.getlist('rate[]')
+        amounts = request.POST.getlist('amount[]')
+        
+        for i in range(len(descs)):
+            detail = GSTInvoiceDetails(
+                Invoice_No=master,
+                Description=descs[i],
+                HSN_Code=hsns[i] if hsns[i] else None,
+                Qty=qtys[i] if qtys[i] else 0,
+                
+                Rate=rates[i] if rates[i] else 0,
+                Amount=amounts[i] if amounts[i] else 0
+            )
+            detail.save()
+            
+        messages.success(request, 'GST Invoice created successfully!')
+        return redirect('branchapp_one:listgstinvoices')
+
+    customers = CustomerDetails.objects.filter(Status=1)
+    return render(request, 'add_gst_invoice.html', {'customers': customers, 'branch_url': 'branchapp_one'})
+
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def edit_gst_invoice(request, invoice_no):
+    master = GSTInvoiceMaster.objects.get(Invoice_No=invoice_no)
+    
+    if request.method == 'POST':
+        master.Customer_Id = request.POST.get('customer_id')
+        master.Agent_Id = request.POST.get('customer_id')
+        master.Date = request.POST.get('invoice_date')
+        master.P_O_No = request.POST.get('po_no')
+        master.Tax_Type = request.POST.get('tax_type')
+        master.Total_Amount = request.POST.get('total_amount', 0)
+        master.SGST_Amount = request.POST.get('sgst_amount', 0)
+        master.CGST_Amount = request.POST.get('cgst_amount', 0)
+        master.IGST_Amount = request.POST.get('igst_amount', 0)
+        master.Grand_Total = request.POST.get('grand_total', 0)
+        
+        cust = CustomerDetails.objects.filter(Customer_Id=master.Customer_Id).first()
+        if not cust:
+            cust = CustomerDetails.objects.filter(Agent_Id=master.Customer_Id).first()
+        if cust:
+            master.Customer_Name = cust.Customer_Name
+            
+        master.save()
+        
+        # Delete old details and insert new ones
+        GSTInvoiceDetails.objects.filter(Invoice_No=master).delete()
+        
+        descs = request.POST.getlist('desc[]')
+        hsns = request.POST.getlist('hsn[]')
+        qtys = request.POST.getlist('qty[]')
+        rates = request.POST.getlist('rate[]')
+        amounts = request.POST.getlist('amount[]')
+        
+        for i in range(len(descs)):
+            detail = GSTInvoiceDetails(
+                Invoice_No=master,
+                Description=descs[i],
+                HSN_Code=hsns[i] if hsns[i] else None,
+                Qty=qtys[i] if qtys[i] else 0,
+                
+                Rate=rates[i] if rates[i] else 0,
+                Amount=amounts[i] if amounts[i] else 0
+            )
+            detail.save()
+            
+        messages.success(request, 'GST Invoice updated successfully!')
+        return redirect('branchapp_one:listgstinvoices')
+
+    customers = CustomerDetails.objects.filter(Status=1)
+    details = GSTInvoiceDetails.objects.filter(Invoice_No=master)
+    return render(request, 'edit_gst_invoice.html', {
+        'master': master, 
+        'details': details, 
+        'customers': customers,
+        'branch_url': 'branchapp_one'
+    })
+
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def delete_gst_invoice(request, invoice_no):
+    GSTInvoiceMaster.objects.filter(Invoice_No=invoice_no).update(Status=0)
+    messages.success(request, 'GST Invoice deleted successfully!')
+    return redirect('branchapp_one:listgstinvoices')
+
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def gst_invoice_pdf(request, invoice_no):
+    master = GSTInvoiceMaster.objects.get(Invoice_No=invoice_no)
+    details = GSTInvoiceDetails.objects.filter(Invoice_No=master)
+    
+    cust = CustomerDetails.objects.filter(Customer_Id=master.Customer_Id).first()
+    if not cust:
+        cust = CustomerDetails.objects.filter(Agent_Id=master.Customer_Id).first()
+        
+    return render(request, 'gst_invoice_pdf.html', {
+        'master': master,
+        'details': details,
+        'customer_info': cust,
+        'branch_url': 'branchapp_one'
+    })

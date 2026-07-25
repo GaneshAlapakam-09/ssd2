@@ -155,6 +155,10 @@
 														 
 													</th>
 													<th>
+														GSTIN
+														 
+													</th>
+													<th>
 														Type
 														 
 													</th>
@@ -294,6 +298,7 @@
 					phone: "{{ item.Phone_No|escapejs }}", 
 					alt_phone: "{{ item.Alt_Phone|escapejs }}", 
 					email: "{{ item.Email|escapejs }}", 
+					gstin: "{% if item.GSTIN and item.GSTIN != 'None' %}{{ item.GSTIN|escapejs }}{% else %}-{% endif %}", 
 					type: "{{ item.Type|escapejs | upper}}", 
 					action: `<div class="btn-group list-cust">
 								<a href="{% if item.Customer_Id %}{% url branch_url|add:':editcustomer' item.Customer_Id %}{% else %}{% url branch_url|add:':editcustomer' item.Agent_Id %}{% endif %}"><button type="button" class="btn btn-default ion icon ion-md-create"></button></a>
@@ -312,6 +317,7 @@
 					{ data: "phone" },
 					{ data: "alt_phone" },
 					{ data: "email" },
+					{ data: "gstin" },
 					{ data: "type" },
 					{ data: "action" }
 				],

@@ -147,6 +147,10 @@
 														 
 													</th>
 													<th>
+														GSTIN
+														 
+													</th>
+													<th>
 														Type
 														 
 													</th>
@@ -286,6 +290,7 @@
 					phone: "{{ item.Phone_No|escapejs }}", 
 					alt_phone: "{{ item.Alt_Phone|escapejs }}", 
 					email: "{{ item.Email|escapejs }}", 
+					gstin: "{% if item.GSTIN and item.GSTIN != 'None' %}{{ item.GSTIN|escapejs }}{% else %}-{% endif %}", 
 					type: "{{ item.Type|escapejs | upper}}", 
 					address: "{{ item.Address|escapejs}}", 
 
@@ -301,6 +306,7 @@
 					{ data: "phone" },
 					{ data: "alt_phone" },
 					{ data: "email" },
+					{ data: "gstin" },
 					{ data: "type" },
 					{ data: "address" }
 				],

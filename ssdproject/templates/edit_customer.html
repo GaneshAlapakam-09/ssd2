@@ -157,6 +157,14 @@
 								</div>
 							</div>
 
+							<!-- GSTIN -->
+							<div class="form-group">
+								<label class="col-md-3 control-label">GSTIN</label>
+								<div class="col-md-9">
+									<input type="text" class="form-control" value="{% if item.GSTIN and item.GSTIN != 'None' %}{{item.GSTIN}}{% endif %}" placeholder="GST Number" name="gstin" style="text-transform: uppercase;">
+								</div>
+							</div>
+
 							
 							
 							<!-- Address -->

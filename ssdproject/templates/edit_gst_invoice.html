@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Edit GST Invoice</title>
+	{% load static %}
+	<link rel="icon" type="image/x-icon" href="{% static 'images/SS_LOGO.webp' %}">
+	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/main.min.css' %}">
+	<style>
+		.inline-input { width: 100%; border: none; background: transparent; padding: 5px; }
+		.inline-input:focus { outline: none; background: #f9f9f9; }
+		.table-totals { margin-top: 20px; font-weight: bold; }
+		.form-horizontal .form-group { margin-left: 0; margin-right: 0; }
+	</style>
+</head>
+<body id="app" class="app off-canvas">
+	<!-- header -->
+	{% include 'includes/header.html'%}
+	<!-- main-container -->
+	<div class="main-container clearfix">
+		<!-- main-navigation -->
+		{% include 'includes/sidebar.html'%}
+		<div class="content-container fixedHeader nav-expand">
+			<div class="col-md-11">
+				<div class="panel panel-lined panel-hovered mb20">
+					<div class="panel-heading">Edit GST Invoice ({{master.Invoice_No}})</div>
+					<div class="panel-body">
+						<form id="gstInvoiceForm" method="POST" action="{% url branch_url|add:':editgstinvoice' master.Invoice_No %}">
+							{% csrf_token %}
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Customer</label>
+										<select name="customer_id" id="customer_id" class="form-control" required>
+											<option value="">Select Customer</option>
+											{% for item in customers %}
+												<option value="{% if item.Customer_Id %}{{item.Customer_Id}}{% else %}{{item.Agent_Id}}{% endif %}"
+                                                    data-name="{{item.Customer_Name}}" data-address="{{item.Address}}" data-gstin="{{item.GSTIN}}"
+                                                    {% if master.Customer_Id == item.Customer_Id or master.Customer_Id == item.Agent_Id %}selected{% endif %}>
+													{{item.Customer_Name}} - {% if item.Customer_Id %}{{item.Customer_Id}}{% else %}{{item.Agent_Id}}{% endif %}
+												</option>
+											{% endfor %}
+										</select>
+									</div>
+									<div class="form-group">
+										<label>GSTIN</label>
+										<input type="text" id="customer_gstin" name="customer_gstin" class="form-control" readonly>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Date</label>
+										<input type="date" name="invoice_date" class="form-control" required value="{{master.Date|date:'Y-m-d'}}">
+									</div>
+									<div class="form-group">
+										<label>P.O No (Optional)</label>
+										<input type="text" name="po_no" class="form-control" value="{{master.P_O_No|default_if_none:''}}">
+									</div>
+								</div>
+							</div>
+							
+							<div class="table-responsive mt20">
+								<table class="table table-bordered" id="invoiceTable">
+									<thead>
+										<tr>
+											<th>S.No.</th>
+											<th>DESCRIPTION</th>
+											<th>HSN Code</th>
+											<th>Qty</th>
+											<th>Rate</th>
+											<th>Amount</th>
+											<th><button type="button" class="btn btn-success btn-xs" id="addRow"><i class="fa fa-plus"></i></button></th>
+										</tr>
+									</thead>
+									<tbody>
+                                        {% for detail in details %}
+										<tr>
+											<td class="sno">{{forloop.counter}}</td>
+											<td><textarea name="desc[]" class="inline-input" rows="2" required>{{detail.Description}}</textarea></td>
+											<td><input type="text" name="hsn[]" class="inline-input" value="{{detail.HSN_Code|default_if_none:''}}"></td>
+											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="{{detail.Qty}}" required></td>
+											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="{{detail.Rate}}" required></td>
+											<td><input type="text" name="amount[]" class="inline-input amount" value="{{detail.Amount}}" readonly></td>
+											<td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
+										</tr>
+                                        {% empty %}
+                                        <tr>
+											<td class="sno">1</td>
+											<td><textarea name="desc[]" class="inline-input" rows="2" required></textarea></td>
+											<td><input type="text" name="hsn[]" class="inline-input"></td>
+											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required></td>
+											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required></td>
+											<td><input type="text" name="amount[]" class="inline-input amount" value="0.00" readonly></td>
+											<td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
+										</tr>
+                                        {% endfor %}
+									</tbody>
+								</table>
+							</div>
+							
+							<div class="row table-totals">
+								<div class="col-md-6">
+									<label>Tax Type:</label>
+									<label class="ui-radio-inline">
+										<input type="radio" name="tax_type" value="SGST" {% if master.Tax_Type == 'SGST' %}checked{% endif %}> SGST / CGST
+									</label>
+									<label class="ui-radio-inline">
+										<input type="radio" name="tax_type" value="IGST" {% if master.Tax_Type == 'IGST' %}checked{% endif %}> IGST
+									</label>
+								</div>
+								<div class="col-md-6 text-right">
+									<p>TOTAL: <span id="subTotal">{{master.Total_Amount}}</span></p>
+									<p id="sgstRow">SGST (9.00%): <span id="sgstAmount">{{master.SGST_Amount}}</span></p>
+									<p id="cgstRow">CGST (9.00%): <span id="cgstAmount">{{master.CGST_Amount}}</span></p>
+									<p id="igstRow" style="display:none;">IGST (18.00%): <span id="igstAmount">{{master.IGST_Amount}}</span></p>
+									<h4>GRAND TOTAL: <span id="grandTotal">{{master.Grand_Total}}</span></h4>
+                                    
+                                    <input type="hidden" name="total_amount" id="h_subTotal" value="{{master.Total_Amount}}">
+                                    <input type="hidden" name="sgst_amount" id="h_sgstAmount" value="{{master.SGST_Amount}}">
+                                    <input type="hidden" name="cgst_amount" id="h_cgstAmount" value="{{master.CGST_Amount}}">
+                                    <input type="hidden" name="igst_amount" id="h_igstAmount" value="{{master.IGST_Amount}}">
+                                    <input type="hidden" name="grand_total" id="h_grandTotal" value="{{master.Grand_Total}}">
+								</div>
+							</div>
+							
+							<div class="text-right mt20">
+								<button type="submit" class="btn btn-primary">Update Invoice</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="{% static 'scripts/vendors.js' %}"></script>
+	<script>
+		$(document).ready(function(){
+            function calculateTotals() {
+                var subTotal = 0;
+                $('#invoiceTable tbody tr').each(function(){
+                    var qty = parseFloat($(this).find('.qty').val()) || 0;
+                    var rate = parseFloat($(this).find('.rate').val()) || 0;
+                    var amt = qty * rate;
+                    $(this).find('.amount').val(amt.toFixed(2));
+                    subTotal += amt;
+                });
+                
+                $('#subTotal').text(subTotal.toFixed(2));
+                $('#h_subTotal').val(subTotal.toFixed(2));
+                
+                var taxType = $('input[name="tax_type"]:checked').val();
+                var grandTotal = subTotal;
+                
+                if(taxType === 'SGST'){
+                    var sgst = subTotal * 0.09;
+                    var cgst = subTotal * 0.09;
+                    $('#sgstAmount').text(sgst.toFixed(2));
+                    $('#cgstAmount').text(cgst.toFixed(2));
+                    $('#h_sgstAmount').val(sgst.toFixed(2));
+                    $('#h_cgstAmount').val(cgst.toFixed(2));
+                    $('#h_igstAmount').val(0);
+                    
+                    $('#sgstRow, #cgstRow').show();
+                    $('#igstRow').hide();
+                    grandTotal += (sgst + cgst);
+                } else {
+                    var igst = subTotal * 0.18;
+                    $('#igstAmount').text(igst.toFixed(2));
+                    $('#h_igstAmount').val(igst.toFixed(2));
+                    $('#h_sgstAmount').val(0);
+                    $('#h_cgstAmount').val(0);
+                    
+                    $('#sgstRow, #cgstRow').hide();
+                    $('#igstRow').show();
+                    grandTotal += igst;
+                }
+                
+                $('#grandTotal').text(grandTotal.toFixed(2));
+                $('#h_grandTotal').val(grandTotal.toFixed(2));
+            }
+            
+            function updateSno() {
+                $('#invoiceTable tbody tr').each(function(index){
+                    $(this).find('.sno').text(index + 1);
+                });
+            }
+
+            $('#addRow').click(function(){
+                var tr = `<tr>
+                            <td class="sno"></td>
+                            <td><textarea name="desc[]" class="inline-input" rows="2" required></textarea></td>
+                            <td><input type="text" name="hsn[]" class="inline-input"></td>
+                            <td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required></td>
+                            <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required></td>
+                            <td><input type="text" name="amount[]" class="inline-input amount" value="0.00" readonly></td>
+                            <td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
+                          </tr>`;
+                $('#invoiceTable tbody').append(tr);
+                updateSno();
+            });
+            
+            $(document).on('click', '.rmRow', function(){
+                $(this).closest('tr').remove();
+                updateSno();
+                calculateTotals();
+            });
+            
+            $(document).on('input', '.qty, .rate', function(){
+                calculateTotals();
+            });
+            
+            $('input[name="tax_type"]').change(function(){
+                calculateTotals();
+            });
+            
+            $('#customer_id').change(function(){
+                var gstin = $(this).find(':selected').data('gstin');
+                if(gstin && gstin != 'None' && gstin != 'null') {
+                    $('#customer_gstin').val(gstin);
+                } else {
+                    $('#customer_gstin').val('');
+                }
+            });
+
+            // Initialize on load
+            calculateTotals();
+            $('#customer_id').trigger('change');
+		});
+	</script>
+</body>
+</html>
