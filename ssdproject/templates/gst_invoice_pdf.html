@@ -9,7 +9,7 @@
         body { font-family: 'Roboto', sans-serif; background: #fff; padding: 20px; color: #000; }
         
         .invoice-box {
-            max-width: 900px;
+            
             margin: auto;
             padding: 20px;
             {% comment %} border: 1px solid #ddd; {% endcomment %}
@@ -28,9 +28,11 @@
         table.items-table th, table.items-table td { border-bottom: 1px solid #000; border-right: 1px solid #000; padding: 8px; text-align: center; font-size: 10px; }
         table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
         table.items-table td.desc { text-align: left; }
-        table.items-table td.amount { text-align: right; }
+        table.items-table td.amount { text-align: right;   }
         table.items-table td.desc { text-align: left; }
         table.items-table td.amount { text-align: right; }
+        .fit-content-col { width: 1%; white-space: nowrap; }
+
         
         .totals-table { width: 40%; float: right; margin-top: 10px; border-collapse: collapse; }
         .totals-table td { padding: 5px 8px; text-align: right; border: 1px solid #000; }
@@ -99,8 +101,8 @@
                     <th>DESCRIPTION</th>
                     <th>HSN Code</th>
                     <th>Qty</th>
-                    <th>Rate</th>
-                    <th>Amount</th>
+                    <th class='fit-content-col'>Rate</th>
+                    <th class='fit-content-col amount'>Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -110,43 +112,43 @@
                     <td class="desc" style="white-space: pre-wrap;">{{ item.Description }}</td>
                     <td>{{ item.HSN_Code|default:"-" }}</td>
                     <td>{{ item.Qty }}</td>
-                    <td>{{ item.Rate|floatformat:2 }}</td>
-                    <td class="amount">{{ item.Amount|floatformat:2 }}</td>
+                    <td class='fit-content-col' >{{ item.Rate|floatformat:2 }}</td>
+                    <td class='amount fit-content-col'>{{ item.Amount|floatformat:2 }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td colspan="4" style="border-right: none;"></td>
-                    <td style="text-align: right; padding-right: 20px;"><strong>TOTAL</strong></td>
-                    <td class="amount"><strong>{{ master.Total_Amount|floatformat:2 }}</strong></td>
+                    <td style="text-align: right; padding-right: 20px; "><strong>TOTAL</strong></td>
+                    <td class="amount fit-content-col"><strong>{{ master.Total_Amount|floatformat:2 }}</strong></td>
                 </tr>
                 {% if master.Tax_Type == 'SGST' %}
                 <tr>
                     <td colspan="4" style="border-right: none;"></td>
-                    <td style="text-align: left;">
+                    <td style="text-align: left; ">
                         SGST <span style="float: right;">9.00%</span>
                     </td>
-                    <td class="amount"><strong>{{ master.SGST_Amount|floatformat:2 }}</strong></td>
+                    <td class="amount fit-content-col"><strong>{{ master.SGST_Amount|floatformat:2 }}</strong></td>
                 </tr>
                 <tr>
                     <td colspan="4" style="border-right: none;"></td>
-                    <td style="text-align: left;">
+                    <td style="text-align: left; ">
                         CGST <span style="float: right;">9.00%</span>
                     </td>
-                    <td class="amount"><strong>{{ master.CGST_Amount|floatformat:2 }}</strong></td>
+                    <td class="amount fit-content-col"><strong>{{ master.CGST_Amount|floatformat:2 }}</strong></td>
                 </tr>
                 {% else %}
                 <tr>
                     <td colspan="4" style="border-right: none;"></td>
-                    <td style="text-align: left;">
+                    <td style="text-align: left; ">
                         IGST <span style="float: right;">18.00%</span>
                     </td>
-                    <td class="amount"><strong>{{ master.IGST_Amount|floatformat:2 }}</strong></td>
+                    <td class="amount fit-content-col"><strong>{{ master.IGST_Amount|floatformat:2 }}</strong></td>
                 </tr>
                 {% endif %}
                 <tr>
                     <td colspan="4" style="border-right: none;"></td>
-                    <td style="text-align: right; padding-right: 20px; font-size: 14px; font-weight: bold;">GRAND TOTAL</td>
-                    <td class="amount" style='font-size: 14px; font-weight: bold;'><strong>{{ master.Grand_Total|floatformat:2 }}</strong></td>
+                    <td style="text-align: right; padding-right: 20px; font-size: 14px; font-weight: bold; text-wrap:nowrap ">GRAND TOTAL</td>
+                    <td class="amount fit-content-col" style='font-size: 14px; font-weight: bold;'><strong>{{ master.Grand_Total|floatformat:2 }}</strong></td>
                 </tr>
             </tbody>
         </table>
@@ -185,7 +187,7 @@
         function downloadPDF() {
             var element = document.getElementById('print-area');
             var opt = {
-                margin:       [0.5, 0.5, 0.2, 0.5], // 0.2 inches is approximately 20px for the bottom margin
+                margin:       [0.5, 0.5, 0.3, 0.5], // 0.2 inches is approximately 20px for the bottom margin
                 filename:     'Invoice_{{ master.Invoice_No|slugify }}.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },

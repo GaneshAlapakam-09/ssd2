@@ -7,7 +7,8 @@ from .models import (
     MaterialMaster, InwardMaster, ProductMaster, CategoriesMaster, CostMaster,
     BillingMaster, QuoteMaster, EstimateMaster, BillingDetails, QuoteDetails,
     EstimateDetails, Payment_Master, Payment_Details, Cash_Book_Master,
-    Employee, OutwardMaster, GSTInvoiceMaster, GSTInvoiceDetails
+    Employee, OutwardMaster, GSTInvoiceMaster, GSTInvoiceDetails,
+    GSTQuotationMaster, GSTQuotationDetails
 )
 from django.contrib import messages
 
@@ -2682,3 +2683,188 @@ def gst_invoice_pdf(request, invoice_no):
         'details': details,
         'customer_info': cust
     })
+
+
+# ----------------- GST QUOTATION MODULE -----------------
+
+@login_required(login_url='ssdapp:signin')
+def list_gst_quotations(request):
+    data = GSTQuotationMaster.objects.filter(Status=1).order_by('-Quotation_No')
+    return render(request, 'list_gst_quotations.html', {'data': data})
+
+@login_required(login_url='ssdapp:signin')
+def add_gst_quotation(request):
+    if request.method == 'POST':
+        customer_id = request.POST.get('customer_id')
+        quotation_date = request.POST.get('quotation_date')
+        subject = request.POST.get('subject')
+        reference = request.POST.get('reference')
+        validity = request.POST.get('validity')
+        tax_type = request.POST.get('tax_type')
+        total_amount = request.POST.get('total_amount', 0)
+        sgst_amount = request.POST.get('sgst_amount', 0)
+        cgst_amount = request.POST.get('cgst_amount', 0)
+        igst_amount = request.POST.get('igst_amount', 0)
+        grand_total = request.POST.get('grand_total', 0)
+        added_by = request.user.username
+        
+        # Determine next Quotation_No
+        import datetime
+        now = datetime.datetime.now()
+        year = now.year
+        month = now.month
+        if month >= 4:
+            fin_year = f"{str(year)[-2:]}-{str(year+1)[-2:]}"
+        else:
+            fin_year = f"{str(year-1)[-2:]}-{str(year)[-2:]}"
+            
+        last_quote = GSTQuotationMaster.objects.filter(Quotation_No__contains=f"SSQ/{fin_year}/").order_by('S_No').last()
+        if last_quote and last_quote.S_No:
+            s_no = last_quote.S_No + 1
+        else:
+            s_no = 1
+        
+        quotation_no = f"SSQ/{fin_year}/{s_no}"
+        
+        customer_name = ""
+        cust = CustomerDetails.objects.filter(Customer_Id=customer_id).first()
+        if not cust:
+            cust = CustomerDetails.objects.filter(Agent_Id=customer_id).first()
+        if cust:
+            customer_name = cust.Customer_Name
+            
+        master = GSTQuotationMaster(
+            S_No=s_no,
+            Quotation_No=quotation_no,
+            Date=quotation_date,
+            Customer_Id=customer_id,
+            Agent_Id=customer_id,
+            Customer_Name=customer_name,
+            Subject=subject,
+            Reference=reference,
+            Validity=validity,
+            Tax_Type=tax_type,
+            Total_Amount=total_amount,
+            SGST_Amount=sgst_amount,
+            CGST_Amount=cgst_amount,
+            IGST_Amount=igst_amount,
+            Grand_Total=grand_total,
+            Added_By=added_by
+        )
+        master.save()
+        
+        # Save details
+        descs = request.POST.getlist('desc[]')
+        hsns = request.POST.getlist('hsn[]')
+        qtys = request.POST.getlist('qty[]')
+        rates = request.POST.getlist('rate[]')
+        amounts = request.POST.getlist('amount[]')
+        
+        for i in range(len(descs)):
+            detail = GSTQuotationDetails(
+                Quotation_No=master,
+                Description=descs[i],
+                HSN_Code=hsns[i] if hsns[i] else None,
+                Qty=qtys[i] if qtys[i] else 0,
+                Rate=rates[i] if rates[i] else 0,
+                Amount=amounts[i] if amounts[i] else 0
+            )
+            detail.save()
+            
+        messages.success(request, 'GST Quotation created successfully!')
+        return redirect('ssdapp:listgstquotations')
+
+    customers = CustomerDetails.objects.filter(Status=1)
+    return render(request, 'add_gst_quotation.html', {'customers': customers, 'branch_url': 'ssdapp'})
+
+@login_required(login_url='ssdapp:signin')
+def edit_gst_quotation(request, quotation_no):
+    master = GSTQuotationMaster.objects.get(Quotation_No=quotation_no)
+    details = GSTQuotationDetails.objects.filter(Quotation_No=master)
+    customers = CustomerDetails.objects.filter(Status=1)
+    
+    # Pre-fill Reference with (R) when editing, as requested
+    if master.Reference and not master.Reference.endswith('(R)'):
+        master.Reference = f"{master.Reference}(R)"
+    elif not master.Reference:
+        master.Reference = "(R)"
+        
+    if request.method == 'POST':
+        master.Date = request.POST.get('quotation_date')
+        customer_id = request.POST.get('customer_id')
+        master.Customer_Id = customer_id
+        master.Agent_Id = customer_id
+        
+        master.Subject = request.POST.get('subject')
+        master.Reference = request.POST.get('reference')
+        master.Validity = request.POST.get('validity')
+        
+        cust = CustomerDetails.objects.filter(Customer_Id=customer_id).first()
+        if not cust:
+            cust = CustomerDetails.objects.filter(Agent_Id=customer_id).first()
+        if cust:
+            master.Customer_Name = cust.Customer_Name
+            
+        master.Tax_Type = request.POST.get('tax_type')
+        master.Total_Amount = request.POST.get('total_amount', 0)
+        master.SGST_Amount = request.POST.get('sgst_amount', 0)
+        master.CGST_Amount = request.POST.get('cgst_amount', 0)
+        master.IGST_Amount = request.POST.get('igst_amount', 0)
+        master.Grand_Total = request.POST.get('grand_total', 0)
+        master.save()
+        
+        # Delete old details
+        details.delete()
+        
+        # Save new details
+        descs = request.POST.getlist('desc[]')
+        hsns = request.POST.getlist('hsn[]')
+        qtys = request.POST.getlist('qty[]')
+        rates = request.POST.getlist('rate[]')
+        amounts = request.POST.getlist('amount[]')
+        
+        for i in range(len(descs)):
+            detail = GSTQuotationDetails(
+                Quotation_No=master,
+                Description=descs[i],
+                HSN_Code=hsns[i] if hsns[i] else None,
+                Qty=qtys[i] if qtys[i] else 0,
+                Rate=rates[i] if rates[i] else 0,
+                Amount=amounts[i] if amounts[i] else 0
+            )
+            detail.save()
+            
+        messages.success(request, 'GST Quotation updated successfully!')
+        return redirect('ssdapp:listgstquotations')
+        
+    return render(request, 'edit_gst_quotation.html', {
+        'master': master,
+        'details': details,
+        'customers': customers,
+        'branch_url': 'ssdapp'
+    })
+
+@login_required(login_url='ssdapp:signin')
+def delete_gst_quotation(request, quotation_no):
+    master = GSTQuotationMaster.objects.get(Quotation_No=quotation_no)
+    master.Status = 0
+    master.save()
+    messages.success(request, 'GST Quotation deleted successfully!')
+    return redirect('ssdapp:listgstquotations')
+
+@login_required(login_url='ssdapp:signin')
+def gst_quotation_pdf(request, quotation_no):
+    master = GSTQuotationMaster.objects.get(Quotation_No=quotation_no)
+    details = GSTQuotationDetails.objects.filter(Quotation_No=master)
+    
+    # Get Customer info
+    customer = CustomerDetails.objects.filter(Customer_Id=master.Customer_Id).first()
+    if not customer:
+        customer = CustomerDetails.objects.filter(Agent_Id=master.Customer_Id).first()
+        
+    return render(request, 'gst_quotation_pdf.html', {
+        'master': master,
+        'details': details,
+        'customer': customer,
+    })
+

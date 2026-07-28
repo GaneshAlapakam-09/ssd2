@@ -323,3 +323,31 @@ class GSTInvoiceDetails(models.Model):
     Qty = models.FloatField(default=0)
     Rate = models.FloatField(default=0)
     Amount = models.FloatField(default=0)
+
+
+class GSTQuotationMaster(models.Model):
+    S_No = models.IntegerField(null=True)
+    Quotation_No = models.CharField(primary_key=True, max_length=50)
+    Date = models.DateField(null=True, auto_now=False, auto_now_add=False)
+    Customer_Id = models.CharField(max_length=20, null=True)
+    Agent_Id = models.CharField(max_length=20, null=True)
+    Customer_Name = models.CharField(max_length=50, null=True)
+    Subject = models.CharField(max_length=255, null=True)
+    Reference = models.CharField(max_length=255, null=True)
+    Validity = models.CharField(max_length=100, null=True)
+    Tax_Type = models.CharField(max_length=10, null=True) # SGST or IGST
+    Total_Amount = models.FloatField(default=0)
+    SGST_Amount = models.FloatField(default=0)
+    CGST_Amount = models.FloatField(default=0)
+    IGST_Amount = models.FloatField(default=0)
+    Grand_Total = models.FloatField(default=0)
+    Status = models.IntegerField(default=1)
+    Added_By = models.CharField(max_length=50, null=True)
+
+class GSTQuotationDetails(models.Model):
+    Quotation_No = models.ForeignKey(GSTQuotationMaster, on_delete=models.CASCADE)
+    Description = models.TextField(null=True)
+    HSN_Code = models.CharField(max_length=50, null=True)
+    Qty = models.FloatField(default=0)
+    Rate = models.FloatField(default=0)
+    Amount = models.FloatField(default=0)

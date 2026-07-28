@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GST Quotation</title>
+    {% load static %}
+    <style>
+        body { font-family: 'Roboto', sans-serif; background: #fff; padding: 20px; color: #000; font-size: 14px; }
+        
+        
+        
+        .invoice-box {
+            margin: auto;
+            padding: 20px;
+            position: relative;
+            box-sizing: border-box;
+            min-height: 1025px; /* Fits exactly into A4 content area without triggering a new page */
+        }
+
+        .logo-text { display: flex; align-items: center; position: relative; z-index: 2; margin-bottom: 30px;}
+        
+        .header-table { width: 100%; margin-bottom: 20px; }
+        .header-table td { vertical-align: top; }
+        
+        table.items-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #000; }
+        table.items-table th, table.items-table td { border: 1px solid #000; padding: 10px; text-align: center; font-size: 13px; }
+table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
+        table.items-table td.desc { text-align: left; }
+        table.items-table td.amount { text-align: right; }
+        .fit-content-col { width: 1%; white-space: nowrap; }
+
+        .print-btn, .back-btn, .download-btn { display: inline-block; margin: 10px; padding: 10px 15px; background: #007bff; color: white; text-align: center; cursor: pointer; border: none; border-radius: 5px; text-decoration: none;}
+        .download-btn { background: #28a745; }
+        @media print {
+            @page { margin: 0; }
+            body { margin: 1cm; padding: 0; }
+            .print-btn, .back-btn, .download-btn { display: none !important; }
+            .invoice-box {
+            margin: auto;
+            padding: 20px;
+            position: relative;
+            box-sizing: border-box;
+            min-height: 1025px; /* Fits exactly into A4 content area without triggering a new page */
+        }
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="{% url branch_url|add:':listgstquotations' %}" class="back-btn">&larr; Back To List</a>
+        <button class="print-btn" onclick="window.print()">Print Quotation</button>
+        <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+    </div>
+    
+    <div class="invoice-box" id="print-area">
+        <table class="header-table">
+            <tr>
+                <td style="width: 50%;">
+                    <div class="logo-text">
+                        <img src="{% static 'images/ssd-enterprises-logo.webp' %}" alt="" width='200px'>
+                    </div>
+                </td>
+                <td style="width: 50%; text-align: right;">
+                    <br><br><br>
+                    <div style="font-size: 13px; color: #555;">
+                        <span style="font-weight:bold;">QUOTATION</span><br>
+                        DATE : {{ master.Date|date:"d/m/Y" }}
+                    </div>
+                </td>
+            </tr>
+        </table>
+        
+        <div style="font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+            {% if master.Reference %}
+                Ref : {{ master.Reference }}<br>
+            {% else %}
+                Ref : <br>
+            {% endif %}
+            <span style="font-weight:bold; font-size:16px;">To,</span><br>
+            <strong>M/s.{{ master.Customer_Name }}</strong><br>
+            {% if customer.Address %}{{ customer.Address|linebreaksbr }}{% endif %}
+        </div>
+
+        <div style="font-size: 14px; margin-bottom: 10px;">
+            {% if master.Subject %}
+                Sub : {{ master.Subject }}
+            {% else %}
+                Sub :
+            {% endif %}
+        </div>
+
+        <div style="font-size: 14px; line-height: 1.6;">
+            Dear Sir,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;With reference to your discussion with the our conversation of Branding works we are pleased to quote our best prices as below.
+        </div>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Description</th>
+                    <th>Size</th>
+                    <th class='fit-content-col'>Sqft / Per Piece<br>Price</th>
+                    <th>Qty</th>
+                    <th class='fit-content-col amount'>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in details %}
+                <tr>
+                    <td>{{ forloop.counter }}.</td>
+                    <td class="desc" style="white-space: pre-wrap;">{{ item.Description }}</td>
+                    <td>{{ item.HSN_Code|default:"-" }}</td>
+                    <td class='fit-content-col'>{{ item.Rate|floatformat:2 }}</td>
+                    <td>{{ item.Qty }}</td>
+                    <td class='amount fit-content-col'>{{ item.Amount|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4" style="border-right: none; border-bottom: none;"></td>
+                    <td style="text-align: right; padding-right: 20px; font-size: 15px; font-weight: bold; border-left: none; border-bottom: none;">TOTAL</td>
+                    <td class="amount fit-content-col" style='font-size: 15px; font-weight: bold; border-bottom: none;'>{{ master.Total_Amount|floatformat:2 }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 20px; font-size: 14px;">
+            <p>Thanking you for your business!</p>
+            
+            {% comment %} <p style="color: red; font-weight: bold; font-style: italic; margin-bottom: 5px;">NOTE :</p> {% endcomment %}
+            <table style="width: 100%; border: none; font-size: 13px;">
+                <tr>
+                    <td style="width: 15%; vertical-align: top; border: none; padding: 2px 0;">NOTE </td>
+                    <td style="width: 45%; vertical-align: top; border: none; padding: 2px 0;">
+                        : 75% Advance and<br>
+                        &nbsp; Balance 25% on Deliver the Board<br>
+                        &nbsp; GST WILL ADD 18% WITH GRAND TOTAL
+                    </td>
+                    <td style="width: 40%; vertical-align: bottom; text-align: right; border: none; padding: 2px 0;" rowspan="2">
+                        Thanks and Regards<br>
+                        SS DIGITAL Enterprises<br>
+                        Mohamed Uwaise.H<br>
+                        +91 9629932649
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top; border: none; padding: 15px 0 2px 0;">Validity of quotation</td>
+                    <td style="vertical-align: top; border: none; padding: 15px 0 2px 0;">: {{ master.Validity|default:"" }}</td>
+                </tr>
+            </table>
+        </div>
+
+        
+        <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; font-size: 14px; font-weight: bold; color: #555; text-align: start; border-top: 2px solid #ccc; padding-top: 15px;">
+            No.1/13, J.N.Road (Opp. Uzhavar Sathai) Tiruvallur - 602 001.<br>
+            Mob : +91 96299 32649 &nbsp;&nbsp;&nbsp; E-mail : ssenterprisesabu@gmail.com
+        </div>
+
+        
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadPDF() {
+            var element = document.getElementById('print-area');
+            var opt = {
+                margin:       [0.5, 0.5, 0.5, 0.5],
+                filename:     'Quotation_{{ master.Quotation_No|slugify }}.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>

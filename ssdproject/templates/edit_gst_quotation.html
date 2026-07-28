@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title>Add GST Invoice</title>
+	<title>Edit GST Quotation</title>
 	{% load static %}
 	<link rel="icon" type="image/x-icon" href="{% static 'images/SS_LOGO.webp' %}">
 	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.min.css' %}">
@@ -15,12 +15,11 @@
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 	<style>
-		.inline-input { width: 100%; border: none; background: transparent; padding: 5px;}
+		.inline-input { width: 100%; border: none; background: transparent; padding: 5px; }
 		.inline-input:focus { outline: none; background: #f9f9f9; }
 		textarea.inline-input { resize: none; overflow: hidden; min-height: 40px; }
 		.table-totals { margin-top: 20px; font-weight: bold; }
 		.form-horizontal .form-group { margin-left: 0; margin-right: 0; }
-		.btn > i:before {margin:0}
 	</style>
 </head>
 <body id="app" class="app off-canvas">
@@ -33,9 +32,9 @@
 		<div class="content-container fixedHeader nav-expand">
 			<div class="col-md-11">
 				<div class="panel panel-lined panel-hovered mb20">
-					<div class="panel-heading">Add GST Invoice</div>
+					<div class="panel-heading">Edit GST Quotation ({{master.Quotation_No}})</div>
 					<div class="panel-body">
-						<form id="gstInvoiceForm" method="POST" action="{% url branch_url|add:':addgstinvoice' %}">
+						<form id="gstQuotationForm" method="POST" action="{% url branch_url|add:':editgstquotation' master.Quotation_No %}">
 							{% csrf_token %}
 							<div class="row">
 								<div class="col-md-6">
@@ -45,7 +44,8 @@
 											<option value="">Select Customer</option>
 											{% for item in customers %}
 												<option value="{% if item.Customer_Id %}{{item.Customer_Id}}{% else %}{{item.Agent_Id}}{% endif %}"
-                                                    data-name="{{item.Customer_Name}}" data-address="{{item.Address}}" data-gstin="{{item.GSTIN}}">
+                                                    data-name="{{item.Customer_Name}}" data-address="{{item.Address}}" data-gstin="{{item.GSTIN}}"
+                                                    {% if master.Customer_Id == item.Customer_Id or master.Customer_Id == item.Agent_Id %}selected{% endif %}>
 													{{item.Customer_Name}} - {% if item.Customer_Id %}{{item.Customer_Id}}{% else %}{{item.Agent_Id}}{% endif %}
 												</option>
 											{% endfor %}
@@ -59,72 +59,85 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<label>Date</label>
-										<input type="date" name="invoice_date" class="form-control" required value="{% now 'Y-m-d' %}">
+										<input type="date" name="quotation_date" class="form-control" required value="{{master.Date|date:'Y-m-d'}}">
 									</div>
 									<div class="form-group">
-										<label>P.O No (Optional)</label>
-										<input type="text" name="po_no" class="form-control" placeholder="Enter P.O No">
+										<label>Subject</label>
+										<input type="text" name="subject" class="form-control" value="{{master.Subject|default_if_none:''}}" placeholder="Enter Subject">
+									</div>
+									<div class="form-group">
+										<label>Reference</label>
+										<input type="text" name="reference" class="form-control" value="{{master.Reference|default_if_none:''}}" placeholder="Enter Reference">
+									</div>
+									<div class="form-group">
+										<label>Validity of Quotation</label>
+										<input type="date" name="validity" class="form-control" value="{{master.Validity|default_if_none:''}}" placeholder="Enter Validity">
 									</div>
 								</div>
 							</div>
 							
 							<div class="table-responsive mt20">
-								<table class="table table-bordered" id="invoiceTable">
+								<table class="table table-bordered" id="quotationTable">
 									<thead>
 										<tr>
 											<th>S.No.</th>
 											<th>DESCRIPTION</th>
-											<th>HSN Code</th>
+											<th>Size</th>
 											<th>Qty</th>
-											<th>Rate</th>
+											<th>Sqft / Per Piece Price</th>
 											<th>Amount</th>
-											<th>Action</th>
+											<th><button type="button" class="btn btn-success btn-xs" id="addRow"><i class="fa fa-plus"></i></button></th>
 										</tr>
 									</thead>
 									<tbody>
+                                        {% for detail in details %}
 										<tr>
+											<td class="sno">{{forloop.counter}}</td>
+											<td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description...">{{detail.Description}}</textarea></td>
+											<td><input type="text" name="hsn[]" class="inline-input" value="{{detail.HSN_Code|default_if_none:''}}" placeholder="Size"></td>
+											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="{{detail.Qty}}" required placeholder="0"></td>
+											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="{{detail.Rate}}" required placeholder="0.00"></td>
+											<td><input type="text" name="amount[]" class="inline-input amount" value="{{detail.Amount}}" placeholder="0.00"></td>
+											<td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
+										</tr>
+                                        {% empty %}
+                                        <tr>
 											<td class="sno">1</td>
 											<td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description..."></textarea></td>
-											<td><input type="text" name="hsn[]" class="inline-input" placeholder="Enter HSN Code"></td>
+											<td>
+            <div style="display:flex; align-items:center;">
+                <input type="number" step="0.01" class="inline-input size-len" placeholder="L" style="width: 45%; padding:2px;"> 
+                <span style="margin: 0 3px;">x</span> 
+                <input type="number" step="0.01" class="inline-input size-wid" placeholder="W" style="width: 45%; padding:2px;">
+            </div>
+            <input type="hidden" name="hsn[]" class="inline-input hsn-val">
+        </td>
 											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required placeholder="0"></td>
 											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
-											<td><input type="text" name="amount[]" class="inline-input amount" value="0.00" readonly placeholder="0.00"></td>
-											<td><button type="button" class="btn btn-danger btn rmRow"><i class="fa fa-trash"></i></button></td>
+											<td><input type="text" name="amount[]" class="inline-input amount" value="0.00" placeholder="0.00"></td>
+											<td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
 										</tr>
+                                        {% endfor %}
 									</tbody>
 								</table>
-								<div align="right">
-								<button type="button" class="btn btn-success btn" id="addRow"><i class="fa fa-plus"></i></button>
-								</div>
 							</div>
 							
 							<div class="row table-totals">
-								<div class="col-md-6">
-									<label>Tax Type:</label>
-									<label class="ui-radio-inline">
-										<input type="radio" name="tax_type" value="SGST" checked> SGST / CGST
-									</label>
-									<label class="ui-radio-inline">
-										<input type="radio" name="tax_type" value="IGST"> IGST
-									</label>
-								</div>
+								<div class="col-md-6"><input type="hidden" name="tax_type" value="SGST"></div>
 								<div class="col-md-6 text-right">
-									<p>TOTAL: <span id="subTotal">0.00</span></p>
-									<p id="sgstRow">SGST (9.00%): <span id="sgstAmount">0.00</span></p>
-									<p id="cgstRow">CGST (9.00%): <span id="cgstAmount">0.00</span></p>
-									<p id="igstRow" style="display:none;">IGST (18.00%): <span id="igstAmount">0.00</span></p>
-									<h4>GRAND TOTAL: <span id="grandTotal">0.00</span></h4>
+									<p>TOTAL: <span id="subTotal">{{master.Total_Amount}}</span></p>
+									
                                     
-                                    <input type="hidden" name="total_amount" id="h_subTotal" value="0">
-                                    <input type="hidden" name="sgst_amount" id="h_sgstAmount" value="0">
-                                    <input type="hidden" name="cgst_amount" id="h_cgstAmount" value="0">
-                                    <input type="hidden" name="igst_amount" id="h_igstAmount" value="0">
-                                    <input type="hidden" name="grand_total" id="h_grandTotal" value="0">
+                                    <input type="hidden" name="total_amount" id="h_subTotal" value="{{master.Total_Amount}}">
+                                    <input type="hidden" name="sgst_amount" id="h_sgstAmount" value="{{master.SGST_Amount}}">
+                                    <input type="hidden" name="cgst_amount" id="h_cgstAmount" value="{{master.CGST_Amount}}">
+                                    <input type="hidden" name="igst_amount" id="h_igstAmount" value="{{master.IGST_Amount}}">
+                                    <input type="hidden" name="grand_total" id="h_grandTotal" value="{{master.Grand_Total}}">
 								</div>
 							</div>
 							
 							<div class="text-right mt20">
-								<button type="submit" class="btn btn-primary">Save Invoice</button>
+								<button type="submit" class="btn btn-primary">Update Invoice</button>
 							</div>
 						</form>
 					</div>
@@ -190,52 +203,40 @@
 	<script src="{% static 'scripts/app.js' %}"></script>
 	<script>
 		$(document).ready(function(){
+            
+            // Initialize existing sizes
+            $('.hsn-val').each(function(){
+                var val = $(this).val();
+                if(val && val.includes('x')){
+                    var parts = val.split('x');
+                    $(this).closest('tr').find('.size-len').val(parts[0].trim());
+                    $(this).closest('tr').find('.size-wid').val(parts[1].trim());
+                }
+            });
+
+            // Bind events for size fields as well
+            
+
+            
+            $(document).on('input', '.amount', function(){
+                calculateTotals();
+            });
+
             function calculateTotals() {
                 var subTotal = 0;
-                $('#invoiceTable tbody tr').each(function(){
-                    var qty = parseFloat($(this).find('.qty').val()) || 0;
-                    var rate = parseFloat($(this).find('.rate').val()) || 0;
-                    var amt = qty * rate;
-                    $(this).find('.amount').val(amt.toFixed(2));
+                $('#quotationTable tbody tr').each(function(){
+                    var amt = parseFloat($(this).find('.amount').val()) || 0;
                     subTotal += amt;
                 });
                 
                 $('#subTotal').text(subTotal.toFixed(2));
                 $('#h_subTotal').val(subTotal.toFixed(2));
-                
-                var taxType = $('input[name="tax_type"]:checked').val();
-                var grandTotal = subTotal;
-                
-                if(taxType === 'SGST'){
-                    var sgst = subTotal * 0.09;
-                    var cgst = subTotal * 0.09;
-                    $('#sgstAmount').text(sgst.toFixed(2));
-                    $('#cgstAmount').text(cgst.toFixed(2));
-                    $('#h_sgstAmount').val(sgst.toFixed(2));
-                    $('#h_cgstAmount').val(cgst.toFixed(2));
-                    $('#h_igstAmount').val(0);
-                    
-                    $('#sgstRow, #cgstRow').show();
-                    $('#igstRow').hide();
-                    grandTotal += (sgst + cgst);
-                } else {
-                    var igst = subTotal * 0.18;
-                    $('#igstAmount').text(igst.toFixed(2));
-                    $('#h_igstAmount').val(igst.toFixed(2));
-                    $('#h_sgstAmount').val(0);
-                    $('#h_cgstAmount').val(0);
-                    
-                    $('#sgstRow, #cgstRow').hide();
-                    $('#igstRow').show();
-                    grandTotal += igst;
-                }
-                
-                $('#grandTotal').text(grandTotal.toFixed(2));
-                $('#h_grandTotal').val(grandTotal.toFixed(2));
+                $('#h_grandTotal').val(subTotal.toFixed(2)); // Grand total is same as subtotal now
             }
+
             
             function updateSno() {
-                $('#invoiceTable tbody tr').each(function(index){
+                $('#quotationTable tbody tr').each(function(index){
                     $(this).find('.sno').text(index + 1);
                 });
             }
@@ -244,13 +245,20 @@
                 var tr = `<tr>
                             <td class="sno"></td>
                             <td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description..."></textarea></td>
-                            <td><input type="text" name="hsn[]" class="inline-input" placeholder="Enter HSN Code"></td>
+                            <td>
+            <div style="display:flex; align-items:center;">
+                <input type="number" step="0.01" class="inline-input size-len" placeholder="L" style="width: 45%; padding:2px;"> 
+                <span style="margin: 0 3px;">x</span> 
+                <input type="number" step="0.01" class="inline-input size-wid" placeholder="W" style="width: 45%; padding:2px;">
+            </div>
+            <input type="hidden" name="hsn[]" class="inline-input hsn-val">
+        </td>
                             <td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required placeholder="0"></td>
                             <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
-                            <td><input type="text" name="amount[]" class="inline-input amount" value="0.00" readonly placeholder="0.00"></td>
-                            <td><button type="button" class="btn btn-danger btn rmRow"><i class="fa fa-trash"></i></button></td>
+                            <td><input type="text" name="amount[]" class="inline-input amount" value="0.00" placeholder="0.00"></td>
+                            <td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
                           </tr>`;
-                $('#invoiceTable tbody').append(tr);
+                $('#quotationTable tbody').append(tr);
                 updateSno();
             });
             
@@ -281,6 +289,11 @@
                     $('#customer_gstin').val('');
                 }
             });
+
+            // Initialize on load
+            calculateTotals();
+            $('#customer_id').trigger('change');
+            $('textarea[name="desc[]"]').trigger('input');
 		});
 	</script>
 </body>

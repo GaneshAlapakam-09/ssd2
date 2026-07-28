@@ -10,9 +10,14 @@
 	<link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
 	<link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
 	<link rel="stylesheet" href="{% static 'styles/main.min.css' %}">
+	
+	<link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 	<style>
 		.inline-input { width: 100%; border: none; background: transparent; padding: 5px; }
 		.inline-input:focus { outline: none; background: #f9f9f9; }
+		textarea.inline-input { resize: none; overflow: hidden; min-height: 40px; }
 		.table-totals { margin-top: 20px; font-weight: bold; }
 		.form-horizontal .form-group { margin-left: 0; margin-right: 0; }
 	</style>
@@ -48,7 +53,7 @@
 									</div>
 									<div class="form-group">
 										<label>GSTIN</label>
-										<input type="text" id="customer_gstin" name="customer_gstin" class="form-control" readonly>
+										<input type="text" id="customer_gstin" name="customer_gstin" class="form-control" readonly placeholder="Customer GSTIN">
 									</div>
 								</div>
 								<div class="col-md-6">
@@ -58,7 +63,7 @@
 									</div>
 									<div class="form-group">
 										<label>P.O No (Optional)</label>
-										<input type="text" name="po_no" class="form-control" value="{{master.P_O_No|default_if_none:''}}">
+										<input type="text" name="po_no" class="form-control" value="{{master.P_O_No|default_if_none:''}}" placeholder="Enter P.O No">
 									</div>
 								</div>
 							</div>
@@ -80,21 +85,21 @@
                                         {% for detail in details %}
 										<tr>
 											<td class="sno">{{forloop.counter}}</td>
-											<td><textarea name="desc[]" class="inline-input" rows="2" required>{{detail.Description}}</textarea></td>
-											<td><input type="text" name="hsn[]" class="inline-input" value="{{detail.HSN_Code|default_if_none:''}}"></td>
-											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="{{detail.Qty}}" required></td>
-											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="{{detail.Rate}}" required></td>
-											<td><input type="text" name="amount[]" class="inline-input amount" value="{{detail.Amount}}" readonly></td>
+											<td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description...">{{detail.Description}}</textarea></td>
+											<td><input type="text" name="hsn[]" class="inline-input" value="{{detail.HSN_Code|default_if_none:''}}" placeholder="HSN Code"></td>
+											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="{{detail.Qty}}" required placeholder="0"></td>
+											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="{{detail.Rate}}" required placeholder="0.00"></td>
+											<td><input type="text" name="amount[]" class="inline-input amount" value="{{detail.Amount}}" readonly placeholder="0.00"></td>
 											<td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
 										</tr>
                                         {% empty %}
                                         <tr>
 											<td class="sno">1</td>
-											<td><textarea name="desc[]" class="inline-input" rows="2" required></textarea></td>
-											<td><input type="text" name="hsn[]" class="inline-input"></td>
-											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required></td>
-											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required></td>
-											<td><input type="text" name="amount[]" class="inline-input amount" value="0.00" readonly></td>
+											<td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description..."></textarea></td>
+											<td><input type="text" name="hsn[]" class="inline-input" placeholder="HSN Code"></td>
+											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required placeholder="0"></td>
+											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
+											<td><input type="text" name="amount[]" class="inline-input amount" value="0.00" readonly placeholder="0.00"></td>
 											<td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
 										</tr>
                                         {% endfor %}
@@ -137,7 +142,61 @@
 		</div>
 	</div>
 
+	<!-- theme settings -->
+	<div class="site-settings clearfix hidden-xs" >
+		<div class="settings clearfix">
+			<div class="trigger ion ion-settings left"></div>
+			<div class="wrapper left">
+				<ul class="list-unstyled other-settings">
+					<li class="clearfix mb10">
+						<div class="left small">Nav Horizontal</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox" id="navHorizontal"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+					</li>
+					<li class="clearfix mb10">
+						<div class="left small">Fixed Header</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox"  id="fixedHeader"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+					</li>
+					<li class="clearfix mb10">
+						<div class="left small">Nav Full</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox"  id="navFull"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+					</li>
+				</ul>
+				<hr/>
+				<ul class="themes list-unstyled" id="themeColor">
+					<li data-theme="theme-zero"></li>
+					<li data-theme="theme-one"></li>
+					<li data-theme="theme-two"></li>
+					<li data-theme="theme-three" class="active"></li>
+					<li data-theme="theme-four"></li>
+					<li data-theme="theme-five"></li>
+					<li data-theme="theme-six"></li>
+					<li data-theme="theme-seven"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- #end theme settings -->
+
 	<script src="{% static 'scripts/vendors.js' %}"></script>
+	<script src="{% static 'scripts/plugins/screenfull.js' %}"></script>
+	<script src="{% static 'scripts/plugins/perfect-scrollbar.min.js' %}"></script>
+	<script src="{% static 'scripts/plugins/waves.min.js' %}"></script>
+	<script src="{% static 'scripts/app.js' %}"></script>
 	<script>
 		$(document).ready(function(){
             function calculateTotals() {
@@ -193,11 +252,11 @@
             $('#addRow').click(function(){
                 var tr = `<tr>
                             <td class="sno"></td>
-                            <td><textarea name="desc[]" class="inline-input" rows="2" required></textarea></td>
-                            <td><input type="text" name="hsn[]" class="inline-input"></td>
-                            <td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required></td>
-                            <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required></td>
-                            <td><input type="text" name="amount[]" class="inline-input amount" value="0.00" readonly></td>
+                            <td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description..."></textarea></td>
+                            <td><input type="text" name="hsn[]" class="inline-input" placeholder="HSN Code"></td>
+                            <td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required placeholder="0"></td>
+                            <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
+                            <td><input type="text" name="amount[]" class="inline-input amount" value="0.00" readonly placeholder="0.00"></td>
                             <td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
                           </tr>`;
                 $('#invoiceTable tbody').append(tr);
@@ -212,6 +271,11 @@
             
             $(document).on('input', '.qty, .rate', function(){
                 calculateTotals();
+            });
+            
+            $(document).on('input', 'textarea[name="desc[]"]', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
             });
             
             $('input[name="tax_type"]').change(function(){
@@ -230,6 +294,7 @@
             // Initialize on load
             calculateTotals();
             $('#customer_id').trigger('change');
+            $('textarea[name="desc[]"]').trigger('input');
 		});
 	</script>
 </body>

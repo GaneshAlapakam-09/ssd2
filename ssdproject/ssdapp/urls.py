@@ -81,5 +81,11 @@ urlpatterns = [
     path('listgstinvoices/', views.list_gst_invoices, name='listgstinvoices'),
     path('deletegstinvoice/<path:invoice_no>/', views.delete_gst_invoice, name='deletegstinvoice'),
     path('gst_invoice_pdf/<path:invoice_no>/', views.gst_invoice_pdf, name='gst_invoice_pdf'),
-]
 
+    # GST Quotation URLs
+    path('listgstquotations/', views.list_gst_quotations, name='listgstquotations'),
+    path('addgstquotation/', views.add_gst_quotation, name='addgstquotation'),
+    path('editgstquotation/<path:quotation_no>/', views.edit_gst_quotation, name='editgstquotation'),
+    path('deletegstquotation/<path:quotation_no>/', views.delete_gst_quotation, name='deletegstquotation'),
+    path('gstquotationpdf/<path:quotation_no>/', views.gst_quotation_pdf, name='gst_quotation_pdf'),
+]
