@@ -87,4 +87,11 @@ urlpatterns = [
     path('editgstquotation/<path:quotation_no>/', views.edit_gst_quotation, name='editgstquotation'),
     path('deletegstquotation/<path:quotation_no>/', views.delete_gst_quotation, name='deletegstquotation'),
     path('gstquotationpdf/<path:quotation_no>/', views.gst_quotation_pdf, name='gst_quotation_pdf'),
+    
+    # ----------------- DELIVERY CHALLAN MODULE -----------------
+    path('listdeliverychallans/', views.list_delivery_challans, name='listdeliverychallans'),
+    path('adddeliverychallan/', views.add_delivery_challan, name='add_delivery_challan'),
+    path('editdeliverychallan/<path:challan_no>/', views.edit_delivery_challan, name='edit_delivery_challan'),
+    path('deletedeliverychallan/<path:challan_no>/', views.delete_delivery_challan, name='delete_delivery_challan'),
+    path('deliverychallanpdf/<path:challan_no>/', views.delivery_challan_pdf, name='delivery_challan_pdf'),
 ]

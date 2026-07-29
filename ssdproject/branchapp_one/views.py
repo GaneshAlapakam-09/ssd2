@@ -7,7 +7,7 @@ from .models import (
     Cash_Book_Details, CustomerMaster, CustomerDetails, Expense_Category,
     MaterialMaster, InwardMaster, OutwardMaster, BillingMaster, QuoteMaster, EstimateMaster, BillingDetails, QuoteDetails,
     EstimateDetails, Payment_Master, Payment_Details, Cash_Book_Master,
-    GSTInvoiceMaster, GSTInvoiceDetails, GSTQuotationMaster, GSTQuotationDetails
+    GSTInvoiceMaster, GSTInvoiceDetails, GSTQuotationMaster, GSTQuotationDetails, DeliveryChallanMaster, DeliveryChallanDetails
 )
 
 # models from main app 
@@ -2694,7 +2694,177 @@ def gst_invoice_pdf(request, invoice_no):
         'branch_url': 'branchapp_one'
     })
 
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def list_delivery_challans(request):
+    data = DeliveryChallanMaster.objects.filter(Status=1).order_by('-Challan_No')
+    return render(request, 'list_delivery_challans.html', {'data': data})
 
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def add_delivery_challan(request):
+    if request.method == 'POST':
+        customer_id = request.POST.get('customer_id')
+        challan_date = request.POST.get('challan_date')
+        mode_of_despatch = request.POST.get('mode_of_despatch')
+        veh_no = request.POST.get('veh_no')
+        date_and_time_of_supply = request.POST.get('date_and_time_of_supply')
+        place_of_supply = request.POST.get('place_of_supply')
+        total_qty = request.POST.get('total_qty', 0)
+        added_by = request.user.username
+        
+        # Determine next Challan_No
+        import datetime
+        now = datetime.datetime.now()
+        year = now.year
+        month = now.month
+        if month >= 4:
+            fin_year = f"{str(year)[-2:]}-{str(year+1)[-2:]}"
+        else:
+            fin_year = f"{str(year-1)[-2:]}-{str(year)[-2:]}"
+            
+        last_challan = DeliveryChallanMaster.objects.all().order_by('S_No').last()
+        if last_challan and last_challan.S_No:
+            s_no = last_challan.S_No + 1
+        else:
+            s_no = 1
+        
+        challan_no = f"SSETRL - {s_no}"
+        
+        customer_name = ""
+        cust = CustomerDetails.objects.filter(Customer_Id=customer_id).first()
+        if not cust:
+            cust = CustomerDetails.objects.filter(Agent_Id=customer_id).first()
+        if cust:
+            customer_name = cust.Customer_Name
+            
+        master = DeliveryChallanMaster(
+            S_No=s_no,
+            Challan_No=challan_no,
+            Date=challan_date,
+            Customer_Id=customer_id,
+            Agent_Id=customer_id,
+            Customer_Name=customer_name,
+            Mode_of_Despatch=mode_of_despatch,
+            Veh_No=veh_no,
+            Date_and_Time_of_Supply=date_and_time_of_supply,
+            Place_of_Supply=place_of_supply,
+            Total_Qty=total_qty,
+            Added_By=added_by
+        )
+        master.save()
+        
+        # Save details
+        descs = request.POST.getlist('desc[]')
+        sizes = request.POST.getlist('size[]')
+        qtys = request.POST.getlist('qty[]')
+        materials = request.POST.getlist('material[]')
+        rates = request.POST.getlist('rate[]')
+        values = request.POST.getlist('value[]')
+        
+        for i in range(len(descs)):
+            detail = DeliveryChallanDetails(
+                Challan_No=master,
+                Description=descs[i],
+                Size=sizes[i] if sizes[i] else None,
+                Qty=qtys[i] if qtys[i] else 0,
+                Material=materials[i] if materials[i] else None,
+                Rate=rates[i] if rates[i] else 0,
+                Value=values[i] if values[i] else 0
+            )
+            detail.save()
+            
+        messages.success(request, 'Delivery Challan created successfully!')
+        return redirect('branchapp_one:listdeliverychallans')
+
+    customers = CustomerDetails.objects.filter(Status=1)
+    return render(request, 'add_delivery_challan.html', {'customers': customers, 'branch_url': 'branchapp_one'})
+
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def edit_delivery_challan(request, challan_no):
+    master = DeliveryChallanMaster.objects.get(Challan_No=challan_no)
+    details = DeliveryChallanDetails.objects.filter(Challan_No=master)
+    customers = CustomerDetails.objects.filter(Status=1)
+    
+    if request.method == 'POST':
+        master.Date = request.POST.get('challan_date')
+        customer_id = request.POST.get('customer_id')
+        master.Customer_Id = customer_id
+        master.Agent_Id = customer_id
+        
+        master.Mode_of_Despatch = request.POST.get('mode_of_despatch')
+        master.Veh_No = request.POST.get('veh_no')
+        master.Date_and_Time_of_Supply = request.POST.get('date_and_time_of_supply')
+        master.Place_of_Supply = request.POST.get('place_of_supply')
+        master.Total_Qty = request.POST.get('total_qty', 0)
+        
+        cust = CustomerDetails.objects.filter(Customer_Id=customer_id).first()
+        if not cust:
+            cust = CustomerDetails.objects.filter(Agent_Id=customer_id).first()
+        if cust:
+            master.Customer_Name = cust.Customer_Name
+            
+        master.save()
+        
+        # Delete old details
+        details.delete()
+        
+        # Save new details
+        descs = request.POST.getlist('desc[]')
+        sizes = request.POST.getlist('size[]')
+        qtys = request.POST.getlist('qty[]')
+        materials = request.POST.getlist('material[]')
+        rates = request.POST.getlist('rate[]')
+        values = request.POST.getlist('value[]')
+        
+        for i in range(len(descs)):
+            detail = DeliveryChallanDetails(
+                Challan_No=master,
+                Description=descs[i],
+                Size=sizes[i] if sizes[i] else None,
+                Qty=qtys[i] if qtys[i] else 0,
+                Material=materials[i] if materials[i] else None,
+                Rate=rates[i] if rates[i] else 0,
+                Value=values[i] if values[i] else 0
+            )
+            detail.save()
+            
+        messages.success(request, 'Delivery Challan updated successfully!')
+        return redirect('branchapp_one:listdeliverychallans')
+        
+    return render(request, 'edit_delivery_challan.html', {
+        'master': master,
+        'details': details,
+        'customers': customers,
+        'branch_url': 'branchapp_one'
+    })
+
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def delete_delivery_challan(request, challan_no):
+    master = DeliveryChallanMaster.objects.get(Challan_No=challan_no)
+    master.Status = 0
+    master.save()
+    messages.success(request, 'Delivery Challan deleted successfully!')
+    return redirect('branchapp_one:listdeliverychallans')
+
+@login_required(login_url='ssdapp:signin')
+@branch_one_required
+def delivery_challan_pdf(request, challan_no):
+    master = DeliveryChallanMaster.objects.get(Challan_No=challan_no)
+    details = DeliveryChallanDetails.objects.filter(Challan_No=master)
+    
+    # Get Customer info
+    customer = CustomerDetails.objects.filter(Customer_Id=master.Customer_Id).first()
+    if not customer:
+        customer = CustomerDetails.objects.filter(Agent_Id=master.Customer_Id).first()
+        
+    return render(request, 'delivery_challan_pdf.html', {
+        'master': master,
+        'details': details,
+        'customer': customer,
+    })
 # ----------------- GST QUOTATION MODULE -----------------
 
 @login_required(login_url='ssdapp:signin')

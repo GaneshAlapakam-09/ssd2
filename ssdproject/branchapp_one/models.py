@@ -351,3 +351,29 @@ class GSTQuotationDetails(models.Model):
     Qty = models.FloatField(default=0)
     Rate = models.FloatField(default=0)
     Amount = models.FloatField(default=0)
+
+
+class DeliveryChallanMaster(models.Model):
+    S_No = models.IntegerField(null=True)
+    Challan_No = models.CharField(primary_key=True, max_length=50)
+    Date = models.DateField(null=True, auto_now=False, auto_now_add=False)
+    Customer_Id = models.CharField(max_length=20, null=True)
+    Agent_Id = models.CharField(max_length=20, null=True)
+    Customer_Name = models.CharField(max_length=50, null=True)
+    Mode_of_Despatch = models.CharField(max_length=100, null=True, blank=True)
+    Veh_No = models.CharField(max_length=50, null=True, blank=True)
+    Date_and_Time_of_Supply = models.CharField(max_length=100, null=True, blank=True)
+    Place_of_Supply = models.CharField(max_length=100, null=True, blank=True)
+    Total_Qty = models.IntegerField(default=0)
+    Status = models.IntegerField(default=1)
+    Added_By = models.CharField(max_length=50, null=True)
+
+
+class DeliveryChallanDetails(models.Model):
+    Challan_No = models.ForeignKey(DeliveryChallanMaster, on_delete=models.CASCADE)
+    Description = models.TextField(null=True)
+    Size = models.CharField(max_length=50, null=True, blank=True)
+    Qty = models.IntegerField(default=0)
+    Material = models.CharField(max_length=50, null=True, blank=True)
+    Rate = models.FloatField(default=0)
+    Value = models.FloatField(default=0)

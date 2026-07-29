@@ -9,10 +9,12 @@
         body { font-family: 'Roboto', sans-serif; background: #fff; padding: 20px; color: #000; }
         
         .invoice-box {
-            
             margin: auto;
             padding: 20px;
-            {% comment %} border: 1px solid #ddd; {% endcomment %}
+            position: relative;
+            box-sizing: border-box;
+            min-height: 1000px;
+            padding-bottom: 250px; /* Space for footer */
         }
 
         .ss { font-family: fantasy; color: red; font-size: 60px; font-weight: 100; line-height: 1; }
@@ -40,18 +42,36 @@
         
         .clearfix::after { content: ""; clear: both; display: table; }
         
+        .invoice-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+        }
+
         .print-btn, .back-btn, .download-btn { display: inline-block; margin: 10px; padding: 10px 15px; background: #007bff; color: white; text-align: center; cursor: pointer; border: none; border-radius: 5px; text-decoration: none;}
         .download-btn { background: #28a745; }
         @media print {
-            @page { margin: 0; }
-            body { margin: 1cm; padding: 0; }
+            @page { margin: 0; size: A4; }
+            body { margin: 0; padding: 0; }
+            .no-print { display: none !important; }
             .print-btn, .back-btn, .download-btn { display: none !important; }
-            .invoice-box { border: none; padding: 0; }
+            .invoice-box { 
+                border: none; 
+                padding: 15mm 20mm;
+                padding-bottom: 250px;
+                min-height: 296mm;
+            }
+            .invoice-footer {
+                left: 20mm;
+                right: 20mm;
+                bottom: 20mm;
+            }
         }
     </style>
 </head>
 <body>
-    <div style="text-align: center; margin-bottom: 20px;">
+    <div class="no-print" style="text-align: center; margin-bottom: 20px;">
         <a href="{% url branch_url|add:':listgstinvoices' %}" class="back-btn">&larr; Back To List</a>
         <button class="print-btn" onclick="window.print()">Print Invoice</button>
         <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
@@ -153,28 +173,28 @@
             </tbody>
         </table>
         
-        <div style="margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between;">
-            <div>
-                <p style="text-decoration: underline; margin-bottom: 5px;">Account Details</p>
-                <table style="font-size: 14px; border: none;">
-                    <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Account Name</td><td style="border: none; text-align: left;">: SS ENTERPRISES</td></tr>
-                    <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Account Number</td><td style="border: none; text-align: left;">: 502 000 751 892 50</td></tr>
-                    <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">IFSC Code</td><td style="border: none; text-align: left;">: HDFC0008935</td></tr>
-                    <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Branch</td><td style="border: none; text-align: left;">: KAKKALUR ROAD, THIRUVALLUR.</td></tr>
-                </table>
+        <div class="invoice-footer">
+            <div style="margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between;">
+                <div>
+                    <p style="text-decoration: underline; margin-bottom: 5px;">Account Details</p>
+                    <table style="font-size: 14px; border: none;">
+                        <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Account Name</td><td style="border: none; text-align: left;">: SS ENTERPRISES</td></tr>
+                        <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Account Number</td><td style="border: none; text-align: left;">: 502 000 751 892 50</td></tr>
+                        <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">IFSC Code</td><td style="border: none; text-align: left;">: HDFC0008935</td></tr>
+                        <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Branch</td><td style="border: none; text-align: left;">: KAKKALUR ROAD, THIRUVALLUR.</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div style="margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between;">
+                <div style="margin-top: 30px; font-size: 12px; color: #555; text-align: start; font-weight: bold;">
+                    <p style="margin: 0;">No.3/13, J.N.Road (Opp. Uzhavar Sathai) Tiruvallur - 602 001. <br> Mob : +91 96299 32649 &nbsp;&nbsp;&nbsp; E-mail : ssenterprisesabu@gmail.com</p>
+                    {% comment %} <p style="margin: 5px 0 0 0;"></p> {% endcomment %}
+                </div>
+                <div style="text-align: right; display: flex; flex-direction: column; justify-content: flex-end;">
+                    <p style="margin: 0px;">Authorized Signature</p>
+                </div>
             </div>
         </div>
-        <div style="margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between;">
-            <div style="margin-top: 30px; font-size: 12px; color: #555; text-align: start; font-weight: bold;">
-                <p style="margin: 0;">No.3/13, J.N.Road (Opp. Uzhavar Sathai) Tiruvallur - 602 001. <br> Mob : +91 96299 32649 &nbsp;&nbsp;&nbsp; E-mail : ssenterprisesabu@gmail.com</p>
-                {% comment %} <p style="margin: 5px 0 0 0;"></p> {% endcomment %}
-            </div>
-            <div style="text-align: right; display: flex; flex-direction: column; justify-content: flex-end;">
-                <p style="margin: 0px;">Authorized Signature</p>
-            </div>
-        </div>
-        
-        
     </div>
     
     {% comment %} <div style="position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background-color: #00a4d3; z-index: 1;">

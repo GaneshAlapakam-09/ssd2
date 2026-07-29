@@ -34,19 +34,20 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
         @media print {
             @page { margin: 0; }
             body { margin: 1cm; padding: 0; }
+            .no-print { display: none !important; }
             .print-btn, .back-btn, .download-btn { display: none !important; }
             .invoice-box {
-            margin: auto;
-            padding: 20px;
-            position: relative;
-            box-sizing: border-box;
-            min-height: 1025px; /* Fits exactly into A4 content area without triggering a new page */
-        }
+                margin: auto;
+                padding: 20px;
+                position: relative;
+                box-sizing: border-box;
+                min-height: 1000px; /* Reduced slightly to prevent extra blank page */
+            }
         }
     </style>
 </head>
 <body>
-    <div style="text-align: center; margin-bottom: 20px;">
+    <div class="no-print" style="text-align: center; margin-bottom: 20px;">
         <a href="{% url branch_url|add:':listgstquotations' %}" class="back-btn">&larr; Back To List</a>
         <button class="print-btn" onclick="window.print()">Print Quotation</button>
         <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
@@ -124,19 +125,18 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
             </tbody>
         </table>
         
-        <div style="margin-top: 20px; font-size: 14px;">
+        <div style="margin-top: 20px; font-size: 14px;position: absolute; bottom: 100px; left: 20px; right: 20px;">
             <p>Thanking you for your business!</p>
             
             {% comment %} <p style="color: red; font-weight: bold; font-style: italic; margin-bottom: 5px;">NOTE :</p> {% endcomment %}
             <table style="width: 100%; border: none; font-size: 13px;">
                 <tr>
-                    <td style="width: 15%; vertical-align: top; border: none; padding: 2px 0;">NOTE </td>
-                    <td style="width: 45%; vertical-align: top; border: none; padding: 2px 0;">
-                        : 75% Advance and<br>
+                    <td style="width: 5%; vertical-align: top; border: none; padding: 2px 0;">NOTE </td>
+                    <td style="width: 45%; vertical-align: top; border: none; padding: 2px 0;">: 75% Advance and<br>
                         &nbsp; Balance 25% on Deliver the Board<br>
                         &nbsp; GST WILL ADD 18% WITH GRAND TOTAL
                     </td>
-                    <td style="width: 40%; vertical-align: bottom; text-align: right; border: none; padding: 2px 0;" rowspan="2">
+                    <td style="width: 15%; vertical-align: bottom; text-align: left; border: none; padding: 2px 0;" rowspan="2">
                         Thanks and Regards<br>
                         SS DIGITAL Enterprises<br>
                         Mohamed Uwaise.H<br>
@@ -151,7 +151,7 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
         </div>
 
         
-        <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; font-size: 14px; font-weight: bold; color: #555; text-align: start; border-top: 2px solid #ccc; padding-top: 15px;">
+        <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; font-size: 14px; font-weight: bold; color: #555; text-align: start; border-top: 2px solid #ccc; padding-top: 15px; margin-bottom">
             No.1/13, J.N.Road (Opp. Uzhavar Sathai) Tiruvallur - 602 001.<br>
             Mob : +91 96299 32649 &nbsp;&nbsp;&nbsp; E-mail : ssenterprisesabu@gmail.com
         </div>

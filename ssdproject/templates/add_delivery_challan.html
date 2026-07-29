@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Add Delivery Challan</title>
+	{% load static %}
+	<link rel="icon" type="image/x-icon" href="{% static 'images/SS_LOGO.webp' %}">
+	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'styles/main.min.css' %}">
+	
+	<link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+	<style>
+		.inline-input { width: 100%; border: none; background: transparent; padding: 5px;}
+		.inline-input:focus { outline: none; background: #f9f9f9; }
+		textarea.inline-input { resize: none; overflow: hidden; min-height: 40px; }
+		.table-totals { margin-top: 20px; font-weight: bold; }
+		.form-horizontal .form-group { margin-left: 0; margin-right: 0; }
+		.btn > i:before {margin:0}
+	</style>
+</head>
+<body id="app" class="app off-canvas">
+	<!-- header -->
+	{% include 'includes/header.html'%}
+	<!-- main-container -->
+	<div class="main-container clearfix">
+		<!-- main-navigation -->
+		{% include 'includes/sidebar.html'%}
+		<div class="content-container fixedHeader nav-expand">
+			<div class="col-md-11">
+				<div class="panel panel-lined panel-hovered mb20">
+					<div class="panel-heading">Add Delivery Challan</div>
+					<div class="panel-body">
+						<form id="deliveryChallanForm" method="POST" action="{% url branch_url|add:':add_delivery_challan' %}">
+							{% csrf_token %}
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>To (Customer)</label>
+										<select name="customer_id" id="customer_id" class="form-control" required>
+											<option value="">Select Customer</option>
+											{% for item in customers %}
+												<option value="{% if item.Customer_Id %}{{item.Customer_Id}}{% else %}{{item.Agent_Id}}{% endif %}"
+                                                    data-name="{{item.Customer_Name}}" data-address="{{item.Address}}" data-gstin="{{item.GSTIN}}">
+													{{item.Customer_Name}} - {% if item.Customer_Id %}{{item.Customer_Id}}{% else %}{{item.Agent_Id}}{% endif %}
+												</option>
+											{% endfor %}
+										</select>
+									</div>
+									<div class="form-group">
+										<label>GSTIN</label>
+										<input type="text" id="customer_gstin" name="customer_gstin" class="form-control" readonly placeholder="Customer GSTIN">
+									</div>
+                                    <div class="form-group">
+										<label>Mode of Despatch</label>
+										<input type="text" name="mode_of_despatch" class="form-control" placeholder="Enter Mode of Despatch">
+									</div>
+                                    <div class="form-group">
+										<label>Veh. No</label>
+										<input type="text" name="veh_no" class="form-control" placeholder="Enter Vehicle No">
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Date</label>
+										<input type="date" name="challan_date" class="form-control" required value="{% now 'Y-m-d' %}">
+									</div>
+									<div class="form-group">
+										<label>Date & Time of Supply</label>
+										<input type="text" name="date_and_time_of_supply" class="form-control" placeholder="Enter Date & Time of Supply">
+									</div>
+									<div class="form-group">
+										<label>Place of Supply</label>
+										<input type="text" name="place_of_supply" class="form-control" placeholder="Enter Place of Supply">
+									</div>
+								</div>
+							</div>
+							
+							<div class="table-responsive mt20">
+								<table class="table table-bordered" id="challanTable">
+									<thead>
+										<tr>
+											<th>S.No.</th>
+											<th>DESCRIPTION</th>
+											<th>Size</th>
+											<th>Qty</th>
+                                            <th>Mat.</th>
+											<th>Rate</th>
+											<th>Value</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="sno">1</td>
+											<td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description..."></textarea></td>
+											<td>
+                                                <input type="text" name="size[]" class="inline-input" placeholder="Size">
+                                            </td>
+											<td><input type="number" name="qty[]" class="inline-input qty" value="1" required placeholder="0"></td>
+											<td><input type="text" name="material[]" class="inline-input" placeholder="Material"></td>
+                                            <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
+											<td><input type="number" step="0.01" name="value[]" class="inline-input value" value="0.00" placeholder="0.00"></td>
+											<td><button type="button" class="btn btn-danger btn rmRow"><i class="fa fa-trash"></i></button></td>
+										</tr>
+									</tbody>
+								</table>
+								<div align="right">
+								<button type="button" class="btn btn-success btn" id="addRow"><i class="fa fa-plus"></i></button>
+								</div>
+							</div>
+							
+							<div class="row table-totals">
+								<div class="col-md-6"></div>
+								<div class="col-md-6 text-right">
+									<p>TOTAL Qty: <span id="totalQty">1</span></p>
+                                    <input type="hidden" name="total_qty" id="h_totalQty" value="1">
+								</div>
+							</div>
+							
+							<div class="text-right mt20">
+								<button type="submit" class="btn btn-primary">Save Challan</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- theme settings -->
+	<div class="site-settings clearfix hidden-xs" >
+		<div class="settings clearfix">
+			<div class="trigger ion ion-settings left"></div>
+			<div class="wrapper left">
+				<ul class="list-unstyled other-settings">
+					<li class="clearfix mb10">
+						<div class="left small">Nav Horizontal</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox" id="navHorizontal"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+					</li>
+					<li class="clearfix mb10">
+						<div class="left small">Fixed Header</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox"  id="fixedHeader"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+					</li>
+					<li class="clearfix mb10">
+						<div class="left small">Nav Full</div>
+						<div class="md-switch right">
+							<label>
+								<input type="checkbox"  id="navFull"> 
+								<span>&nbsp;</span> 
+							</label>
+						</div>
+					</li>
+				</ul>
+				<hr/>
+				<ul class="themes list-unstyled" id="themeColor">
+					<li data-theme="theme-zero"></li>
+					<li data-theme="theme-one"></li>
+					<li data-theme="theme-two"></li>
+					<li data-theme="theme-three" class="active"></li>
+					<li data-theme="theme-four"></li>
+					<li data-theme="theme-five"></li>
+					<li data-theme="theme-six"></li>
+					<li data-theme="theme-seven"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- #end theme settings -->
+
+	<script src="{% static 'scripts/vendors.js' %}"></script>
+	<script src="{% static 'scripts/plugins/screenfull.js' %}"></script>
+	<script src="{% static 'scripts/plugins/perfect-scrollbar.min.js' %}"></script>
+	<script src="{% static 'scripts/plugins/waves.min.js' %}"></script>
+	<script src="{% static 'scripts/app.js' %}"></script>
+	<script>
+		$(document).ready(function(){
+            
+            $(document).on('input', '.qty, .rate', function(){
+                var tr = $(this).closest('tr');
+                var qty = parseFloat(tr.find('.qty').val()) || 0;
+                var rate = parseFloat(tr.find('.rate').val()) || 0;
+                tr.find('.value').val((qty * rate).toFixed(2));
+                calculateTotals();
+            });
+
+            function calculateTotals() {
+                var totalQty = 0;
+                $('#challanTable tbody tr').each(function(){
+                    var q = parseInt($(this).find('.qty').val()) || 0;
+                    totalQty += q;
+                });
+                
+                $('#totalQty').text(totalQty);
+                $('#h_totalQty').val(totalQty);
+            }
+            
+            function updateSno() {
+                $('#challanTable tbody tr').each(function(index){
+                    $(this).find('.sno').text(index + 1);
+                });
+            }
+
+            $('#addRow').click(function(){
+                var tr = `<tr>
+                            <td class="sno"></td>
+                            <td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description..."></textarea></td>
+                            <td>
+                                <input type="text" name="size[]" class="inline-input" placeholder="Size">
+                            </td>
+                            <td><input type="number" name="qty[]" class="inline-input qty" value="1" required placeholder="0"></td>
+                            <td><input type="text" name="material[]" class="inline-input" placeholder="Material"></td>
+                            <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
+                            <td><input type="number" step="0.01" name="value[]" class="inline-input value" value="0.00" placeholder="0.00"></td>
+                            <td><button type="button" class="btn btn-danger btn rmRow"><i class="fa fa-trash"></i></button></td>
+                        </tr>`;
+                $('#challanTable tbody').append(tr);
+                updateSno();
+                calculateTotals();
+            });
+
+            $(document).on('click', '.rmRow', function(){
+                if($('#challanTable tbody tr').length > 1){
+                    $(this).closest('tr').remove();
+                    updateSno();
+                    calculateTotals();
+                }
+            });
+
+            // customer selection
+            $('#customer_id').change(function(){
+                var selected = $(this).find('option:selected');
+                var gstin = selected.data('gstin');
+                $('#customer_gstin').val(gstin || '');
+            });
+		});
+	</script>
+</body>
+</html>

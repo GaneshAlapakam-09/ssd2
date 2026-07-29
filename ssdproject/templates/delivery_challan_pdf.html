@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Delivery Challan</title>
+    {% load static %}
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
+        body { font-family: 'Roboto', sans-serif; background: #fff; padding: 0; margin: 0; color: #000; font-size: 14px; }
+        
+        .invoice-box {
+            margin: auto;
+            padding: 20px 40px;
+            padding-bottom: 300px;
+            position: relative;
+            box-sizing: border-box;
+            max-width: 800px;
+            min-height: 1025px; /* Fits exactly into A4 content area */
+        }
+        
+        .header-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: capitalize;
+        }
+
+        .header-layout {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .header-left {
+            width: 50%;
+            line-height: 1.5;
+        }
+        
+        .header-left .company-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .header-right {
+            width: 50%;
+            line-height: 1.5;
+            padding-left: 50px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        
+        .info-label {
+            width: 80px;
+        }
+        
+        .info-value {
+            flex-grow: 1;
+        }
+
+        .to-section {
+            margin-top: 20px;
+        }
+
+        .to-label {
+            font-weight: bold;
+        }
+
+        .customer-name {
+            text-transform: uppercase;
+        }
+        
+        .gstin-section {
+            margin-top: 15px;
+        }
+
+        table.items-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            border: 2px solid #000; 
+        }
+        table.items-table th, table.items-table td { 
+            border: 1px solid #000; 
+            padding: 8px 10px; 
+            text-align: center; 
+            font-size: 13px; 
+        }
+        table.items-table th { 
+            font-weight: bold; 
+        }
+        table.items-table th:first-child, table.items-table td:first-child {
+            border-left: 2px solid #000;
+        }
+        table.items-table th:last-child, table.items-table td:last-child {
+            border-right: 2px solid #000;
+        }
+        
+        table.items-table td.desc { 
+            text-align: left; 
+        }
+
+        .total-row td {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .details-section {
+            line-height: 1.6;
+            position: absolute;
+            bottom: 200px;
+            left: 40px;
+            right: 40px;
+            font-size: 14px;
+        }
+
+        table.signature-table {
+            border-collapse: collapse;
+            border: 2px solid #000;
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            width: calc(100% - 80px);
+        }
+
+        table.signature-table th, table.signature-table td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            text-align: center;
+        }
+        table.signature-table th {
+            font-weight: normal;
+        }
+
+        table.signature-table .lower-row td {
+            height: 80px;
+            vertical-align: bottom;
+            text-align: left;
+            position: relative;
+        }
+        
+        table.signature-table .lower-row td.right-align {
+            text-align: center;
+        }
+
+        table.signature-table .lower-row .top-text {
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        table.signature-table .lower-row .top-text-center {
+            position: absolute;
+            top: 8px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        table.signature-table .lower-row .bottom-text {
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        table.signature-table .lower-row .bottom-text-center {
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            width: 100%;
+            display: inline-block;
+        }
+
+        .print-btn, .back-btn, .download-btn { display: inline-block; margin: 10px; padding: 10px 15px; background: #007bff; color: white; text-align: center; cursor: pointer; border: none; border-radius: 5px; text-decoration: none;}
+        .download-btn { background: #28a745; }
+        
+        @media print {
+            @page { margin: 0; size: A4; }
+            body { margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+            .print-btn, .back-btn, .download-btn { display: none !important; }
+            .invoice-box {
+                padding: 15mm 20mm;
+                padding-bottom: 300px;
+                border: none;
+                min-height: 296mm; /* Full page height */
+            }
+            .details-section {
+                left: 20mm;
+                right: 20mm;
+            }
+            table.signature-table {
+                left: 20mm;
+                width: calc(100% - 40mm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="text-align: center; margin-bottom: 20px; padding-top: 20px;">
+        <a href="{% url branch_url|add:':listdeliverychallans' %}" class="back-btn">&larr; Back To List</a>
+        <button class="print-btn" onclick="window.print()">Print Challan</button>
+        <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+    </div>
+    
+    <div class="invoice-box" id="print-area">
+        <div class="header-title">
+            Delivery Challan
+        </div>
+
+        <div class="header-layout">
+            <div class="header-left">
+                <div class="company-name">SS ENTERPRISES</div>
+                <div>3/13, J.N.Road</div>
+                <div>Thiruvallur - 602 001.</div>
+                <div>Mob : +91 96299 32649</div>
+                <div>Email : ssdigitaltrl@gmail.com</div>
+                <div>GSTIN: 33HRYPM6809K1ZU</div>
+            </div>
+            
+            <div class="header-right">
+                <div class="info-row">
+                    <div class="info-label">Date</div>
+                    <div class="info-value">: {{ master.Date|date:"d.m.Y" }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">S.No.</div>
+                    <div class="info-value">: {{ master.Challan_No }}</div>
+                </div>
+
+                <div class="to-section">
+                    <div class="to-label">To,</div>
+                    <div class="customer-name">{{ master.Customer_Name }}</div>
+                    {% if customer.Address %}
+                        <div>{{ customer.Address|linebreaksbr }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="gstin-section">
+                    GSTIN : {{ customer.GSTIN|default:"-" }}
+                </div>
+            </div>
+        </div>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">S.No</th>
+                    <th style="width: 40%;">DESCRIPTION</th>
+                    <th style="width: 15%;">Size</th>
+                    <th style="width: 10%;">Qty</th>
+                    <th style="width: 10%;">Mat.</th>
+                    <th style="width: 10%;">Rate</th>
+                    <th style="width: 10%;">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in details %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="desc" style="white-space: pre-wrap;">{{ item.Description }}</td>
+                    <td>{{ item.Size|default:"-" }}</td>
+                    <td>{{ item.Qty }}</td>
+                    <td>{{ item.Material|default:"-" }}</td>
+                    <td>{{ item.Rate|default_if_none:"" }}</td>
+                    <td>{{ item.Value|default_if_none:"" }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="total-row">
+                    <td colspan="3" style="text-align: center;">TOTAL Qty</td>
+                    <td>{{ master.Total_Qty }}</td>
+                    <td colspan="3"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="details-section">
+            <div>Mode of Despatch : {{ master.Mode_of_Despatch|default:"" }}</div>
+            <div>Veh. No : {{ master.Veh_No|default:"" }}</div>
+            <div>Date & Time of Supply : {{ master.Date_and_Time_of_Supply|default:"" }}</div>
+            <div>Place of Supply : {{ master.Place_of_Supply|default:"" }}</div>
+        </div>
+
+        <table class="signature-table">
+            <thead>
+                <tr>
+                    <th style="width: 33.33%;">Prepared by</th>
+                    <th style="width: 33.33%;">Acknowledgement</th>
+                    <th style="width: 33.33%;">Security</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ master.Added_By|title }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="lower-row">
+                    <td colspan="2" style="border-right: none;">
+                        <div class="top-text">Receiver's Signature</div>
+                        <div class="bottom-text">Mobile No. :</div>
+                    </td>
+                    <td style="border-left: none;">
+                        <div class="top-text-center">For SS ENTERPRISES</div>
+                        <div class="bottom-text-center">Authorised Signatory</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadPDF() {
+            var element = document.getElementById('print-area');
+            var opt = {
+                margin:       [0.5, 0.5, 0.5, 0.5],
+                filename:     'Challan_{{ master.Challan_No|slugify }}.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
