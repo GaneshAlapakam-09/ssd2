@@ -110,7 +110,7 @@
 											<td><input type="text" name="material[]" class="inline-input" placeholder="Material" value="{{ detail.Material|default_if_none:'' }}"></td>
                                             <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="{{ detail.Rate }}" required placeholder="0.00"></td>
 											<td><input type="number" step="0.01" name="value[]" class="inline-input value" value="{{ detail.Value }}" placeholder="0.00"></td>
-											<td><button type="button" class="btn btn-danger btn rmRow"><i class="fa fa-trash"></i></button></td>
+											<td><button type="button" class="btn btn-danger btn rmRow"><span class="fa fa-trash"></span></button></td>
 										</tr>
                                         {% empty %}
                                         <tr>
@@ -123,13 +123,13 @@
 											<td><input type="text" name="material[]" class="inline-input" placeholder="Material"></td>
                                             <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
 											<td><input type="number" step="0.01" name="value[]" class="inline-input value" value="0.00" placeholder="0.00"></td>
-											<td><button type="button" class="btn btn-danger btn rmRow"><i class="fa fa-trash"></i></button></td>
+											<td><button type="button" class="btn btn-danger btn rmRow"><span class="fa fa-trash"></span></button></td>
 										</tr>
                                         {% endfor %}
 									</tbody>
 								</table>
 								<div align="right">
-								<button type="button" class="btn btn-success btn" id="addRow"><i class="fa fa-plus"></i></button>
+								<button type="button" class="btn btn-success btn" id="addRow"><span class="fa fa-plus"></span></button>
 								</div>
 							</div>
 							
@@ -245,7 +245,7 @@
                             <td><input type="text" name="material[]" class="inline-input" placeholder="Material"></td>
                             <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
                             <td><input type="number" step="0.01" name="value[]" class="inline-input value" value="0.00" placeholder="0.00"></td>
-                            <td><button type="button" class="btn btn-danger btn rmRow"><i class="fa fa-trash"></i></button></td>
+                            <td><button type="button" class="btn btn-danger btn rmRow"><span class="fa fa-trash"></span></button></td>
                         </tr>`;
                 $('#challanTable tbody').append(tr);
                 updateSno();

@@ -93,7 +93,7 @@
 											<th>Qty</th>
 											<th>Sqft / Per Piece Price</th>
 											<th>Amount</th>
-											<th><button type="button" class="btn btn-success btn-xs" id="addRow"><i class="fa fa-plus"></i></button></th>
+											<th>Action</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -112,7 +112,7 @@
 											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="{{detail.Qty}}" required placeholder="0"></td>
 											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="{{detail.Rate}}" required placeholder="0.00"></td>
 											<td><input type="text" name="amount[]" class="inline-input amount" value="{{detail.Amount}}" placeholder="0.00"></td>
-											<td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
+											<td><button type="button" class="btn btn-danger btn rmRow"><span class="fa fa-trash"></span></button></td>
 										</tr>
                                         {% empty %}
                                         <tr>
@@ -129,11 +129,14 @@
 											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required placeholder="0"></td>
 											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
 											<td><input type="text" name="amount[]" class="inline-input amount" value="0.00" placeholder="0.00"></td>
-											<td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
+											<td><button type="button" class="btn btn-danger btn rmRow"><span class="fa fa-trash"></span></button></td>
 										</tr>
                                         {% endfor %}
 									</tbody>
 								</table>
+								<div align="right">
+								<button type="button" class="btn btn-success btn" id="addRow"><span class="fa fa-plus"></span></button>
+								</div>
 							</div>
 							
 							<div class="row table-totals">
@@ -275,7 +278,7 @@
                             <td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="1" required placeholder="0"></td>
                             <td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="0" required placeholder="0.00"></td>
                             <td><input type="text" name="amount[]" class="inline-input amount" value="0.00" placeholder="0.00"></td>
-                            <td><button type="button" class="btn btn-danger btn-xs rmRow"><i class="fa fa-trash"></i></button></td>
+                            <td><button type="button" class="btn btn-danger btn rmRow"><span class="fa fa-trash"></span></button></td>
                           </tr>`;
                 $('#quotationTable tbody').append(tr);
                 updateSno();
