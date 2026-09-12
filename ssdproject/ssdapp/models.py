@@ -442,6 +442,7 @@ class GSTQuotationMaster(models.Model):
     Agent_Id = models.CharField(max_length=20, null=True)
     Customer_Name = models.CharField(max_length=50, null=True)
     Subject = models.CharField(max_length=255, null=True)
+    Message_Topic = models.CharField(max_length=255, null=True, default='Branding works')
     Reference = models.CharField(max_length=255, null=True)
     Validity = models.CharField(max_length=100, null=True)
     Tax_Type = models.CharField(max_length=10, null=True) # SGST or IGST

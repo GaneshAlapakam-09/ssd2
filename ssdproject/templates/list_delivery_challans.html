@@ -26,6 +26,7 @@
 <!-- CSS Stylesheets -->
 <link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'styles/main.min.css' %}">
+<link rel="stylesheet" href="{% static 'styles/plugins/bootstrap-datepicker.css' %}">
 
 
 
@@ -125,7 +126,7 @@
 					</div>
 
 					<form class="form-horizontal right col-lg-8" action="javascript:;" style="display: flex; gap: 10px; justify-content: flex-end;">
-						<input type="date" class="form-control input-sm dateFilter" placeholder="Filter by Date" style="width: 150px;">
+						<input type="text" class="form-control input-sm dateFilter" placeholder="dd/mm/yyyy" style="width: 150px;">
 						<input type="text" class="form-control input-sm searchInput" placeholder="Type keyword" style="width: 150px;">
 						<button type="button" class="btn btn-sm btn-default clearFilterBtn">Clear</button>
 					</form>
@@ -266,6 +267,7 @@
 <script src="{% static 'scripts/plugins/perfect-scrollbar.min.js' %}"></script>
 <script src="{% static 'scripts/plugins/waves.min.js' %}"></script>
 <script src="{% static 'scripts/plugins/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'scripts/plugins/bootstrap-datepicker.min.js' %}"></script>
 <script src="{% static 'scripts/app.js' %}"></script>
 {% comment %} <script src="{% static 'scripts/tables.init.js' %}"></script> {% endcomment %}
 
@@ -296,8 +298,8 @@
 				{ 
 					Challan_No: "{{ item.Challan_No|escapejs }}", 
 					Date: {
-						display: "{{ item.Date|escapejs }}",
-						filter: "{{ item.Date|date:'Y-m-d'|escapejs }}"
+						display: "{{ item.Date|date:'d/m/Y'|escapejs }}",
+						filter: "{{ item.Date|date:'d/m/Y'|escapejs }}"
 					}, 
 					Customer_Id: "{% if item.Customer_Id %}{{ item.Customer_Id|escapejs }}{% else %}{{ item.Agent_Id|escapejs }}{% endif %}", 
 					Customer_Name: "{{ item.Customer_Name|escapejs |upper }}", 
@@ -335,6 +337,12 @@
 	
 			$dataTable.find(".searchInput").on("keyup", function () {
 				table.search(this.value).draw();
+			});
+
+			$('.dateFilter').datepicker({
+				format: 'dd/mm/yyyy',
+				autoclose: true,
+				todayHighlight: true
 			});
 
 			$dataTable.find(".dateFilter").on("change", function () {

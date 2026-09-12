@@ -2865,6 +2865,7 @@ def add_gst_quotation(request):
         subject = request.POST.get('subject')
         reference = request.POST.get('reference')
         validity = request.POST.get('validity')
+        message_topic = request.POST.get('message_topic', 'Branding works')
         tax_type = request.POST.get('tax_type')
         total_amount = request.POST.get('total_amount', 0)
         sgst_amount = request.POST.get('sgst_amount', 0)
@@ -2906,6 +2907,7 @@ def add_gst_quotation(request):
             Agent_Id=customer_id,
             Customer_Name=customer_name,
             Subject=subject,
+            Message_Topic=message_topic,
             Reference=reference,
             Validity=validity,
             Tax_Type=tax_type,
@@ -2961,6 +2963,7 @@ def edit_gst_quotation(request, quotation_no):
         master.Agent_Id = customer_id
         
         master.Subject = request.POST.get('subject')
+        master.Message_Topic = request.POST.get('message_topic', 'Branding works')
         master.Reference = request.POST.get('reference')
         master.Validity = request.POST.get('validity')
         
