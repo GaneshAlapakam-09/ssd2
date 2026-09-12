@@ -170,8 +170,19 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
-            html2pdf().set(opt).from(element).save();
+            return html2pdf().set(opt).from(element).save();
         }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('download') === 'true') {
+                downloadPDF().then(function() {
+                    setTimeout(function() {
+                        window.location.href = "{% url branch_url|add:':listgstquotations' %}";
+                    }, 500);
+                });
+            }
+        };
     </script>
 </body>
 </html>

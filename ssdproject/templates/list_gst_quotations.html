@@ -310,10 +310,11 @@
 					Grand_Total: "{{ item.Grand_Total|escapejs }}", 
 					Tax_Type: "{{ item.Tax_Type|escapejs|upper}}",
 					Added_By: "{{ item.Added_By|escapejs|upper}}",
-					action: `<div class="btn-group list-cust">
-								<a href="{% url branch_url|add:':gst_quotation_pdf' item.Quotation_No %}"><button type="button" class="btn btn-default fa fa-print icon  waves-effect"></button></a>
-								<a href="{% url branch_url|add:':editgstquotation' item.Quotation_No %}"><button type="button" class="btn btn-default ion icon ion-md-create"></button></a>
-								<a class="del-btn" href="{% url branch_url|add:':deletegstquotation' item.Quotation_No %}"><button type="button" class="btn btn-default ion icon ion-md-trash waves-effect"></button></a>
+					action: `							<div class="btn-group list-cust">
+								<a href="{% url branch_url|add:':gst_quotation_pdf' item.Quotation_No %}"><button type="button" title="Print PDF" class="btn btn-default fa fa-print icon  waves-effect"></button></a>
+								<a href="{% url branch_url|add:':gst_quotation_pdf' item.Quotation_No %}?download=true"><button type="button" title="Download PDF" class="btn btn-default fa fa-download icon waves-effect"></button></a>
+								<a href="{% url branch_url|add:':editgstquotation' item.Quotation_No %}"><button type="button" title="Edit" class="btn btn-default ion icon ion-md-create"></button></a>
+								<a class="del-btn" href="{% url branch_url|add:':deletegstquotation' item.Quotation_No %}"><button type="button" title="Delete" class="btn btn-default ion icon ion-md-trash waves-effect"></button></a>
 							</div>`
 				}{% if not loop.last %},{% endif %}
 				{% endfor %}
@@ -337,9 +338,26 @@
 				searching: true,
 				dom: "rtip",
 				pageLength: 10,
-				order: [[0, "desc"]]
+				order: [[0, "desc"]],
+				stateSave: true
 			});
 	
+			var state = table.state.loaded();
+			if (state) {
+				var colSearch = state.columns[1].search;
+				if (colSearch && colSearch.search) {
+					$dataTable.find(".dateFilter").val(colSearch.search);
+				}
+				var globalSearch = state.search;
+				if (globalSearch && globalSearch.search) {
+					$dataTable.find(".searchInput").val(globalSearch.search);
+				}
+				var length = state.length;
+				if (length) {
+					$dataTable.find(".lengthSelect").val(length);
+				}
+			}
+
 			$dataTable.find(".searchInput").on("keyup", function () {
 				table.search(this.value).draw();
 			});

@@ -95,6 +95,8 @@
                 </td>
             </tr>
         </table>
+        <hr style="border: none; border-top: 3px solid #333; margin-bottom: 3px; margin-top: 15px;">
+        <hr style="border: none; border-top: 1px solid #999; margin-top: 0; margin-bottom: 15px;">
         
         <table class="header-table" style="margin-top: 10px; font-size: 14px;">
             <tr>
@@ -184,15 +186,19 @@
                         <tr><td style="padding-right: 20px; padding-bottom: 3px; border: none; text-align: left;">Branch</td><td style="border: none; text-align: left;">: KAKKALUR ROAD, THIRUVALLUR.</td></tr>
                     </table>
                 </div>
-            </div>
-            <div style="margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between;">
-                <div style="margin-top: 30px; font-size: 12px; color: #555; text-align: start; font-weight: bold;">
-                    <p style="margin: 0;">No.3/13, J.N.Road (Opp. Uzhavar Sathai) Tiruvallur - 602 001. <br> Mob : +91 96299 32649 &nbsp;&nbsp;&nbsp; E-mail : ssenterprisesabu@gmail.com</p>
-                    {% comment %} <p style="margin: 5px 0 0 0;"></p> {% endcomment %}
-                </div>
                 <div style="text-align: right; display: flex; flex-direction: column; justify-content: flex-end;">
                     <p style="margin: 0px;">Authorized Signature</p>
                 </div>
+            </div>
+            <hr style="border: none; border-top: 1px solid #999; margin-top: 15px; margin-bottom: 0px;">
+            <div style="margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between;">
+                <div style="margin-top: 0px; font-size: 12px; color: #555; text-align: start; font-weight: bold;">
+                    <p style="margin: 0;">No.3/13, J.N.Road (Opp. Uzhavar Sathai) Tiruvallur - 602 001. <br> Mob : +91 96299 32649 &nbsp;&nbsp;&nbsp; E-mail : ssenterprisesabu@gmail.com</p>
+                    {% comment %} <p style="margin: 5px 0 0 0;"></p> {% endcomment %}
+                </div>
+                <!--<div style="text-align: right; display: flex; flex-direction: column; justify-content: flex-end;">
+                    <p style="margin: 0px;">Authorized Signature</p>
+                </div>-->
             </div>
         </div>
     </div>
@@ -213,8 +219,19 @@
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
-            html2pdf().set(opt).from(element).save();
+            return html2pdf().set(opt).from(element).save();
         }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('download') === 'true') {
+                downloadPDF().then(function() {
+                    setTimeout(function() {
+                        window.location.href = "{% url branch_url|add:':listgstinvoices' %}";
+                    }, 500);
+                });
+            }
+        };
     </script>
 </body>
 </html>
