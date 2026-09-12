@@ -128,7 +128,7 @@
 							</div>
 							
 							<div class="text-right mt20">
-								<button type="submit" class="btn btn-primary">Save Invoice</button>
+								<button type="submit" class="btn btn-primary">Save Quotation</button>
 							</div>
 						</form>
 					</div>
@@ -198,16 +198,21 @@
             // Initialize existing sizes
             $('.hsn-val').each(function(){
                 var val = $(this).val();
-                if(val && val.includes('x')){
-                    var parts = val.split('x');
+                if(val && val.toLowerCase().includes('x')){
+                    var parts = val.toLowerCase().split('x');
                     $(this).closest('tr').find('.size-len').val(parts[0].trim());
                     $(this).closest('tr').find('.size-wid').val(parts[1].trim());
                 }
             });
 
             // Bind events for size fields as well
-            
-
+            $(document).on('input', '.size-len, .size-wid', function() {
+                var tr = $(this).closest('tr');
+                var l = tr.find('.size-len').val() || '';
+                var w = tr.find('.size-wid').val() || '';
+                var combined = (l && w) ? l + ' X ' + w : (l || w);
+                tr.find('.hsn-val').val(combined);
+            });
             
             $(document).on('input', '.amount', function(){
                 calculateTotals();

@@ -94,7 +94,14 @@
 										<tr>
 											<td class="sno">{{forloop.counter}}</td>
 											<td><textarea name="desc[]" class="inline-input" rows="2" required placeholder="Enter description...">{{detail.Description}}</textarea></td>
-											<td><input type="text" name="hsn[]" class="inline-input" value="{{detail.HSN_Code|default_if_none:''}}" placeholder="Size"></td>
+											<td>
+            <div style="display:flex; align-items:center;">
+                <input type="number" step="0.01" class="inline-input size-len" placeholder="L" style="width: 45%; padding:2px;"> 
+                <span style="margin: 0 3px;">x</span> 
+                <input type="number" step="0.01" class="inline-input size-wid" placeholder="W" style="width: 45%; padding:2px;">
+            </div>
+            <input type="hidden" name="hsn[]" class="inline-input hsn-val" value="{{detail.HSN_Code|default_if_none:''}}">
+        </td>
 											<td><input type="number" step="0.01" name="qty[]" class="inline-input qty" value="{{detail.Qty}}" required placeholder="0"></td>
 											<td><input type="number" step="0.01" name="rate[]" class="inline-input rate" value="{{detail.Rate}}" required placeholder="0.00"></td>
 											<td><input type="text" name="amount[]" class="inline-input amount" value="{{detail.Amount}}" placeholder="0.00"></td>
@@ -137,7 +144,7 @@
 							</div>
 							
 							<div class="text-right mt20">
-								<button type="submit" class="btn btn-primary">Update Invoice</button>
+								<button type="submit" class="btn btn-primary">Update Quotation</button>
 							</div>
 						</form>
 					</div>
@@ -207,16 +214,21 @@
             // Initialize existing sizes
             $('.hsn-val').each(function(){
                 var val = $(this).val();
-                if(val && val.includes('x')){
-                    var parts = val.split('x');
+                if(val && val.toLowerCase().includes('x')){
+                    var parts = val.toLowerCase().split('x');
                     $(this).closest('tr').find('.size-len').val(parts[0].trim());
                     $(this).closest('tr').find('.size-wid').val(parts[1].trim());
                 }
             });
 
             // Bind events for size fields as well
-            
-
+            $(document).on('input', '.size-len, .size-wid', function() {
+                var tr = $(this).closest('tr');
+                var l = tr.find('.size-len').val() || '';
+                var w = tr.find('.size-wid').val() || '';
+                var combined = (l && w) ? l + ' X ' + w : (l || w);
+                tr.find('.hsn-val').val(combined);
+            });
             
             $(document).on('input', '.amount', function(){
                 calculateTotals();

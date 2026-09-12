@@ -124,8 +124,10 @@
 						&nbsp;entries
 					</div>
 
-					<form class="form-horizontal right col-lg-4" action="javascript:;">
-						<input type="text" class="form-control input-sm searchInput" placeholder="Type keyword">
+					<form class="form-horizontal right col-lg-8" action="javascript:;" style="display: flex; gap: 10px; justify-content: flex-end;">
+						<input type="date" class="form-control input-sm dateFilter" placeholder="Filter by Date" style="width: 150px;">
+						<input type="text" class="form-control input-sm searchInput" placeholder="Type keyword" style="width: 150px;">
+						<button type="button" class="btn btn-sm btn-default clearFilterBtn">Clear</button>
 					</form>
 				</div>
 
@@ -293,7 +295,10 @@
 				{% for item in data %}
 				{ 
 					Invoice_No: "{{ item.Invoice_No|escapejs }}", 
-					Date: "{{ item.Date|escapejs }}", 
+					Date: {
+						display: "{{ item.Date|escapejs }}",
+						filter: "{{ item.Date|date:'Y-m-d'|escapejs }}"
+					}, 
 					Customer_Id: "{% if item.Customer_Id %}{{ item.Customer_Id|escapejs }}{% else %}{{ item.Agent_Id|escapejs }}{% endif %}", 
 					Customer_Name: "{{ item.Customer_Name|escapejs |upper }}", 
 					Grand_Total: "{{ item.Grand_Total|escapejs }}", 
@@ -313,7 +318,7 @@
 				
 				columns: [
 					{ data: "Invoice_No" },
-					{ data: "Date" },
+					{ data: "Date", render: { _: 'display', filter: 'filter', sort: 'filter' } },
 					{ data: "Customer_Id" },
 					{ data: "Customer_Name" },
 					{ data: "Grand_Total" },
@@ -330,6 +335,16 @@
 	
 			$dataTable.find(".searchInput").on("keyup", function () {
 				table.search(this.value).draw();
+			});
+
+			$dataTable.find(".dateFilter").on("change", function () {
+				table.column(1).search(this.value).draw();
+			});
+
+			$dataTable.find(".clearFilterBtn").on("click", function () {
+				$dataTable.find(".searchInput").val("");
+				$dataTable.find(".dateFilter").val("");
+				table.search("").columns().search("").draw();
 			});
 	
 			$dataTable.find(".lengthSelect").on("change", function () {
