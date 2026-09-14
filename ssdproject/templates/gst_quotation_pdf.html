@@ -15,6 +15,7 @@
             position: relative;
             box-sizing: border-box;
             min-height: 1025px; /* Fits exactly into A4 content area without triggering a new page */
+            padding-bottom: 250px; /* Space for footer */
         }
 
         .logo-text { display: flex; align-items: center; position: relative; z-index: 2; margin-bottom: 30px;}
@@ -42,6 +43,7 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
                 position: relative;
                 box-sizing: border-box;
                 min-height: 1000px; /* Reduced slightly to prevent extra blank page */
+                padding-bottom: 250px; /* Space for footer */
             }
         }
     </style>
@@ -65,6 +67,11 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
                     <br><br><br>
                     <div style="font-size: 13px; color: #555;">
                         <span style="font-weight:bold;">QUOTATION</span><br>
+                        {% if master.Reference %}
+                            <strong>Ref : {{ master.Reference }}</strong><br>
+                        {% else %}
+                            Ref : <br>
+                        {% endif %}
                         DATE : {{ master.Date|date:"d/m/Y" }}
                     </div>
                 </td>
@@ -72,14 +79,10 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
         </table>
         
         <div style="font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
-            {% if master.Reference %}
-                Ref : {{ master.Reference }}<br>
-            {% else %}
-                Ref : <br>
-            {% endif %}
             <span style="font-weight:bold; font-size:16px;">To,</span><br>
             <strong>M/s.{{ master.Customer_Name }}</strong><br>
-            {% if customer.Address %}{{ customer.Address|linebreaksbr }}{% endif %}
+            {% if customer.Address %}{{ customer.Address|linebreaksbr }}{% endif %}<br>
+            <strong>Ph :</strong> {{ customer.Phone_No|default:"" }}
         </div>
 
         <div style="font-size: 14px; margin-bottom: 10px;">
@@ -92,7 +95,7 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
 
         <div style="font-size: 14px; line-height: 1.6;">
             Dear Sir,<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;With reference to your discussion with the our conversation of {{ master.Message_Topic|default:'Branding works' }} we are pleased to quote our best prices as below.
+            &nbsp;&nbsp;&nbsp;&nbsp;With reference to your discussion with our conversation of {{ master.Message_Topic|default:'Branding works' }} we are pleased to quote our best prices as below.
         </div>
         
         <table class="items-table">
@@ -126,7 +129,7 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
         </table>
         
         <div style="margin-top: 20px; font-size: 14px;position: absolute; bottom: 100px; left: 20px; right: 20px;">
-            <p>Thanking you for your business!</p>
+            <p>Thank you for your business with us!</p>
             
             {% comment %} <p style="color: red; font-weight: bold; font-style: italic; margin-bottom: 5px;">NOTE :</p> {% endcomment %}
             <table style="width: 100%; border: none; font-size: 13px;">
@@ -139,21 +142,19 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
                     <td style="width: 15%; vertical-align: bottom; text-align: left; border: none; padding: 2px 0;" rowspan="2">
                         Thanks and Regards<br>
                         SS DIGITAL Enterprises<br>
-                        Mohamed Uwaise.H<br>
-                        +91 9629932649
+                        <p style="opacity: 0.5; text-wrap:nowrap;color:#4d4d4d !important;">A computer-generated quote with a "no signature required"</p>
                     </td>
                 </tr>
                 <tr>
-                    <td style="vertical-align: top; border: none; padding: 15px 0 2px 0;">Validity of quotation</td>
+                    <td style="vertical-align: top; border: none; padding: 15px 0 2px 0;">Validity of this quotation</td>
                     <td style="vertical-align: top; border: none; padding: 15px 0 2px 0;">: {{ master.Validity|default:"" }}</td>
                 </tr>
             </table>
         </div>
 
         
-        <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; font-size: 14px; font-weight: bold; color: #555; text-align: start; border-top: 2px solid #ccc; padding-top: 15px; margin-bottom">
-            No.1/13, J.N.Road (Opp. Uzhavar Sathai) Tiruvallur - 602 001.<br>
-            Mob : +91 96299 32649 &nbsp;&nbsp;&nbsp; E-mail : ssenterprisesabu@gmail.com
+        <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; font-size: 14px; color: #555; text-align: start; border-top: 2px solid #ccc; padding-top: 15px; margin-bottom">
+            <p style="margin: 0;">No.201/7, C.V.Naidu Salai, 1st Floor, Near Muthoot Finance (Nellai Sweets Upstairs) Thiruvallur - 602 001. <span style="font-weight:1000 !important;text-wrap:nowrap">Mobile : +91 96555 30609 / +91 96299 32649 </span><br> E-mail : ssdigitaltrl@gmail.com || <a href="https://ssdigitaltrl.com/">Website: ssdigitaltrl.com</a></p>
         </div>
 
         
@@ -161,16 +162,128 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
+        function preparePagedPDF() {
+            const original = document.getElementById('print-area');
+            
+            let pagedContainer = document.getElementById('paged-print-area');
+            if (pagedContainer) pagedContainer.remove();
+            
+            pagedContainer = document.createElement('div');
+            pagedContainer.id = 'paged-print-area';
+
+            const beforeTable = [];
+            const afterTable = [];
+            let isBefore = true;
+            let originalTable = null;
+
+            Array.from(original.children).forEach(child => {
+                if (child.tagName && child.tagName.toLowerCase() === 'table' && child.classList.contains('items-table')) {
+                    originalTable = child;
+                    isBefore = false;
+                } else if (isBefore) {
+                    beforeTable.push(child.cloneNode(true));
+                } else {
+                    afterTable.push(child.cloneNode(true));
+                }
+            });
+
+            const rows = Array.from(originalTable.querySelectorAll('tbody tr'));
+            const theadHTML = originalTable.querySelector('thead').outerHTML;
+
+            let termsDiv = null;
+            let addressDiv = null;
+            afterTable.forEach(child => {
+                if (child.innerHTML && child.innerHTML.includes('Thank you for your business')) termsDiv = child;
+                if (child.innerHTML && child.innerHTML.includes('No.201/7')) addressDiv = child;
+            });
+
+            const PAGE_HEIGHT = 1025; // Adjusted A4 content height
+            let currentPageNum = 1;
+            let currentPage = createPage(currentPageNum);
+            pagedContainer.appendChild(currentPage);
+            let currentTbody = currentPage.querySelector('.items-table tbody');
+
+            function createPage(pageNum) {
+                const page = document.createElement('div');
+                page.className = 'invoice-box';
+                page.style.minHeight = PAGE_HEIGHT + 'px';
+                page.style.height = PAGE_HEIGHT + 'px';
+                page.style.position = 'relative';
+                page.style.boxSizing = 'border-box';
+                page.style.backgroundColor = '#fff';
+                
+                if (pageNum > 1) {
+                    page.classList.add('page-break');
+                    const spacer = document.createElement('div');
+                    spacer.style.height = '50px'; // Top space for second page
+                    page.appendChild(spacer);
+                }
+
+                if (pageNum === 1) {
+                    beforeTable.forEach(el => page.appendChild(el.cloneNode(true)));
+                }
+
+                const table = document.createElement('table');
+                table.className = 'items-table';
+                table.innerHTML = theadHTML + '<tbody></tbody>';
+                page.appendChild(table);
+
+                return page;
+            }
+
+            // Append to DOM to measure height accurately
+            original.style.display = 'none';
+            original.parentNode.insertBefore(pagedContainer, original);
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i].cloneNode(true);
+                currentTbody.appendChild(row);
+                
+                let currentTable = currentPage.querySelector('.items-table');
+                // Fill the page completely, leaving a small 20px bottom safety margin
+                if (currentTable.offsetTop + currentTable.offsetHeight > PAGE_HEIGHT - 20) {
+                    currentTbody.removeChild(row);
+                    currentPageNum++;
+                    currentPage = createPage(currentPageNum);
+                    pagedContainer.appendChild(currentPage);
+                    currentTbody = currentPage.querySelector('.items-table tbody');
+                    currentTbody.appendChild(row);
+                }
+            }
+
+            let finalTable = currentPage.querySelector('.items-table');
+            // Check if footers can fit on the current page (they need ~250px of space)
+            if (finalTable.offsetTop + finalTable.offsetHeight > PAGE_HEIGHT - 250) {
+                // Footers don't fit! Create a new page just for them.
+                currentPageNum++;
+                currentPage = createPage(currentPageNum);
+                pagedContainer.appendChild(currentPage);
+            }
+
+            // Append footers only to the final page
+            if (termsDiv) currentPage.appendChild(termsDiv.cloneNode(true));
+            if (addressDiv) currentPage.appendChild(addressDiv.cloneNode(true));
+
+            // Now reset position for rendering
+            pagedContainer.style.position = 'static';
+            return pagedContainer;
+        }
+
         function downloadPDF() {
-            var element = document.getElementById('print-area');
+            var element = preparePagedPDF();
             var opt = {
-                margin:       0,
-                filename:     'Quotation_{{ master.Quotation_No|slugify }}.pdf',
+                margin:       [0, 0, 0, 0.2],
+                filename:     '{{ master.Customer_Name }}-{{ master.Quotation_No }}{% if master.Reference and "(R)" in master.Reference %}(R){% endif %}.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: 'css', before: '.page-break' }
             };
-            return html2pdf().set(opt).from(element).save();
+            
+            return html2pdf().set(opt).from(element).save().then(() => {
+                element.remove();
+                document.getElementById('print-area').style.display = 'block';
+            });
         }
 
         window.onload = function() {
