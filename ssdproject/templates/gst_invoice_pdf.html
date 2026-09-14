@@ -43,6 +43,7 @@
         .clearfix::after { content: ""; clear: both; display: table; }
         
         .invoice-footer {
+            margin-top:auto;
             position: absolute;
             bottom: 20px;
             left: 20px;
@@ -213,7 +214,7 @@
         function downloadPDF() {
             var element = document.getElementById('print-area');
             var opt = {
-                margin:       [0.5, 0.5, 0.3, 0.5], // 0.2 inches is approximately 20px for the bottom margin
+                margin:       0, // 0.2 inches is approximately 20px for the bottom margin
                 filename:     'Invoice_{{ master.Invoice_No|slugify }}.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },

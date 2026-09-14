@@ -164,7 +164,7 @@ table.items-table th { background: #f4f4f4; color: #000; font-weight: bold; }
         function downloadPDF() {
             var element = document.getElementById('print-area');
             var opt = {
-                margin:       [0.5, 0.5, 0.5, 0.5],
+                margin:       0,
                 filename:     'Quotation_{{ master.Quotation_No|slugify }}.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },

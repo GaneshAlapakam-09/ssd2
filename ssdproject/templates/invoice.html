@@ -122,13 +122,34 @@
         .bill-calculation{
             margin-right: 70px;
         }
+
+        .table-bordered.payment-details thead th,
+        .page-invoice .invoice-wrap .invoice-table thead tr {
+            background-color: #666464 !important;
+        }
         
+        /* Remove borders from the Sent To / Estimation section */
+        .invoice-subhead, .address-wrap, .row.mb30 {
+            border: none !important;
+        }
+
+        /* Remove border from the overall invoice container to prevent it in the print/PDF */
+        .invoice-wrap {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Make job and payment details table borders darker */
+        .table-bordered.job-details, .table-bordered.job-details th, .table-bordered.job-details td,
+        .table-bordered.payment-details, .table-bordered.payment-details th, .table-bordered.payment-details td {
+            border: 1px solid #333 !important;
+        }
 		  
 	</style>
 
 </head>
 
-<body id="app" class="app off-canvas">
+<body id="app" class="app off-canvas"  style='letter-spacing: .5px; background: #fff;'>
 	{% comment %} <div id="preloader">
 		<h1 class="dash-cont loa"> <span class="ss">SS</span> <span class="digital">digital</span></h1>
 	</div> {% endcomment %}
@@ -140,7 +161,7 @@
                 <div class="col-md-12">
                     <!-- Invoice Start -->
                     <button class="btn btn-primary mr5" type="submit" id="submitButton"  onclick="window.location.href='{% url branch_url|add:':listbill' %}';">&larr; Back To Bills List</button>
-                    <div class="invoice-wrap" id= "content">
+                    <div class="invoice-wrap" id="content" style="display: flex; flex-direction: column;">
                         <div class="clearfix invoice-head">
 							<span>
 								<img src="{% static 'images/SS_LOGO__1.png' %}"  width="200px" alt="">
@@ -253,6 +274,7 @@
                         </table>
                         <!-- #end invoice table -->
 
+                        <div style="margin-top: auto;">
                         <div>
                             <table class="right table-bordered table-striped bill-calculation">
                                 <thead>
@@ -292,7 +314,18 @@
                  
                         {% comment %} <h5 class="text-center large mt30 footer">SS Digital || Tiruvallur || 9629932649</h5> {% endcomment %}
 
-                        <div style="min-height:100px"></div>
+                        {% comment %} <div style="min-height:100px"></div> {% endcomment %}
+                        <hr style="border: none; border-top: 1px solid #999; margin-top: 15px; margin-bottom: 0px;">
+                        <div style="margin-top: 20px; font-size: 18px; display: flex; justify-content: space-between;">
+                            <div style="margin-top: 0px; font-size: 18px; color: #555; text-align: start; font-weight: bold;">
+                                <p style="margin: 0;">No.201/7, C.V.Naidu Salai, 1st Floor, Near Muthoot Finance (Nellai Sweets Upstairs) Thiruvallur - 602 001. Mobile : 9655530609 / 9629932649<br> E-mail : ssdigitaltrl@gmail.com || <a href="https://ssdigitaltrl.com/">Website: ssdigitaltrl.com</a></p>
+                                {% comment %} <p style="margin: 5px 0 0 0;"></p> {% endcomment %}
+                            </div>
+                            <!--<div style="text-align: right; display: flex; flex-direction: column; justify-content: flex-end;">
+                                <p style="margin: 0px;">Authorized Signature</p>
+                            </div>-->
+                        </div>
+                        </div>
 
 
                     </div>
@@ -340,13 +373,21 @@
             down.style.display = "none";
             submit.style.display = "none";
     
+            // Set minimum height to match A4 pages so footer sticks to bottom
+            const originalMinHeight = content.style.minHeight;
+            const a4Height = content.offsetWidth * (297 / 210);
+            const currentHeight = content.offsetHeight;
+            const pages = Math.ceil(currentHeight / a4Height) || 1;
+            content.style.minHeight = (pages * a4Height) + "px";
+
             html2canvas(content, {
                 scale: 2,
                 useCORS: true,
                 logging: false,
-                willReadFrequently: true
+                willReadFrequently: true,
+                backgroundColor: "#ffffff"
             }).then(canvas => {
-                const imgData = canvas.toDataURL("image/png", 1.0);
+                const imgData = canvas.toDataURL("image/jpeg", 0.98);
                 const pdf = new jsPDF("p", "mm", "a4");
     
                 const imgWidth = 210;
@@ -356,18 +397,19 @@
                 let position = 0;
                 let heightLeft = imgHeight;
     
-                pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+                pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
     
                 heightLeft -= pageHeight;
     
                 while (heightLeft > 0) {
                     position = heightLeft - imgHeight;
                     pdf.addPage();
-                    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+                    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
     
                 pdf.save("{{ billId }}.pdf");
+                content.style.minHeight = originalMinHeight;
     
                 // Hide loading and show buttons
                 setTimeout(() => {
@@ -394,11 +436,19 @@
             down.style.display = "none";
             submit.style.display = "none";
         
+            // Set minimum height to match A5 pages so footer sticks to bottom
+            const originalMinHeight = content.style.minHeight;
+            const a5Height = content.offsetWidth * (210 / 148);
+            const currentHeight = content.offsetHeight;
+            const pages = Math.ceil(currentHeight / a5Height) || 1;
+            content.style.minHeight = (pages * a5Height) + "px";
+
             html2canvas(content, {
                 scrollY: -window.scrollY,
-                scale: 3 // High resolution capture
+                scale: 3, // High resolution capture
+                backgroundColor: "#ffffff"
             }).then(canvas => {
-                let imgData = canvas.toDataURL('image/png');
+                let imgData = canvas.toDataURL('image/jpeg', 0.98);
                 let pdf = new jsPDF('p', 'mm', 'a5');
                 let imgWidth = 148;
                 let pageHeight = 210;
@@ -407,17 +457,18 @@
                 let heightLeft = imgHeight;
                 let position = 0;
         
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
         
                 while (heightLeft > 0) {
                     position -= pageHeight;
                     pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
         
                 pdf.autoPrint();
+                content.style.minHeight = originalMinHeight;
         
                 const pdfBlob = pdf.output('blob');
                 const blobUrl = URL.createObjectURL(pdfBlob);
@@ -468,7 +519,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     const tableBody = document.querySelector(".invoice-table.job-details tbody");
     const currentRows = tableBody.querySelectorAll("tr").length;
-    const rowsToAdd = 15 - currentRows;
+    const rowsToAdd = Math.max(0, 8 - currentRows);
 
     for (let i = 0; i < rowsToAdd; i++) {
       const row = document.createElement("tr");

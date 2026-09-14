@@ -4852,7 +4852,7 @@ th,td {
 .page-invoice .invoice-wrap {
   border: 1px solid #eeeeee;
   padding: 20px 30px;
-  background: #fff;
+  /* background: #fff; */
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 .page-invoice .invoice-wrap .invoice-head {
@@ -4869,7 +4869,7 @@ th,td {
   border: 1px solid #eeeeee;
 }
 .page-invoice .invoice-wrap .address-wrap .address-title {
-  border-bottom: 1px solid #eeeeee;
+  /* border-bottom: 1px solid #eeeeee; */
   padding: 20px;
 }
 .page-invoice .invoice-wrap .address-wrap address {
