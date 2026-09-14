@@ -334,7 +334,7 @@
 								<a title="Bill Details" href="{% url branch_url|add:':bill_payment_details' item.Bill_Id %}"><button type="button" class="btn btn-default ion icon fa fa-list-ol"></button></a>
 								{% if item.Pending_Amount != 0 %}<a title="Add Payment" href="{% url branch_url|add:':addpayment' item.Bill_Id %}"><button type="button" class="btn btn-default ion icon ion-md-cash"></button></a> {% endif %}
 								<a href="{% url branch_url|add:':overallinvoice' item.Bill_Id %}"><button type="button" class="btn btn-default fa fa-print icon  waves-effect"></button></a>
-								<a href="{% url branch_url|add:':whatsapp' item.Bill_Id %}"><button type="button" class="btn btn-default ion icon ion-logo-whatsapp"></button></a>
+								<a href="{% url branch_url|add:':whatsapp' item.Bill_Id %}" target="_blank"><button type="button" class="btn btn-default ion icon ion-logo-whatsapp"></button></a>
 								<a href="{% url branch_url|add:':update_bill' item.Bill_Id %}"><button type="button" class="btn btn-default ion icon ion-md-create"></button></a>
 							</div>`,
 					status: `<span style="background-color: 

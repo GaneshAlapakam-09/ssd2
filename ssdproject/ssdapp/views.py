@@ -1059,10 +1059,9 @@ def bill(request):
 @main_branch_required
 def select_bill(request, id):
     whatsData = BillingMaster.objects.get(Bill_Id=id)
-    # Store WhatsApp URL in session to use after redirect
+    # Redirect directly to WhatsApp URL
     whatsapp_url = send_whatsapp_message(whatsData)
-    request.session['whatsapp_url'] = whatsapp_url
-    return redirect('ssdapp:service_success') 
+    return redirect(whatsapp_url)
 
 
 def send_whatsapp_message(data):
